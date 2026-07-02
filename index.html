@@ -1833,7 +1833,6 @@
   // El "objeto" de la oferta = todas estas cartas. Códigos para otorgar a usuarios:
   const REDEEM_CODES = {
     "BRUNSON": OFFER_BY["brunson-anim"].cards,
-    "COACHES-2026": ["coach-1st","coach-2nd","coach-3rd"],   // las 3 cartas de coaches (reusable; borrar para desactivar)
   };
   const ownsPromo = id => ((state.promo && state.promo[id])||0) > 0;
   function grantPromo(ids){
@@ -3650,13 +3649,8 @@
   // códigos canjeables UNA sola vez por cuenta (todos usan el mismo código)
   const ONCE_CODES = {
     "LEYENDA90": { coins:2000, pack90s:true },
-    // Premios de PODIO — 1 código de un solo uso por carta ganada
-    "PODIO-1RO-K9X4T": { promo:["coach-1st"] },   // Thibodeau · 1er Lugar (dorada)
-    "PODIO-2DO-S7M2R": { promo:["coach-2nd"] },   // Entrenador Spurs · 2do Lugar
-    "PODIO-3RO-P5Q8W": { promo:["coach-3rd"] },   // Entrenador Spurs · 3er Lugar
     "VERANO-3F1K-2026": { ficha:3, coins:1000 },  // 3 Fichas de Verano + 1000 balones
     "BALON-2500-T7X9": { coins:2500 },            // 2500 balones (1 uso por cuenta)
-    "COACHES-3X-M4K8": { promo:["coach-1st","coach-2nd","coach-3rd"] },  // las 3 cartas coach (1 uso por cuenta)
   };
   async function redeemCode(raw){
     const code = String(raw||"").trim().toUpperCase();
