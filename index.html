@@ -1551,7 +1551,8 @@
   // ===== ECONOMÍA: monedas (se ganan jugando "Encestes") =====
   const PACK_COST = { std:150, elite:600, finals:1200, psa:1000, reward:0, noventas:1100 };
   const TOKEN_COST = 500;   // ficha de verano
-  const COINS_PER_POINT = 10;           // canasta básica (2 pts) = 20 balones
+  const COINS_PER_POINT = 10;           // (legado) balones por punto — ya no se usa para la recompensa
+  const COINS_PER_BASKET = 20;          // balones por CANASTA encestada (no por puntaje)
   function renderCoins(){
     const els = document.querySelectorAll(".coin-amount");
     els.forEach(e=> e.textContent = (state.coins||0).toLocaleString("es"));
@@ -1560,7 +1561,7 @@
   function addCoins(n){ state.coins = (state.coins||0) + n; save(); renderCoins(); return state.coins; }
   function spendCoins(n){ if((state.coins||0) < n) return false; state.coins -= n; save(); renderCoins(); return true; }
   // puente para el minijuego "Encestes" (vive en otro script)
-  window.DunkEconomy = { add:(n)=>addCoins(n), get:()=>state.coins||0, perPoint:COINS_PER_POINT,
+  window.DunkEconomy = { add:(n)=>addCoins(n), get:()=>state.coins||0, perPoint:COINS_PER_POINT, perBasket:COINS_PER_BASKET,
     // récord robusto: máx(nube, respaldo local), monotónico (nunca baja) → no se reinicia ni se farmea
     getBest:()=>{ let ls=0; try{ ls=+(localStorage.getItem('basket_best')||0); }catch(e){} return Math.max(state.bestScore||0, ls||0); },
     setBest:(v)=>{ v=Math.max(state.bestScore||0, v||0); state.bestScore=v; try{ localStorage.setItem('basket_best',v); }catch(e){} save(); } };
@@ -3628,7 +3629,7 @@
   /* =====================================================
      NAV / TOAST / EVENTOS
      ===================================================== */
-  const TENIS_ENABLED = false;   // desactivado temporalmente (pon true para reactivarlo)
+  const TENIS_ENABLED = true;    // reactivado (pon false para mantenimiento)
   function showView(v){
     if(v==="tenis" && !TENIS_ENABLED){ toast("La sección de Tenis está en mantenimiento 🔧"); v="album"; }
     $$(".tab").forEach(t=>t.setAttribute("aria-selected", String(t.dataset.view===v)));
@@ -3807,7 +3808,7 @@
 window.MiniGame = (function(){
   let cv, ctx, stage, W, H, S, lastAvailW=0;
   let ball, hoop, dragging, dragStart, dragNow;
-  let score, streak, timeLeft, running, best, timerId, msgTimeout;
+  let score, streak, timeLeft, running, best, timerId, msgTimeout, baskets;
   let bMod={hoopSpeed:1,hoopR:1,time:60,golden:true};
   function fmtN(n){ n=Math.round(n); return n<100000 ? ''+n : n.toExponential(2); }   // grandes → 1.23e+7
   let particles = [], rings = [], rafId = null, active = false, inited = false;
@@ -3916,7 +3917,7 @@ window.MiniGame = (function(){
   }
   function startGame(){
     bMod = (window.TenisLab && window.TenisLab.bossMods) ? window.TenisLab.bossMods() : {hoopSpeed:1,hoopR:1,time:60,golden:true};
-    score=0; streak=0; timeLeft=bMod.time||60; running=true;
+    score=0; streak=0; baskets=0; timeLeft=bMod.time||60; running=true;
     if(window.TenisLab){ const li=window.TenisLab.levelInfo(); const el=document.getElementById('mg-lvl');
       if(el) el.innerHTML='Nivel '+li.lvl+'-'+(li.boss?'BOS':(li.stg+1))+(li.boss?' · '+li.bossName:'')+' · Meta '+fmtN(li.target); }
     if(window.TenisLab) window.TenisLab.onGameStart();    // reinicia contadores de combos
@@ -3949,8 +3950,8 @@ window.MiniGame = (function(){
         ? (lvlRes.won?'¡Completaste los 8 niveles!':((lvlRes.boss?'BOS superado':'Nivel superado')+' · Meta '+fmtN(lvlRes.target)+' · +'+lvlRes.reward+' balones'))
         : ('Meta '+fmtN(lvlRes.target)+' no alcanzada · reintenta')) : ''; }
     // recompensa en monedas
-    const rate=(window.DunkEconomy && window.DunkEconomy.perPoint) || 10;
-    let earned=score*rate; if(newBest && score>0) earned+=100;   // bonus por récord
+    const rate=(window.DunkEconomy && window.DunkEconomy.perBasket) || 20;
+    let earned=baskets*rate; if(newBest && score>0) earned+=100;   // balones por CANASTA (no por puntaje); bonus por récord
     const rw=document.getElementById('mg-reward');
     if(earned>0 && window.DunkEconomy){ window.DunkEconomy.add(earned);
       rw.innerHTML='<span class="coin-ico"></span> +'+earned+' balones'+(newBest?' · ¡Récord!':''); }
@@ -4028,7 +4029,7 @@ window.MiniGame = (function(){
   function burst(x,y,color){ for(let i=0;i<18;i++){ const a=Math.random()*Math.PI*2, sp=(1+Math.random()*4)*S;
     particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2*S,life:1,color}); } }
   function scoreBasket(){
-    ball.canScore=false; ball.done=true; streak++;
+    ball.canScore=false; ball.done=true; streak++; baskets++;
     const mult = streak>=6?3 : streak>=3?2 : 1;
     const swish = !ball.touchedRim;
     let pts, tnBreak=null;
