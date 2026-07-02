@@ -925,6 +925,23 @@
   .promo-badge b{font-family:var(--display); font-weight:700; font-size:7px; letter-spacing:.08em; color:#fff;}
   .pcard .pc-name{flex:1 1 auto; min-width:0; text-align:right; font-size:9px; font-weight:700;
     text-transform:uppercase; letter-spacing:.01em; color:#fff; text-shadow:0 1px 4px #000; line-height:1.1;}
+  /* ----- cartas de PODIO (1er/2do/3er lugar) ----- */
+  .pcard.pc-gold{border-color:#ffd24d; box-shadow:0 0 0 1px #ffe79a, 0 0 22px rgba(255,201,74,.55), 0 10px 26px rgba(0,0,0,.5);}
+  .pcard.pc-silver{border-color:#dfe7ef; box-shadow:0 0 0 1px #f4f8fc, 0 0 16px rgba(210,224,238,.4), 0 10px 26px rgba(0,0,0,.5);}
+  .pcard.pc-bronze{border-color:#e0955a; box-shadow:0 0 0 1px #f2b988, 0 0 16px rgba(210,130,70,.4), 0 10px 26px rgba(0,0,0,.5);}
+  /* brillo metálico animado sobre el área de la carta */
+  .pcard.pc-gold .pc-foil,.pcard.pc-silver .pc-foil,.pcard.pc-bronze .pc-foil{opacity:.8; animation:podiumFoil 3.4s ease-in-out infinite;}
+  .pcard.pc-gold .pc-foil{background:linear-gradient(125deg, transparent 34%, rgba(255,224,140,.85) 48%, rgba(255,255,255,.9) 52%, transparent 66%);}
+  .pcard.pc-silver .pc-foil{background:linear-gradient(125deg, transparent 34%, rgba(230,240,250,.8) 48%, rgba(255,255,255,.9) 52%, transparent 66%);}
+  .pcard.pc-bronze .pc-foil{background:linear-gradient(125deg, transparent 34%, rgba(240,180,130,.8) 48%, rgba(255,240,225,.85) 52%, transparent 66%);}
+  @keyframes podiumFoil{0%,100%{background-position:0% 0%}50%{background-position:100% 100%}}
+  /* halo dorado interior para el 1er lugar */
+  .pcard.pc-gold::after{content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+    box-shadow:inset 0 0 28px rgba(255,205,90,.5), inset 0 0 3px rgba(255,231,154,.9); border-radius:14px;}
+  /* el número de puesto con color de metal */
+  .pcard.pc-gold .pc-top{color:#ffdf7a; text-shadow:0 0 10px rgba(255,201,74,.9),0 2px 6px #000; font-size:24px;}
+  .pcard.pc-silver .pc-top{color:#eef4fb; text-shadow:0 0 8px rgba(220,232,244,.8),0 2px 6px #000; font-size:24px;}
+  .pcard.pc-bronze .pc-top{color:#f4b184; text-shadow:0 0 8px rgba(224,149,90,.8),0 2px 6px #000; font-size:24px;}
   .shop-mine{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:14px;}
   /* ----- equipamiento (skin actual) ----- */
   .equip-box{margin-bottom:30px;}
@@ -1727,6 +1744,10 @@
     { id:"brunson-meditite",  slug:"jalen-brunson",      nombre:"Brunson · Meditite",   equipo:"New York Knicks", media:97, foto:"tienda-cards/02-New-York-Knicks/brunson-meditite.jpg" },
     { id:"wembi",             slug:"victor-wembanyama",  nombre:"Wemby",                equipo:"San Antonio Spurs", media:97, foto:"tienda-cards/12-San-Antonio-Spurs/wemby-2tallanimation.gif", fit:"contain" },
     { id:"brunson-anim",      slug:"jalen-brunson",      nombre:"Brunson Animado",      equipo:"New York Knicks", media:97, foto:"promo-cards/brunson-anim.gif", fit:"contain" },
+    // Cartas de PODIO (premios de torneo) — el número muestra el puesto, no la media
+    { id:"coach-1st", slug:"coach-thibodeau", nombre:"Thibodeau · 1er Lugar",     equipo:"New York Knicks",  media:99, rankLabel:"1st", rank:"gold",   foto:"promo-cards/coach-knicks.jpg" },
+    { id:"coach-2nd", slug:"coach-spurs-2",   nombre:"Entrenador Spurs · 2do Lugar", equipo:"San Antonio Spurs", media:98, rankLabel:"2nd", rank:"silver", foto:"promo-cards/coach-spurs.jpg" },
+    { id:"coach-3rd", slug:"coach-spurs-3",   nombre:"Entrenador Spurs · 3er Lugar", equipo:"San Antonio Spurs", media:97, rankLabel:"3rd", rank:"bronze", foto:"promo-cards/coach-spurs.jpg" },
   ];
   const PROMO_BY = Object.fromEntries(PROMO.map(c=>[c.id,c]));
   // PAQUETES de la tienda (cada uno con su precio y código propio)
@@ -3512,11 +3533,11 @@
       return `<div class="pcard locked" style="--c1:${t.c1};--c2:${t.c2}">
         <div class="pc-grad"></div><div class="pc-foot"><span class="pc-name">Por desbloquear</span></div></div>`;
     }
-    return `<div class="pcard ${c.fit==='contain'?'pc-contain':''}" style="--c1:${t.c1};--c2:${t.c2}" data-promo="${c.id}">
+    return `<div class="pcard ${c.fit==='contain'?'pc-contain':''} ${c.rank?('pc-'+c.rank):''}" style="--c1:${t.c1};--c2:${t.c2}" data-promo="${c.id}">
       <img src="${esc(c.foto)}" alt="${esc(c.nombre)}" onerror="this.style.opacity=0">
       <div class="pc-foil"></div>
       <div class="pc-grad"></div>
-      <div class="pc-top">${c.media}</div>
+      <div class="pc-top">${c.rankLabel||c.media}</div>
       <div class="pc-foot">${badge}<span class="pc-name">${esc(c.nombre)}</span></div>
     </div>`;
   }
@@ -3656,6 +3677,10 @@
   // códigos canjeables UNA sola vez por cuenta (todos usan el mismo código)
   const ONCE_CODES = {
     "LEYENDA90": { coins:2000, pack90s:true },
+    // Premios de PODIO — 1 código de un solo uso por carta ganada
+    "PODIO-1RO-K9X4T": { promo:["coach-1st"] },   // Thibodeau · 1er Lugar (dorada)
+    "PODIO-2DO-S7M2R": { promo:["coach-2nd"] },   // Entrenador Spurs · 2do Lugar
+    "PODIO-3RO-P5Q8W": { promo:["coach-3rd"] },   // Entrenador Spurs · 3er Lugar
   };
   async function redeemCode(raw){
     const code = String(raw||"").trim().toUpperCase();
@@ -3666,11 +3691,13 @@
       if(state.claimedCodes[code]){ toast("Ya usaste este código en tu cuenta"); return; }
       const r=ONCE_CODES[code];
       state.claimedCodes[code]=true;
-      if(r.coins) addCoins(r.coins);
-      save();
-      toast(`¡Código canjeado! +<b>${r.coins||0}</b> balones + 1 sobre 90s 🎁`);
+      const parts=[];
+      if(r.coins){ addCoins(r.coins); parts.push(`+<b>${r.coins}</b> balones`); }
+      if(r.promo && r.promo.length){ const n=grantPromo(r.promo); parts.push(n?`<b>${n}</b> carta${n>1?'s':''}`:`carta (ya la tenías)`); }
+      if(r.pack90s) parts.push("1 sobre 90s 🎁");
+      save(); try{ renderAll(); }catch(e){}
+      toast(`¡Código canjeado! ${parts.join(" + ")||'✓'}`);
       if(r.pack90s) openPack("noventas", true);   // sobre 90s gratis (con su animación)
-      else save();
       return;
     }
     // 1) códigos fijos (multiuso, para pruebas del dev)
