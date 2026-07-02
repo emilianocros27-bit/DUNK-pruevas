@@ -3681,6 +3681,7 @@
     "PODIO-1RO-K9X4T": { promo:["coach-1st"] },   // Thibodeau · 1er Lugar (dorada)
     "PODIO-2DO-S7M2R": { promo:["coach-2nd"] },   // Entrenador Spurs · 2do Lugar
     "PODIO-3RO-P5Q8W": { promo:["coach-3rd"] },   // Entrenador Spurs · 3er Lugar
+    "VERANO-3F1K-2026": { ficha:3, coins:1000 },  // 3 Fichas de Verano + 1000 balones
   };
   async function redeemCode(raw){
     const code = String(raw||"").trim().toUpperCase();
@@ -3694,10 +3695,12 @@
       const parts=[];
       if(r.coins){ addCoins(r.coins); parts.push(`+<b>${r.coins}</b> balones`); }
       if(r.promo && r.promo.length){ const n=grantPromo(r.promo); parts.push(n?`<b>${n}</b> carta${n>1?'s':''}`:`carta (ya la tenías)`); }
+      if(r.ficha){ parts.push(`<b>${r.ficha}</b> ficha${r.ficha>1?'s':''} de Verano 🃏`); }
       if(r.pack90s) parts.push("1 sobre 90s 🎁");
       save(); try{ renderAll(); }catch(e){}
       toast(`¡Código canjeado! ${parts.join(" + ")||'✓'}`);
       if(r.pack90s) openPack("noventas", true);   // sobre 90s gratis (con su animación)
+      if(r.ficha){ for(let i=0;i<r.ficha;i++) spinFicha(); }   // tiradas de Ficha de Verano gratis
       return;
     }
     // 1) códigos fijos (multiuso, para pruebas del dev)
