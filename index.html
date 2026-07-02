@@ -378,17 +378,23 @@
   .bp-head h3{font-size:18px; text-transform:uppercase;}
   .bp-xp{font-size:13px; color:var(--accent); font-family:var(--display); font-weight:700;}
   .bp-track{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px;}
-  .bp-tier{flex:0 0 150px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:14px; padding:12px; opacity:.55; transition:.2s;}
+  .bp-tier{flex:0 0 132px; display:flex; flex-direction:column; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:14px; padding:12px; opacity:.55; transition:.2s;}
   .bp-tier.reached{opacity:1; border-color:rgba(242,85,44,.5);}
-  .bp-lvl{font-family:var(--display); font-weight:800; font-size:15px; display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;}
-  .bp-lvl span{font-size:11px; color:var(--muted); font-weight:600;}
-  .bp-row{display:flex; align-items:center; gap:6px; font-size:13px; padding:7px 0; border-top:1px solid var(--line);}
-  .bp-tag{font-size:10px; text-transform:uppercase; letter-spacing:.06em; padding:2px 6px; border-radius:6px; background:rgba(255,255,255,.06); color:var(--muted);}
-  .bp-prem .bp-tag{background:rgba(242,184,75,.18); color:#f0c75a;}
-  .bp-rwd{flex:1; font-weight:600;}
+  .bp-tier.bp-big{background:rgba(242,184,75,.08); border-color:rgba(242,184,75,.45);}
+  .bp-lvl{font-family:var(--display); font-weight:800; font-size:15px; display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
+  .bp-lvl span{font-size:10px; color:var(--muted); font-weight:600;}
+  .bp-rwd{flex:1; display:flex; flex-direction:column; gap:6px; padding:8px 0; border-top:1px solid var(--line);}
+  .bp-cos{display:flex; flex-direction:column; align-items:center; gap:3px; text-align:center; font-size:11px; font-weight:600; color:var(--text);}
+  .bp-cos span{line-height:1.1;}
+  .bp-cos.bp-coins{flex-direction:row; justify-content:center; gap:5px; font-size:13px;}
+  .bp-ic, .bp-cos .skin-ball{width:40px; height:40px;}
+  .bp-emoji{font-size:30px; line-height:1;}
+  .bp-title-pill{display:inline-block; padding:5px 9px; border-radius:8px; background:linear-gradient(135deg,#f0c75a,#e08a2e); color:#1a1206; font-family:var(--display); font-weight:800; font-size:11px; letter-spacing:.02em;}
+  .bp-tier.bp-big .bp-coins{color:#f0c75a;}
+  .bp-row{display:flex; align-items:center; justify-content:center; gap:6px; padding-top:8px;}
   .bp-claim{padding:5px 10px; font-size:12px;}
   .bp-ok{color:var(--good); font-weight:800;}
-  .bp-lock{opacity:.7;}
+  .bp-lock{opacity:.7; font-size:18px;}
   .ms-cardprev{flex:0 0 auto; width:58px;}
   .ms-cardprev .pcard{width:58px; min-width:58px;}
   .tab-90s[aria-selected="true"]{color:#cdb0ff;}
@@ -728,6 +734,9 @@
   .acct-menu.show{display:flex}
   .acct-who{font-size:13px; color:var(--muted); line-height:1.6}
   .acct-who b{color:var(--text); font-family:var(--display); font-size:16px}
+  .acct-title{margin-top:4px; padding:3px 9px; border-radius:7px; background:linear-gradient(135deg,#f0c75a,#e08a2e); color:#1a1206; font-family:var(--display); font-weight:800; font-size:11px; letter-spacing:.02em;}
+  .acct.acct-mvp{animation:acctPulse 1.6s ease-in-out infinite;}
+  @keyframes acctPulse{0%,100%{box-shadow:0 0 0 3px #ff8a3d,0 0 12px #ff8a3d77}50%{box-shadow:0 0 0 4px #ffd24d,0 0 18px #ffd24daa}}
   .auth{position:fixed; inset:0; z-index:200; display:none; align-items:center; justify-content:center; padding:20px;
     background:radial-gradient(circle at 50% 0%, rgba(242,85,44,.20), transparent 60%), var(--bg);}
   .auth.show{display:flex}
@@ -1055,7 +1064,7 @@
       </div>
       <button class="acct" id="acct" hidden aria-label="Cuenta"><span id="acct-ini">?</span></button>
       <div class="acct-menu" id="acct-menu">
-        <div class="acct-who">Sesión iniciada como<br><b id="acct-name"></b></div>
+        <div class="acct-who">Sesión iniciada como<br><b id="acct-name"></b><br><span class="acct-title" id="acct-title" style="display:none"></span></div>
         <button class="btn btn-ghost" id="acct-profile">Mi perfil</button>
         <button class="btn btn-ghost" id="acct-logout">Cerrar sesión</button>
       </div>
@@ -1325,7 +1334,6 @@
           <span id="bp-xp" class="bp-xp">Nivel 1</span>
         </div>
         <div class="bp-track" id="bp-track"></div>
-        <button class="btn btn-primary" id="bp-buy" style="margin-top:14px">Desbloquear Premium · <span class="coin-ico"></span> 5000</button>
       </div>
       <div class="pf-sec-head" style="margin-top:26px"><h3>Clasificación</h3></div>
       <ol class="lb-list" id="liga-list"><li class="pf-empty" style="list-style:none">Cargando…</li></ol>
@@ -1744,8 +1752,36 @@
     { id:"voley",   nombre:"Vóleibol", pack:true, emoji:"🏐", desc:"Paneles curvos.",         g:["#ffffff","#eef3f8","#ccd6df"] },
     { id:"tenis",   nombre:"Tenis",    pack:true, emoji:"🎾", desc:"Verde fosforescente.",    g:["#e9f562","#c4e22e","#9bc21f"] },
     { id:"ocho",    nombre:"Bola 8",   pack:true, emoji:"🎱", desc:"La mística bola negra.",   g:["#5a5a5a","#222222","#000000"] },
+    // Balones EXCLUSIVOS del Pase de Batalla (no se compran; solo se ganan en el pase)
+    { id:"atardecer", nombre:"Atardecer", pass:true, desc:"Cielo de playa al anochecer.",   g:["#ffd9a0","#ff7a4d","#9a3b8f"], seam:"#5a1f4a", type:"basket" },
+    { id:"nebula",    nombre:"Nébula",    pass:true, desc:"Galaxia púrpura.",                g:["#cdb4ff","#7a5cff","#2a1f6b"], seam:"#160f3a", type:"basket" },
+    { id:"campeon",   nombre:"Campeón",   pass:true, desc:"Oro de campeón.",                 g:["#fff3b8","#ffd24d","#b9892a"], seam:"#5a3d09", type:"basket" },
+    { id:"retro90s",  nombre:"Retro 90s", pass:true, desc:"Estilo noventero.",               g:["#ff8de0","#9b5cff","#2bd4c9"], seam:"#21115a", type:"basket" },
+    { id:"leyenda",   nombre:"Leyenda S2",pass:true, desc:"El balón de los que llegan al 60.",g:["#fff1c0","#ffb13d","#ff4d18"], seam:"#3a0a0a", fire:true, type:"basket" },
   ];
   const SKIN_PACK_PRICE = 700;
+  // ===== COSMÉTICOS DEL PASE (redes, marcos, títulos, estelas) =====
+  const COSMETICS = {
+    net:   { neon:{name:"Red Neón", color:"#36e0ff", glow:"#36e0ff"}, fuego:{name:"Red Fuego", color:"#ff7a2e", glow:"#ff4d18"} },
+    frame: { bronce:{name:"Marco Bronce", c1:"#e3a96a", c2:"#7a4a22"}, plata:{name:"Marco Plata", c1:"#eef3fa", c2:"#94a2b3"}, oro:{name:"Marco Oro", c1:"#ffe79a", c2:"#caa12a"}, mvp:{name:"Marco MVP", c1:"#ff8a3d", c2:"#ffd24d", anim:true} },
+    title: { novato:{name:"Novato S2"}, veterano:{name:"Veterano S2"}, elite:{name:"Élite S2"}, mvp:{name:"MVP de Temporada"} },
+    trail: { chispas:{name:"Estela Chispas", color:"#ffd24d"}, hielo:{name:"Estela Hielo", color:"#7fe0ff"} },
+  };
+  function ensureCos(){ if(!state.cos) state.cos={}; ["net","frame","title","trail"].forEach(t=>{ if(!state.cos[t]) state.cos[t]={}; }); if(!state.equip) state.equip={}; }
+  function grantCosmetic(type,id){ ensureCos(); if(!COSMETICS[type]||!COSMETICS[type][id]) return false; const had=state.cos[type][id]; state.cos[type][id]=1; state.equip[type]=id; /* auto-equipar lo nuevo */ return !had; }
+  function equippedCos(type){ ensureCos(); const id=state.equip[type]; return (id && COSMETICS[type] && COSMETICS[type][id]) ? Object.assign({id},COSMETICS[type][id]) : null; }
+  // aplica marco (anillo del avatar) y título (junto al nombre) — net/estela se leen en el minijuego
+  function applyCosmetics(){ ensureCos();
+    const fr=equippedCos('frame'), ti=equippedCos('title');
+    const acct=document.getElementById('acct');
+    if(acct){ if(fr){ acct.style.boxShadow=`0 0 0 3px ${fr.c1}, 0 0 12px ${fr.c1}77`; } else { acct.style.boxShadow=''; } acct.classList.toggle('acct-mvp', !!(fr&&fr.id==='mvp')); }
+    const tEl=document.getElementById('acct-title'); if(tEl){ tEl.textContent = ti?ti.name:''; tEl.style.display = ti?'inline-block':'none'; }
+    // puentes para el minijuego (otro IIFE): red y estela equipadas
+    const net=equippedCos('net'), tr=equippedCos('trail');
+    window.__netCos = net ? {color:net.color, glow:net.glow} : null;
+    window.__trailCos = tr ? {color:tr.color} : null;
+  }
+  function addLeagueXp(n){ ensureLeague(); if(!n) return; state.league.xp=(state.league.xp||0)+n; save(); try{ if(document.getElementById('view-liga').classList.contains('active')) renderLiga(); }catch(e){} }
   const LEGENDS_90S = [
     {slug:"michael-jordan",nombre:"Michael Jordan",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/01-michael-jordan.jpg"}, {slug:"magic-johnson",nombre:"Magic Johnson",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/02-magic-johnson.jpg"},
     {slug:"larry-bird",nombre:"Larry Bird",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/03-larry-bird.jpg"}, {slug:"hakeem-olajuwon",nombre:"Hakeem Olajuwon",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/04-hakeem-olajuwon.jpg"},
@@ -1875,7 +1911,7 @@
     if(!state.skins) state.skins={}; if(!state.ballSkin) state.ballSkin="clasico";
     syncBallSkin();
   }
-  function renderAll(){ renderEvent(); renderCoins(); renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); renderAlbumSummer(); }
+  function renderAll(){ renderEvent(); renderCoins(); renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); renderAlbumSummer(); try{ applyCosmetics(); }catch(e){} }
   function updateAccountUI(){
     const b=$("#acct"); if(!b) return;
     if(authUser){ b.hidden=false; $("#acct-ini").textContent=(authUser[0]||"?").toUpperCase(); $("#acct-name").textContent=authUser; }
@@ -2275,13 +2311,14 @@
   function myDisplayName(){ return (myProfile&&myProfile.username) ? "@"+myProfile.username : (authUser? authUser.split("@")[0] : "jugador"); }
   const IS_LOCAL = ['localhost','127.0.0.1','0.0.0.0','::1',''].includes(location.hostname);
   function submitMyScore(score){
-    // en localhost (pruebas) NO se sube nada a la tabla real ni al pase de batalla
-    if(IS_LOCAL){ try{ renderLiga(); }catch(e){} return; }
-    // liga + pase de batalla (local, aunque no estés logueado)
+    // pase de batalla SIEMPRE progresa (también en localhost para poder probarlo):
+    // XP estable por partida = 20 fijo + score/3 (tope 250). El "best" alimenta el ranking.
     ensureLeague();
     state.league.best = Math.max(state.league.best||0, score);
-    state.league.xp = (state.league.xp||0) + score;
-    save();
+    state.league.xp = (state.league.xp||0) + 20 + Math.min(Math.round((score||0)/3), 250);
+    save(); try{ renderLiga(); }catch(e){}
+    // SOLO la subida a la tabla real (nube) se omite en localhost
+    if(IS_LOCAL) return;
     if(!window.DunkFire || !window.DunkFire.submitScore){ renderLiga(); return; }
     if(!currentUid){ toast("Inicia sesión para guardar tu récord en la tabla"); renderLiga(); return; }
     window.DunkFire.submitScore(currentUid, myDisplayName(), score)
@@ -2314,19 +2351,27 @@
     return (h?h+":":"")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
   }
   let leagueTick=null;
-  const BP_TIERS = [
-    {xp:50,   free:{coins:150}, prem:{coins:300}},
-    {xp:150,  free:{coins:200}, prem:{coins:400}},
-    {xp:300,  free:{coins:250}, prem:{coins:500}},
-    {xp:500,  free:{coins:300}, prem:{rewardPacks:1}},
-    {xp:800,  free:{coins:400}, prem:{coins:800}},
-    {xp:1150, free:{coins:500}, prem:{coins:1000}},
-    {xp:1600, free:{coins:600}, prem:{rewardPacks:1}},
-    {xp:2150, free:{coins:800}, prem:{coins:1500}},
-    {xp:2800, free:{coins:1000}, prem:{coins:2000}},
-    {xp:3600, free:{coins:1200}, prem:{rewardPacks:2}},
-  ];
-  const BP_PREMIUM_COST = 5000;
+  // Pase de batalla: UN SOLO track de 60 niveles. Casi todos dan balones (relleno)
+  // y en niveles clave cae algo bueno (sobre, carta de Verano, skin de balón, cosmético), intercalado.
+  const BP_REWARDS = {
+    3:{title:'novato'}, 7:{frame:'bronce'}, 10:{skin:'atardecer'}, 13:{net:'neon'},
+    17:{trail:'chispas'}, 20:{frame:'plata', coins:400}, 23:{title:'veterano'},
+    25:{skin:'nebula'}, 30:{net:'fuego'}, 33:{trail:'hielo'}, 38:{frame:'oro'},
+    40:{summer:1, coins:600}, 43:{skin:'campeon'}, 48:{title:'elite'}, 50:{skin:'retro90s'},
+    55:{frame:'mvp'}, 57:{summer:1}, 60:{skin:'leyenda', title:'mvp', coins:3000},
+  };
+  function bpReward(i){
+    const L=i+1;
+    if(BP_REWARDS[L]) return BP_REWARDS[L];
+    if(L%5===0) return {rewardPacks:1};                       // 5,15,35,45 → sobre
+    return {coins: Math.round((80 + i*10)/5)*5};              // relleno básico: balones escalando
+  }
+  const BP_TIERS = (function(){
+    const out=[]; let xp=0;
+    for(let i=0;i<60;i++){ xp += Math.round((20 + i*7)/5)*5; out.push({xp, r:bpReward(i)}); }
+    return out;
+  })();
+  const bpBig = r => !!(r && (r.skin || r.summer || r.rewardPacks || r.promo || r.net || r.frame || r.title || r.trail));
   function bpLevel(){ ensureLeague(); const xp=state.league.xp||0; let n=0; BP_TIERS.forEach(t=>{ if(xp>=t.xp) n++; }); return n; }
   // tabla de la liga = mismos récords globales del minijuego (como la clasificación normal) + sembrados
   function leagueBoard(){
@@ -2346,26 +2391,43 @@
     state.league.claimHour=hourKey(); addCoins(rew); save(); renderLiga();
     toast(`¡Premio de liga! +<b>${rew}</b> balones (#${rank})`);
   }
-  function claimBP(idx, track){
+  function claimBP(idx){
     ensureLeague();
     const t=BP_TIERS[idx]; if(!t) return;
     if((state.league.xp||0) < t.xp){ toast("Aún no alcanzas ese nivel"); return; }
-    if(track==="prem" && !state.league.premium){ toast("Necesitas el Pase Premium"); return; }
-    const store = track==="prem"?state.league.claimedPremium:state.league.claimedFree;
+    const store = state.league.claimedFree;   // track único (reusa el store de "gratis")
     if(store[idx]){ return; }
     store[idx]=true;
-    const got=msApplyReward(track==="prem"?t.prem:t.free);
+    const got=msApplyReward(t.r);
     save(); renderLiga(); renderRewards();
-    toast(`¡Recompensa nivel ${idx+1}! ${got}`);
+    toast(`¡Nivel ${idx+1} reclamado! ${got||'✓'}`);
   }
-  function buyPremium(){
-    ensureLeague();
-    if(state.league.premium){ toast("Ya tienes el Pase Premium"); return; }
-    if(!spendCoins(BP_PREMIUM_COST)){ toast("Te faltan balones para el Premium"); return; }
-    state.league.premium=true; save(); renderLiga();
-    toast("¡Pase Premium desbloqueado! 🎉");
-  }
-  function rewardLabel(r){ return (r.coins?`<span class="coin-ico"></span> ${r.coins}`:"")+(r.rewardPacks?`🎁 ${r.rewardPacks}`:""); }
+  function rewardLabel(r){ if(!r) return ""; const p=[];
+    if(r.coins) p.push(`<span class="coin-ico"></span> ${r.coins}`);
+    if(r.rewardPacks) p.push(`🎁 ${r.rewardPacks} sobre${r.rewardPacks>1?'s':''}`);
+    if(r.skin && SKIN_BY[r.skin]) p.push(`🏀 ${SKIN_BY[r.skin].nombre}`);
+    if(r.net && COSMETICS.net[r.net]) p.push(`${COSMETICS.net[r.net].name}`);
+    if(r.frame && COSMETICS.frame[r.frame]) p.push(`${COSMETICS.frame[r.frame].name}`);
+    if(r.trail && COSMETICS.trail[r.trail]) p.push(`${COSMETICS.trail[r.trail].name}`);
+    if(r.title && COSMETICS.title[r.title]) p.push(`Título "${COSMETICS.title[r.title].name}"`);
+    if(r.summer) p.push(`🃏 Carta Verano${r.summer>1?' x'+r.summer:''}`);
+    if(r.promo && PROMO_BY[r.promo]) p.push(`carta ${esc(PROMO_BY[r.promo].nombre)}`);
+    return p.join(" + "); }
+  // ===== mini-previews VISUALES de las recompensas del pase =====
+  const bpNetSVG = col => `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="13" rx="14" ry="4.5" fill="none" stroke="${col}" stroke-width="2.6"/><g fill="none" stroke="${col}" stroke-width="1.4" opacity=".9"><path d="M11 14 16 34 24 38 32 34 37 14"/><path d="M16 15 19 35M24 15.5V38M32 15 29 35"/><path d="M13 22H35M15 29H33"/></g></svg>`;
+  const bpFrameSVG = c => { const gid="bpfr"+c.c1.replace('#',''); return `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs><circle cx="24" cy="24" r="17" fill="none" stroke="url(#${gid})" stroke-width="5"/><circle cx="24" cy="24" r="10.5" fill="#11131b"/></svg>`; };
+  const bpTrailSVG = col => `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><g fill="${col}"><circle cx="12" cy="32" r="2.2" opacity=".35"/><circle cx="18" cy="28" r="3" opacity=".55"/><circle cx="25" cy="23" r="4" opacity=".8"/></g><circle cx="34" cy="16" r="6.5" fill="${col}"/></svg>`;
+  const bpSummerSVG = () => `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="8" width="20" height="32" rx="3" fill="#13202b" stroke="#1fb6c9" stroke-width="2"/><circle cx="24" cy="19" r="4.6" fill="#ffd24d"/><path d="M16 35 22 27 27 32 32 24 32 38H16Z" fill="#1fb6c9"/></svg>`;
+  function bpRewardHTML(r){ if(!r) return ""; const out=[];
+    if(r.skin && SKIN_BY[r.skin]){ const s=SKIN_BY[r.skin]; out.push(`<div class="bp-cos">${skinBallSVG(s)}<span>${esc(s.nombre)}</span></div>`); }
+    if(r.net && COSMETICS.net[r.net]){ const c=COSMETICS.net[r.net]; out.push(`<div class="bp-cos">${bpNetSVG(c.color)}<span>${esc(c.name)}</span></div>`); }
+    if(r.frame && COSMETICS.frame[r.frame]){ const c=COSMETICS.frame[r.frame]; out.push(`<div class="bp-cos">${bpFrameSVG(c)}<span>${esc(c.name)}</span></div>`); }
+    if(r.trail && COSMETICS.trail[r.trail]){ const c=COSMETICS.trail[r.trail]; out.push(`<div class="bp-cos">${bpTrailSVG(c.color)}<span>${esc(c.name)}</span></div>`); }
+    if(r.title && COSMETICS.title[r.title]){ const c=COSMETICS.title[r.title]; out.push(`<div class="bp-cos"><span class="bp-title-pill">${esc(c.name)}</span></div>`); }
+    if(r.summer){ out.push(`<div class="bp-cos">${bpSummerSVG()}<span>Carta Verano</span></div>`); }
+    if(r.rewardPacks){ out.push(`<div class="bp-cos"><span class="bp-emoji">🎁</span><span>${r.rewardPacks} Sobre${r.rewardPacks>1?'s':''}</span></div>`); }
+    if(r.coins){ out.push(`<div class="bp-cos bp-coins"><span class="coin-ico"></span><span>${r.coins}</span></div>`); }
+    return out.join(""); }
   function renderLiga(){
     ensureLeague();
     // tu posición + premio por hora
@@ -2388,18 +2450,16 @@
     // pase de batalla
     const lvl=bpLevel();
     const xpEl=$("#bp-xp"); if(xpEl) xpEl.textContent=`Nivel ${lvl} · ${state.league.xp||0} XP`;
-    const buy=$("#bp-buy"); if(buy){ buy.style.display = state.league.premium ? "none" : ""; }
     const track=$("#bp-track");
     if(track){
       track.innerHTML = BP_TIERS.map((t,i)=>{
         const reached=(state.league.xp||0)>=t.xp;
-        const fC=state.league.claimedFree[i], pC=state.league.claimedPremium[i];
-        const fBtn = fC?`<span class="bp-ok">✓</span>` : reached?`<button class="btn btn-primary bp-claim" data-bp="${i}" data-track="free">Reclamar</button>`:`<span class="bp-lock">🔒</span>`;
-        const pBtn = pC?`<span class="bp-ok">✓</span>` : (reached&&state.league.premium)?`<button class="btn btn-primary bp-claim" data-bp="${i}" data-track="prem">Reclamar</button>`:`<span class="bp-lock">${state.league.premium?'🔒':'⭐'}</span>`;
-        return `<div class="bp-tier ${reached?'reached':''}">
+        const claimed=state.league.claimedFree[i];
+        const btn = claimed?`<span class="bp-ok">✓</span>` : reached?`<button class="btn btn-primary bp-claim" data-bp="${i}">Reclamar</button>`:`<span class="bp-lock">🔒</span>`;
+        return `<div class="bp-tier ${reached?'reached':''} ${bpBig(t.r)?'bp-big':''}">
           <div class="bp-lvl">Nv ${i+1}<span>${t.xp} XP</span></div>
-          <div class="bp-row bp-free"><span class="bp-tag">Gratis</span><span class="bp-rwd">${rewardLabel(t.free)}</span>${fBtn}</div>
-          <div class="bp-row bp-prem"><span class="bp-tag">Premium</span><span class="bp-rwd">${rewardLabel(t.prem)}</span>${pBtn}</div>
+          <div class="bp-rwd">${bpRewardHTML(t.r)}</div>
+          <div class="bp-row">${btn}</div>
         </div>`;
       }).join("");
     }
@@ -2886,6 +2946,7 @@
       else state.owned[it.p.slug]=(state.owned[it.p.slug]||0)+1;
     });
     state.packs++; state.totalCards+=n;
+    addLeagueXp(30);                                   // XP del pase por abrir un sobre
     ensureMissions(); state.missions.daily.packs++;   // misión diaria: abrir sobre
     if(kind==="reward") state.rewardPacks=Math.max(0,(state.rewardPacks||0)-1);
     const newlyDone = checkTeamRewards();   // ¿algún equipo completado con estas cartas?
@@ -2938,6 +2999,7 @@
       out.sort((a,b)=>ovr(a.p)-ovr(b.p));   // mejor carta al final
       out.forEach(it=>{ state.owned[it.p.slug]=(state.owned[it.p.slug]||0)+1; });
       state.packs+=packs; state.totalCards+=out.length;
+      addLeagueXp(30*packs);
       ensureMissions(); state.missions.daily.packs+=packs;
       checkTeamRewards(); save();
       renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); renderAlbumSummer();
@@ -3054,8 +3116,12 @@
     if(r.coins){ addCoins(r.coins); txt.push(`<span class="coin-ico"></span> ${r.coins}`); }
     if(r.rewardPacks){ state.rewardPacks=(state.rewardPacks||0)+r.rewardPacks; txt.push(`🎁 ${r.rewardPacks} sobre${r.rewardPacks>1?"s":""}`); }
     if(r.promo && PROMO_BY[r.promo]){ grantPromo([r.promo]); txt.push(`carta <b>${esc(PROMO_BY[r.promo].nombre)}</b>`); }
+    if(r.skin && SKIN_BY[r.skin]){ state.skins=state.skins||{}; state.skins[r.skin]=1; equipSkin(r.skin); txt.push(`🏀 balón <b>${esc(SKIN_BY[r.skin].nombre)}</b>`); }
+    ["net","frame","title","trail"].forEach(type=>{ if(r[type] && COSMETICS[type] && COSMETICS[type][r[type]]){ grantCosmetic(type, r[type]); applyCosmetics(); const nm=COSMETICS[type][r[type]].name; txt.push(type==="title"?`título <b>${esc(nm)}</b>`:`<b>${esc(nm)}</b>`); } });
+    if(r.summer){ const g=grantSummerCards(r.summer); if(g) txt.push(`🃏 ${g} carta${g>1?'s':''} de Verano`); }
     return txt.join(" + ");
   }
+  function grantSummerCards(n){ let g=0; for(let k=0;k<(n||0);k++){ const c=SUMMER_CARDS[Math.floor(Math.random()*SUMMER_CARDS.length)]; if(c){ state.owned[c.slug]=(state.owned[c.slug]||0)+1; state.totalCards=(state.totalCards||0)+1; g++; } } if(g){ try{ renderAlbumSummer(); }catch(e){} } return g; }
   function claimMission(kind, id){
     ensureMissions();
     const list = kind==="daily"?DAILY_MISSIONS:ACH_MISSIONS;
@@ -3173,6 +3239,7 @@
     const out = picks.map(p=>({p, variant:"normal"}));
     out.forEach(it=>{ state.owned[it.p.slug]=(state.owned[it.p.slug]||0)+1; });
     state.packs++; state.totalCards+=n;
+    addLeagueXp(30);
     const newlyDone=checkTeamRewards();
     save();
     renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s();
@@ -3542,7 +3609,7 @@
       ${packBtn}
     </div>`;
     // --- tarjetas de balones: fijos siempre; los del sobre solo si ya los tienes ---
-    const cards = BALL_SKINS.filter(s=> !s.pack || ownsSkin(s.id)).map(s=>{
+    const cards = BALL_SKINS.filter(s=> (!s.pack && !s.pass) || ownsSkin(s.id)).map(s=>{
       const owned=ownsSkin(s.id), isEq=s.id===eq;
       let btn;
       if(isEq) btn = (s.id==="clasico")
@@ -3686,8 +3753,7 @@
     // misiones: reclamar recompensa
     $("#view-liga")?.addEventListener("click", e=>{
       if(e.target.closest("#liga-claim-btn")){ claimHourReward(); return; }
-      if(e.target.closest("#bp-buy")){ buyPremium(); return; }
-      const bp=e.target.closest(".bp-claim"); if(bp){ claimBP(+bp.dataset.bp, bp.dataset.track); return; }
+      const bp=e.target.closest(".bp-claim"); if(bp){ claimBP(+bp.dataset.bp); return; }
     });
     $("#view-misiones")?.addEventListener("click", e=>{
       const cp=e.target.closest(".ms-cardprev"); if(cp){ showPromoFull(cp.dataset.card); return; }
@@ -4134,11 +4200,11 @@ window.MiniGame = (function(){
     ctx.strokeStyle='#ff5a1f'; ctx.lineWidth=2.4*S; ctx.strokeRect(x-tw/2, bTop+bh-th-6*S, tw, th);
     ctx.fillStyle='rgba(255,255,255,.22)'; ctx.fillRect(x-2*S, bTop+bh, 4*S, rimY-(bTop+bh));
     // red
-    if(net){ ctx.strokeStyle='rgba(255,255,255,.82)'; ctx.lineWidth=1.3*S;
+    if(net){ const nc=window.__netCos; ctx.save(); if(nc){ ctx.shadowColor=nc.glow||nc.color; ctx.shadowBlur=6*S; } ctx.strokeStyle=nc?nc.color:'rgba(255,255,255,.82)'; ctx.lineWidth=1.3*S;
       for(let c=0;c<=NET_COLS;c++){ ctx.beginPath(); ctx.moveTo(net[c][0].x,net[c][0].y);
         for(let k=1;k<=NET_ROWS;k++) ctx.lineTo(net[c][k].x,net[c][k].y); ctx.stroke(); }
       for(let k=1;k<=NET_ROWS;k++){ ctx.beginPath(); ctx.moveTo(net[0][k].x,net[0][k].y);
-        for(let c=1;c<=NET_COLS;c++) ctx.lineTo(net[c][k].x,net[c][k].y); ctx.stroke(); } }
+        for(let c=1;c<=NET_COLS;c++) ctx.lineTo(net[c][k].x,net[c][k].y); ctx.stroke(); } ctx.restore(); }
     // aro con relieve (dorado si es especial)
     const rimA = hoop.golden ? '#ffe79a' : '#ff8a4d';
     const rimB = hoop.golden ? '#d9a92a' : '#e0481a';
@@ -4167,7 +4233,8 @@ window.MiniGame = (function(){
     }
     // estela
     if(ball.flying && ball.trail){
-      const trailCol = sk.fire ? '#ff5a1f' : (streak>=3 ? '#ff7a3d' : sk.g[0]);
+      const tc=window.__trailCos;
+      const trailCol = sk.fire ? '#ff5a1f' : (streak>=3 ? '#ff7a3d' : (tc?tc.color:sk.g[0]));
       for(let i=0;i<ball.trail.length;i++){ const t=ball.trail[i], a=(i+1)/ball.trail.length*0.32;
         ctx.globalAlpha=a; ctx.fillStyle=trailCol;
         ctx.beginPath(); ctx.arc(t.x,t.y,ball.r*(0.35+0.5*a),0,7); ctx.fill(); }
