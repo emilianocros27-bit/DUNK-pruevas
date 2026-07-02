@@ -1716,9 +1716,9 @@
     { id:"wembi",             slug:"victor-wembanyama",  nombre:"Wemby",                equipo:"San Antonio Spurs", media:97, foto:"tienda-cards/12-San-Antonio-Spurs/wemby-2tallanimation.gif", fit:"contain" },
     { id:"brunson-anim",      slug:"jalen-brunson",      nombre:"Brunson Animado",      equipo:"New York Knicks", media:97, foto:"promo-cards/brunson-anim.gif", fit:"contain" },
     // Cartas de PODIO (premios de torneo) — el número muestra el puesto, no la media
-    { id:"coach-1st", slug:"coach-thibodeau", nombre:"Thibodeau · 1er Lugar",     equipo:"New York Knicks",  media:99, rankLabel:"1st", rank:"gold",   foto:"promo-cards/coach-knicks.jpg" },
-    { id:"coach-2nd", slug:"coach-spurs-2",   nombre:"Entrenador Spurs · 2do Lugar", equipo:"San Antonio Spurs", media:98, rankLabel:"2nd", rank:"silver", foto:"promo-cards/coach-spurs.jpg" },
-    { id:"coach-3rd", slug:"coach-spurs-3",   nombre:"Entrenador Spurs · 3er Lugar", equipo:"San Antonio Spurs", media:97, rankLabel:"3rd", rank:"bronze", foto:"promo-cards/coach-spurs.jpg" },
+    { id:"coach-1st", slug:"coach-thibodeau", nombre:"Thibodeau · 1er Lugar",     equipo:"New York Knicks",  media:99, rankLabel:"1st", rank:"gold",   foto:"promo-cards/coach-knicks.jpg", trade:true },
+    { id:"coach-2nd", slug:"coach-spurs-2",   nombre:"Entrenador Spurs · 2do Lugar", equipo:"San Antonio Spurs", media:98, rankLabel:"2nd", rank:"silver", foto:"promo-cards/coach-spurs.jpg", trade:true },
+    { id:"coach-3rd", slug:"coach-spurs-3",   nombre:"Entrenador Spurs · 3er Lugar", equipo:"San Antonio Spurs", media:97, rankLabel:"3rd", rank:"bronze", foto:"promo-cards/coach-spurs.jpg", trade:true },
   ];
   const PROMO_BY = Object.fromEntries(PROMO.map(c=>[c.id,c]));
   // PAQUETES de la tienda (cada uno con su precio y código propio)
@@ -2200,6 +2200,7 @@
      ===================================================== */
   // valor de una carta segun su media (+ extra si es Finals especial)
   function cardValue(c){
+    if(c.variant && c.variant.indexOf("promo:")===0){ const pc=PROMO_BY[c.variant.slice(6)]; const m=pc?pc.media:95; return m>=98?600 : m>=95?450 : 320; }
     const p=BY[c.slug]||LEG_BY[c.slug]||SUMMER_BY[c.slug]; if(!p) return 0;
     const m=ovr(p);
     let v = m>=95?420 : m>=90?260 : m>=85?150 : m>=80?90 : m>=75?55 : 30;
@@ -2213,14 +2214,17 @@
     return Math.round(40 + 0.25*(a+b) + 0.9*Math.abs(a-b));
   }
   function addCardToState(c){
+    if(c.variant && c.variant.indexOf("promo:")===0){ const id=c.variant.slice(6); state.promo=state.promo||{}; state.promo[id]=(state.promo[id]||0)+1; return; }
     if(c.variant==="finals") state.finals[c.slug]=(state.finals[c.slug]||0)+1;
     else state.owned[c.slug]=(state.owned[c.slug]||0)+1;
   }
   function removeCardFromState(c){
+    if(c.variant && c.variant.indexOf("promo:")===0){ const id=c.variant.slice(6); if(state.promo&&state.promo[id]){ if(state.promo[id]>1) state.promo[id]--; else delete state.promo[id]; } return; }
     const bag = c.variant==="finals" ? state.finals : state.owned;
     if(bag[c.slug]>1) bag[c.slug]--; else delete bag[c.slug];
   }
   function ownsCardVariant(c){
+    if(c.variant && c.variant.indexOf("promo:")===0) return ((state.promo&&state.promo[c.variant.slice(6)])||0)>0;
     return c.variant==="finals" ? (state.finals[c.slug]||0)>0 : (state.owned[c.slug]||0)>0;
   }
 
@@ -2253,6 +2257,7 @@
   function tradeCardsMini(arr){
     if(!arr||!arr.length) return `<span class="t-empty">—</span>`;
     return arr.map(c=>{
+      if(c.variant && c.variant.indexOf("promo:")===0){ const pc=PROMO_BY[c.variant.slice(6)]; return pc?`<div class="t-cardwrap">${promoCardHTML(pc,{owned:true})}</div>`:""; }
       const p=BY[c.slug]||LEG_BY[c.slug]||SUMMER_BY[c.slug]; if(!p) return "";
       const variant = c.variant==="finals" ? "finals" : "normal";
       return `<div class="t-cardwrap">${cardHTML(p,{owned:true,count:0,variant})}</div>`;
@@ -2266,10 +2271,11 @@
       if((state.finals[p.slug]||0)>0) owned.push({slug:p.slug,variant:"finals",p}); });
     LEGENDS_90S.forEach(p=>{ if((state.owned[p.slug]||0)>0) owned.push({slug:p.slug,variant:"normal",p}); });
     SUMMER_CARDS.forEach(p=>{ if((state.owned[p.slug]||0)>0) owned.push({slug:p.slug,variant:"normal",p}); });
+    PROMO.forEach(c=>{ if(c.trade && ownsPromo(c.id)) owned.push({slug:c.slug, variant:"promo:"+c.id, p:c}); });   // cartas coach intercambiables
     owned.sort((a,b)=>ovr(b.p)-ovr(a.p));
     let sel=[];
     const body=$("#sheet-body");
-    const cell=(o)=>`<div class="ver" data-slug="${o.slug}" data-variant="${o.variant}">${cardHTML(o.p,{owned:true,count:0,variant:o.variant})}<span class="ver-name">Elegir</span></div>`;
+    const cell=(o)=>{ const inner=(o.variant.indexOf("promo:")===0)?promoCardHTML(o.p,{owned:true}):cardHTML(o.p,{owned:true,count:0,variant:o.variant}); return `<div class="ver" data-slug="${o.slug}" data-variant="${o.variant}">${inner}<span class="ver-name">Elegir</span></div>`; };
     body.innerHTML=`<div class="picker-head"><h3>${esc(title)}</h3>${single?"":'<span class="pf-link" id="pk-done">Listo</span>'}</div>
       <p style="padding:0 20px;color:var(--muted);font-size:13px" id="pk-info">${single?"Toca una carta para elegirla.":"Selecciona tus cartas. Comisión estimada según media y desbalance."}</p>
       <div class="picker-grid"><div class="grid pk-grid2" id="pk-grid">${owned.map(cell).join("")||'<div class="pf-empty">No tienes cartas.</div>'}</div></div>`;
@@ -2577,7 +2583,9 @@
   }
   async function beat(){ if(!roomId) return; const u={}; u["presence."+currentUid]=Date.now(); try{ await window.DunkFire.updateTrade(roomId,u); }catch(e){} }
   function feeOf(t){ const p=t.pick||{}; if(!p[t.from]||!p[t.to]) return 0; return tradeFee([p[t.from]],[p[t.to]]); }
-  function slotCard(c){ const p=c&&(BY[c.slug]||LEG_BY[c.slug]||SUMMER_BY[c.slug]); if(!p) return `<span class="tr-empty">—</span>`;
+  function slotCard(c){
+    if(c && c.variant && c.variant.indexOf("promo:")===0){ const pc=PROMO_BY[c.variant.slice(6)]; return pc?`<div class="t-cardwrap">${promoCardHTML(pc,{owned:true})}</div>`:`<span class="tr-empty">—</span>`; }
+    const p=c&&(BY[c.slug]||LEG_BY[c.slug]||SUMMER_BY[c.slug]); if(!p) return `<span class="tr-empty">—</span>`;
     return `<div class="t-cardwrap">${cardHTML(p,{owned:true,count:0,variant:c.variant==="finals"?"finals":"normal"})}</div>`; }
   function renderRoom(t){
     roomTrade=t; const ou=otherOf(t);
