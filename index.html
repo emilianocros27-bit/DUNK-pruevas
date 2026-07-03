@@ -1546,6 +1546,10 @@
   // Reset de balones para TODOS: sube este id y, al cargar, cada cuenta vuelve a 300 balones (una sola vez).
   const COIN_RESET_ID = "2026-07-reset1";
   function applyCoinReset(){ if(state.coinResetId !== COIN_RESET_ID){ state.coins = 300; state.coinResetId = COIN_RESET_ID; } }
+  // Reabrir el Pase de Batalla: limpia los reclamos (para reclamar de nuevo desde el nivel 1
+  // bajo los premios nuevos) PERO conserva el XP/nivel. Sube el id para reabrir otra vez.
+  const BP_RESET_ID = "2026-07-bp1";
+  function applyBpReset(){ if(state.league && state.league.bpResetId !== BP_RESET_ID){ state.league.claimedFree={}; state.league.claimedPremium={}; state.league.bpResetId=BP_RESET_ID; } }
   let PLAYERS = [];
   let BY = {};                 // slug -> player
   function defaultState(){ return { owned:{}, packs:0, totalCards:0, teamsClaimed:{}, rewardPacks:0, messages:[], finals:{}, graded:{}, display:{}, promo:{}, skins:{}, ballSkin:"clasico", coins:300, bestScore:0 }; }
@@ -1885,7 +1889,7 @@
     return bestGrade(s);
   }
 
-  function load(){ try{ const r=JSON.parse(localStorage.getItem(LS)); if(r){ state=Object.assign(state,r);} }catch(e){} applyCoinReset();
+  function load(){ try{ const r=JSON.parse(localStorage.getItem(LS)); if(r){ state=Object.assign(state,r);} }catch(e){} applyCoinReset(); applyBpReset();
     if(!state.finals) state.finals={}; if(!state.graded) state.graded={}; if(!state.display) state.display={}; if(!state.messages) state.messages=[];
     if(!state.promo) state.promo={}; if(typeof state.coins!=="number") state.coins=300;
     if(!state.skins) state.skins={}; if(!state.ballSkin) state.ballSkin="clasico"; syncBallSkin(); }
@@ -1904,6 +1908,7 @@
     if(!state.messages) state.messages=[]; if(!state.promo) state.promo={}; if(typeof state.coins!=="number") state.coins=300;
     if(!state.skins) state.skins={}; if(!state.ballSkin) state.ballSkin="clasico";
     applyCoinReset();   // reset de balones a 300 (una vez por cuenta, según COIN_RESET_ID)
+    applyBpReset();     // reabrir el Pase (limpia reclamos, conserva XP/nivel)
     syncBallSkin();
   }
   function renderAll(){ renderEvent(); renderCoins(); renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); renderAlbumSummer(); try{ applyCosmetics(); }catch(e){} }
