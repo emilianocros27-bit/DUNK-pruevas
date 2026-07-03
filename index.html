@@ -2272,7 +2272,8 @@
     LEGENDS_90S.forEach(p=>{ if((state.owned[p.slug]||0)>0) owned.push({slug:p.slug,variant:"normal",p}); });
     SUMMER_CARDS.forEach(p=>{ if((state.owned[p.slug]||0)>0) owned.push({slug:p.slug,variant:"normal",p}); });
     PROMO.forEach(c=>{ if(c.trade && ownsPromo(c.id)) owned.push({slug:c.slug, variant:"promo:"+c.id, p:c}); });   // cartas coach intercambiables
-    owned.sort((a,b)=>ovr(b.p)-ovr(a.p));
+    const isPromo=o=>o.variant.indexOf("promo:")===0;
+    owned.sort((a,b)=>{ const ap=isPromo(a)?1:0, bp=isPromo(b)?1:0; return ap!==bp ? bp-ap : ovr(b.p)-ovr(a.p); });   // promo primero, luego por media
     let sel=[];
     const body=$("#sheet-body");
     const cell=(o)=>{ const inner=(o.variant.indexOf("promo:")===0)?promoCardHTML(o.p,{owned:true}):cardHTML(o.p,{owned:true,count:0,variant:o.variant}); return `<div class="ver" data-slug="${o.slug}" data-variant="${o.variant}">${inner}<span class="ver-name">Elegir</span></div>`; };
