@@ -4131,9 +4131,9 @@ window.MiniGame = (function(){
     particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2*S,life:1,color}); } }
   function scoreBasket(){
     ball.canScore=false; ball.done=true; streak++; baskets++;
-    const mult = streak>=6?3 : streak>=3?2 : 1;
     const swish = !ball.touchedRim;
-    let pts = 2*mult; if(swish) pts += 2; if(hoop.golden) pts += 3;
+    // puntaje normal, sin multiplicador: base 2 + swish 2 + fuego 3 + dorado 2
+    let pts = 2; if(swish) pts += 2; if(streak>=3) pts += 3; if(hoop.golden) pts += 2;
     let addTime = 1;
     if(hoop.golden){ addTime = 3; }
     if(hoop.golden && swish){ addTime = 10; }   // dorado + swish: +10 segundos
@@ -4145,7 +4145,7 @@ window.MiniGame = (function(){
     let msg;
     if(hoop.golden) msg='¡DORADO! +'+fmtN(pts);
     else if(swish) msg='¡SWISH! +'+fmtN(pts);
-    else if(streak>=3) msg='¡EN LLAMAS x'+mult+'! +'+fmtN(pts);
+    else if(streak>=3) msg='¡EN LLAMAS! +'+fmtN(pts);
     else msg='¡CANASTA! +'+fmtN(pts);
     flash(msg, col);
     timeLeft=Math.min(timeLeft+addTime,99); document.getElementById('mg-time').textContent=timeLeft;
