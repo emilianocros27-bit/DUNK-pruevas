@@ -1261,6 +1261,8 @@
 
       <div class="pf-sec-head"><h3>Skins de balón</h3></div>
       <div class="shop-skins" id="shop-skins"></div>
+      <div class="pf-sec-head"><h3>Skins de aro</h3></div>
+      <div class="shop-skins" id="shop-nets"></div>
 
       <div class="pf-sec-head"><h3>Canjear código</h3></div>
       <form class="shop-redeem" id="redeem-form">
@@ -3628,6 +3630,40 @@
     }).join("");
     wrap.innerHTML = packCard + cards;
   }
+  // ---- skins de ARO (cosméticos net del pase; se equipan junto a los balones) ----
+  function renderNets(){
+    const wrap=$("#shop-nets"); if(!wrap) return;
+    ensureCos();
+    const cur=state.equip.net||"";   // "" = red clásica (blanca)
+    const out=[];
+    out.push(`<div class="skin-card ${cur?'':'on'}">
+      ${bpNetSVG('#ffffff')}
+      <div class="skin-name">Red Clásica</div>
+      <div class="skin-desc">La red blanca de siempre.</div>
+      ${cur?`<button class="btn btn-primary" data-net-equip="">Equipar</button>`:`<button class="btn btn-ghost" disabled>Equipado</button>`}
+    </div>`);
+    Object.keys(COSMETICS.net).forEach(id=>{
+      const c=COSMETICS.net[id], owned=!!(state.cos.net&&state.cos.net[id]), isEq=cur===id;
+      let btn;
+      if(isEq) btn=`<button class="btn btn-primary" data-net-equip="">Quitar</button>`;
+      else if(owned) btn=`<button class="btn btn-primary" data-net-equip="${id}">Equipar</button>`;
+      else btn=`<button class="btn btn-ghost" disabled>🔒 Pase de Batalla</button>`;
+      out.push(`<div class="skin-card ${isEq?'on':''}">
+        ${bpNetSVG(c.color)}
+        <div class="skin-name">${esc(c.name)}</div>
+        <div class="skin-desc">${owned?'Red de aro con luz.':'Consíguela en el Pase de Batalla.'}</div>
+        ${btn}
+      </div>`);
+    });
+    wrap.innerHTML=out.join("");
+  }
+  function equipNet(id){
+    ensureCos();
+    if(id && !(state.cos.net&&state.cos.net[id])){ toast("Aún no tienes esa red"); return; }
+    state.equip.net = id || "";
+    applyCosmetics(); save(); renderNets();
+    toast(id?"¡Red de aro equipada!":"Red clásica equipada");
+  }
   function openSkinPack(){
     const pool=BALL_SKINS.filter(s=>s.pack && !ownsSkin(s.id));
     if(!pool.length){ toast("Ya tienes todos los balones del sobre"); return; }
@@ -3647,7 +3683,7 @@
   }
   function renderTienda(){
     const wrap=$("#shop-offers"); if(wrap) wrap.innerHTML = OFFERS.map(offerHTML).join("");
-    renderEquip(); renderSkins();
+    renderEquip(); renderSkins(); renderNets();
     const mine=$("#shop-mine");
     if(mine){
       const owned=PROMO.filter(c=>ownsPromo(c.id));
@@ -3730,7 +3766,10 @@
       const pack=e.target.closest("[data-skin-pack]"); if(pack){ openSkinPack(); return; }
       const buy=e.target.closest("[data-skin-buy]"); if(buy){ buySkin(buy.dataset.skinBuy); return; }
       const uneq=e.target.closest("[data-skin-unequip]"); if(uneq){ equipSkin("clasico"); return; }
-      const eq=e.target.closest("[data-skin-equip]"); if(eq){ equipSkin(eq.dataset.skinEquip); }
+      const eq=e.target.closest("[data-skin-equip]"); if(eq){ equipSkin(eq.dataset.skinEquip); return; }
+    });
+    $("#shop-nets")?.addEventListener("click", e=>{
+      const neteq=e.target.closest("[data-net-equip]"); if(neteq){ equipNet(neteq.dataset.netEquip); return; }
     });
     $("#redeem-form")?.addEventListener("submit", e=>{ e.preventDefault(); redeemCode($("#redeem-input").value); $("#redeem-input").value=""; });
     // sala de intercambio
