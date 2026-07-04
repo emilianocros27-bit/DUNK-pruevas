@@ -3096,29 +3096,30 @@
   function ensureMissions(){
     if(!state.missions) state.missions={ claimed:{}, stats:{}, daily:null };
     const m=state.missions; if(!m.claimed) m.claimed={}; if(!m.stats) m.stats={};
-    if(!m.daily || m.daily.day!==msToday()) m.daily={ day:msToday(), games:0, baskets:0, golden:0, packs:0, claimed:{} };
+    if(!m.daily || m.daily.day!==msToday()) m.daily={ day:msToday(), games:0, baskets:0, golden:0, packs:0, swishes:0, claimed:{} };
   }
   const _msOwned   = ()=> PLAYERS.filter(p=>ownsAny(p.slug)).length;
   const _msLegends = ()=> LEGENDS_90S.filter(p=>ownsNormal(p.slug)||ownsGraded(p.slug)).length;
   const _msGraded  = ()=> Object.keys(state.graded||{}).some(s=>gradesOf(s).length>0)?1:0;
   const DAILY_MISSIONS = [
-    { id:"play",    t:"Juega 1 partida de Encestes", goal:1,  cur:()=>state.missions.daily.games,   r:{coins:200} },
-    { id:"baskets", t:"Encesta 15 canastas",         goal:15, cur:()=>state.missions.daily.baskets, r:{coins:300} },
-    { id:"golden",  t:"Mete 1 aro dorado",           goal:1,  cur:()=>state.missions.daily.golden,  r:{coins:250} },
-    { id:"pack",    t:"Abre 1 sobre",                goal:1,  cur:()=>state.missions.daily.packs,   r:{coins:150} },
+    { id:"play3",    t:"Juega 3 partidas de Encestes", goal:3,  cur:()=>state.missions.daily.games,   r:{coins:250} },
+    { id:"baskets25",t:"Encesta 25 canastas",          goal:25, cur:()=>state.missions.daily.baskets, r:{coins:400} },
+    { id:"golden3",  t:"Mete 3 aros dorados",          goal:3,  cur:()=>state.missions.daily.golden,  r:{coins:350} },
+    { id:"swish5",   t:"Haz 5 swishes (sin tocar aro)",goal:5,  cur:()=>state.missions.daily.swishes||0, r:{coins:300} },
+    { id:"pack2",    t:"Abre 2 sobres",                goal:2,  cur:()=>state.missions.daily.packs,   r:{coins:200} },
   ];
   const ACH_MISSIONS = [
-    { id:"cards10",  t:"Consigue 10 cartas",            goal:10,  cur:_msOwned, r:{coins:300} },
-    { id:"cards50",  t:"Consigue 50 cartas",            goal:50,  cur:_msOwned, r:{coins:800} },
-    { id:"cards150", t:"Completa el álbum (150 cartas)",goal:150, cur:_msOwned, r:{coins:3000, rewardPacks:1} },
-    { id:"teams1",   t:"Completa 1 equipo",             goal:1,   cur:teamsCompletedCount, r:{coins:400} },
-    { id:"teams30",  t:"Completa los 30 equipos",       goal:30,  cur:teamsCompletedCount, r:{rewardPacks:2} },
-    { id:"leg5",     t:"Consigue 5 leyendas 90s",       goal:5,   cur:_msLegends, r:{coins:500} },
-    { id:"leg30",    t:"Consigue 30 leyendas 90s",      goal:30,  cur:_msLegends, r:{coins:1500} },
-    { id:"score100", t:"Haz 100 puntos en una partida", goal:100, cur:()=>state.missions.stats.bestScore||0, r:{coins:500} },
-    { id:"streak6",  t:"Racha de 6 en Encestes",        goal:6,   cur:()=>state.missions.stats.maxStreak||0, r:{coins:400} },
-    { id:"psa",      t:"Gradúa tu primera carta PSA",   goal:1,   cur:_msGraded, r:{coins:600} },
-    { id:"skin",     t:"Compra una skin de balón",      goal:1,   cur:()=>state.missions.stats.boughtSkin?1:0, r:{coins:300} },
+    { id:"cards25",   t:"Colecciona 25 cartas",             goal:25,  cur:_msOwned, r:{coins:400} },
+    { id:"cards100",  t:"Colecciona 100 cartas",            goal:100, cur:_msOwned, r:{coins:1500, rewardPacks:1} },
+    { id:"album150",  t:"Completa el álbum (150 cartas)",   goal:150, cur:_msOwned, r:{coins:3500, rewardPacks:2} },
+    { id:"teams5",    t:"Completa 5 equipos",               goal:5,   cur:teamsCompletedCount, r:{coins:800} },
+    { id:"teams30",   t:"Completa los 30 equipos",          goal:30,  cur:teamsCompletedCount, r:{coins:2000, rewardPacks:3} },
+    { id:"leg10",     t:"Consigue 10 leyendas 90s",         goal:10,  cur:_msLegends, r:{coins:700} },
+    { id:"baskets500",t:"Encesta 500 canastas en total",    goal:500, cur:()=>state.missions.stats.totalBaskets||0, r:{coins:1000} },
+    { id:"score150",  t:"Haz 150 puntos en una partida",    goal:150, cur:()=>state.missions.stats.bestScore||0, r:{coins:600} },
+    { id:"streak8",   t:"Racha de 8 en Encestes",           goal:8,   cur:()=>state.missions.stats.maxStreak||0, r:{coins:500} },
+    { id:"psa",       t:"Gradúa tu primera carta PSA",      goal:1,   cur:_msGraded, r:{coins:600} },
+    { id:"netskin",   t:"Equipa una skin de aro",           goal:1,   cur:()=>(state.equip&&state.equip.net)?1:0, r:{coins:400} },
   ];
   function msApplyReward(r){
     const txt=[];
@@ -3170,7 +3171,7 @@
   // ganchos para el minijuego (vive en otro script)
   window.DunkMissions = {
     game(){ ensureMissions(); state.missions.daily.games++; save(); },
-    basket(golden){ ensureMissions(); state.missions.daily.baskets++; if(golden) state.missions.daily.golden++; state.missions.stats.totalBaskets=(state.missions.stats.totalBaskets||0)+1; save(); },
+    basket(golden, swish){ ensureMissions(); state.missions.daily.baskets++; if(golden) state.missions.daily.golden++; if(swish) state.missions.daily.swishes=(state.missions.daily.swishes||0)+1; state.missions.stats.totalBaskets=(state.missions.stats.totalBaskets||0)+1; save(); },
     streak(s){ ensureMissions(); state.missions.stats.maxStreak=Math.max(state.missions.stats.maxStreak||0,s); save(); },
     score(sc){ ensureMissions(); state.missions.stats.bestScore=Math.max(state.missions.stats.bestScore||0,sc); save(); },
   };
@@ -4138,7 +4139,7 @@ window.MiniGame = (function(){
     if(hoop.golden){ addTime = 3; }
     if(hoop.golden && swish){ addTime = 10; }   // dorado + swish: +10 segundos
     score += pts; updateHUD();
-    if(window.DunkMissions){ window.DunkMissions.basket(hoop.golden); window.DunkMissions.streak(streak); }
+    if(window.DunkMissions){ window.DunkMissions.basket(hoop.golden, swish); window.DunkMissions.streak(streak); }
     const col = hoop.golden ? '#ffd24d' : swish ? '#7CFC9B' : streak>=3 ? '#ff7a3d' : '#ffd24d';
     burst(hoop.x,hoop.rimY, col);
     rings.push({x:hoop.x,y:hoop.rimY,r:hoop.r*0.5,life:1,color:col});
