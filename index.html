@@ -969,6 +969,7 @@
   .skin-card .btn.cant-afford{opacity:.5;}
   .skin-name{font-family:var(--display); font-weight:700; font-size:15px;}
   .skin-desc{font-size:11.5px; color:var(--muted); line-height:1.25; min-height:28px;}
+  .skin-img{width:72px; height:72px; object-fit:contain; filter:drop-shadow(0 3px 8px rgba(255,201,74,.4));}
   /* polvos */
   .polvo-bal{display:flex; align-items:center; gap:14px; background:linear-gradient(135deg,rgba(138,92,255,.16),rgba(90,47,208,.1)); border:1px solid rgba(154,92,255,.4); border-radius:16px; padding:14px 18px; margin-bottom:16px;}
   .polvo-bal-ico{flex:0 0 auto; display:flex;}
@@ -1804,6 +1805,7 @@
     { id:"campeon",   nombre:"Campeón",   pass:true, desc:"Oro de campeón.",                 g:["#fff3b8","#ffd24d","#b9892a"], seam:"#5a3d09", type:"basket" },
     { id:"retro90s",  nombre:"Retro 90s", pass:true, desc:"Estilo noventero.",               g:["#ff8de0","#9b5cff","#2bd4c9"], seam:"#21115a", type:"basket" },
     { id:"leyenda",   nombre:"Leyenda S2",pass:true, desc:"El balón de los que llegan al 60.",g:["#fff1c0","#ffb13d","#ff4d18"], seam:"#3a0a0a", fire:true, type:"basket" },
+    { id:"trofeo",    nombre:"Trofeo",    pass:true, desc:"El Larry O'Brien dorado.", g:["#fff1c0","#ffd24d","#b9892a"], seam:"#5a3d09", type:"basket", tex:"promo-cards/trofeo.webp", img:"promo-cards/trofeo.webp" },
   ];
   const SKIN_PACK_PRICE = 700;
   // ===== COSMÉTICOS DEL PASE (redes, marcos, títulos, estelas) =====
@@ -3794,7 +3796,7 @@
   const POLVO_SHOP = [
     { id:"pv-kobe",    promo:"win-kobe",  price:1300 },
     { id:"pv-jokic",   promo:"win-jokic", price:1300 },
-    { id:"pv-leyenda", skin:"leyenda",    price:700 },
+    { id:"pv-trofeo",  skin:"trofeo",     price:700 },
   ];
   function renderPolvosStore(){
     const head=$("#polvos-head"), sec=$("#polvos-section"); if(!head||!sec) return;
@@ -3813,7 +3815,8 @@
       if(it.skin){ const s=SKIN_BY[it.skin]; if(!s) return ""; const owned=ownsSkin(it.skin);
         const btn = owned ? `<button class="btn btn-ghost" disabled>Ya la tienes</button>`
           : `<button class="btn btn-primary ${afford?'':'cant-afford'}" data-polvo-buy="${it.id}">${bottleSVG(16)} ${price}</button>`;
-        return `<div class="skin-card">${skinBallSVG(s)}<div class="skin-name">${esc(s.nombre)}</div><div class="skin-desc">${esc(s.desc||'Balón especial.')}</div>${btn}</div>`;
+        const art = s.img ? `<img class="skin-img" src="${esc(s.img)}" alt="${esc(s.nombre)}" onerror="this.style.opacity=0">` : skinBallSVG(s);
+        return `<div class="skin-card">${art}<div class="skin-name">${esc(s.nombre)}</div><div class="skin-desc">${esc(s.desc||'Balón especial.')}</div>${btn}</div>`;
       }
       return "";
     }).join("");
