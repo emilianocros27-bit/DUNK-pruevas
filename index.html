@@ -2854,7 +2854,7 @@
   function dustValue(p, isFinals){ const m=p?ovr(p):80; let d=m>=97?60 : m>=90?30 : m>=85?15 : 8; if(isFinals) d=Math.round(d*1.6); return d; }
   function dustValueFor(slug, v){
     const p=BY[slug]||LEG_BY[slug]||SUMMER_BY[slug];
-    if(v==="promo"){ return 200; }
+    if(v==="promo"){ return 100; }
     return dustValue(p, v==="finals");
   }
   // convertir 1 carta repetida en polvos (elimina 1 copia de la versión mostrada)
@@ -2874,7 +2874,7 @@
     let extra=0, polvos=0;
     Object.keys(state.owned||{}).forEach(slug=>{ const c=state.owned[slug]||0; if(c>1){ const n=c-1; const p=BY[slug]||LEG_BY[slug]||SUMMER_BY[slug]; polvos+=n*dustValue(p,false); extra+=n; state.owned[slug]=1; } });
     Object.keys(state.finals||{}).forEach(slug=>{ const c=state.finals[slug]||0; if(c>1){ const n=c-1; polvos+=n*dustValue(BY[slug],true); extra+=n; state.finals[slug]=1; } });
-    Object.keys(state.promo||{}).forEach(id=>{ const c=state.promo[id]||0; if(c>1){ const n=c-1; polvos+=n*200; extra+=n; state.promo[id]=1; } });
+    // las PROMO NO se convierten en masivo (solo manual, una por una desde su carta)
     if(!extra){ toast("No tienes cartas repetidas"); return; }
     addPolvos(polvos); save();
     try{ renderAlbum(); renderAlbum90s(); renderAlbumSummer(); renderTienda(); }catch(e){}
@@ -2893,7 +2893,7 @@
     if(ownsFinals(slug)) variants.push({key:"finals", variant:"finals", label:"Finals"});
     gradesOf(slug).forEach((e,i)=> variants.push({key:"graded:#"+i, variant:"graded", gradeIdx:i, label:"PSA "+gNum(e)}));
     promosForSlug(slug).forEach(pc=> variants.push({key:"promo:"+pc.id, promo:pc, label:"Promo"}));
-    const cnt = v==="finals" ? (state.finals[slug]||0) : v==="graded" ? gradesOf(slug).length : (state.owned[slug]||0);
+    const cnt = v==="finals" ? (state.finals[slug]||0) : v==="graded" ? gradesOf(slug).length : v==="promo" ? (chosenPromo(slug)?(state.promo[chosenPromo(slug).id]||0):0) : (state.owned[slug]||0);
     // versión gradable según lo que se muestra (no se puede re-graduar una ya graduada)
     const gradeSrc = v==="finals" ? "finals" : v==="promo" ? ("promo:"+(chosenPromo(slug)?chosenPromo(slug).id:"")) : v==="normal" ? "normal" : null;
     const body = $("#sheet-body");
@@ -3889,7 +3889,7 @@
     $("#shop-polvos")?.addEventListener("click", e=>{
       const pv=e.target.closest("[data-polvo-buy]"); if(pv){ buyPolvoItem(pv.dataset.polvoBuy); return; }
     });
-    if(IS_LOCAL){ const db=$("#btn-dust-all"); if(db){ db.style.display=""; db.addEventListener("click", dustAllDuplicates); } }
+    if(IS_LOCAL){ const db=$("#btn-dust-all"); if(db){ db.style.display=""; db.innerHTML=`Transformar repetidas en ${bottleSVG(18)} polvos`; db.addEventListener("click", dustAllDuplicates); } }
     $("#redeem-form")?.addEventListener("submit", e=>{ e.preventDefault(); redeemCode($("#redeem-input").value); $("#redeem-input").value=""; });
     // sala de intercambio
     $("#tr-pick")?.addEventListener("click", roomPick);
