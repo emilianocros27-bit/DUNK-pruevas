@@ -947,6 +947,10 @@
   .pcard.pc-champ .pc-foil{opacity:.85; background:linear-gradient(125deg, transparent 34%, rgba(255,224,140,.85) 47%, rgba(200,150,255,.9) 53%, transparent 66%); background-size:250% 250%; animation:podiumFoil 3s ease-in-out infinite;}
   .pcard.pc-champ::after{content:""; position:absolute; inset:0; z-index:2; pointer-events:none; border-radius:14px; box-shadow:inset 0 0 30px rgba(154,92,255,.45), inset 0 0 3px rgba(255,231,154,.9);}
   .pcard.pc-champ .pc-top{color:#ffdf7a; text-shadow:0 0 10px rgba(255,201,74,.9),0 2px 6px #000; font-size:22px; letter-spacing:.02em;}
+  /* leyendas PSA 10 — slab plateado */
+  .pcard.pc-psa10{border-color:#dfe7ef; box-shadow:0 0 0 1px #f4f8fc, 0 0 20px rgba(210,224,238,.5), 0 10px 26px rgba(0,0,0,.5);}
+  .pcard.pc-psa10 .pc-foil{opacity:.7; background:linear-gradient(125deg, transparent 36%, rgba(230,240,250,.85) 48%, rgba(255,255,255,.95) 52%, transparent 64%); background-size:250% 250%; animation:podiumFoil 3.2s ease-in-out infinite;}
+  .pcard.pc-psa10 .pc-top{font-size:12px; font-weight:800; color:#0c0f16; background:linear-gradient(180deg,#fbfdff,#c9d6e4); padding:3px 7px; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.5); text-shadow:none; letter-spacing:.03em;}
   .shop-mine{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:14px;}
   /* ----- equipamiento (skin actual) ----- */
   .equip-box{margin-bottom:30px;}
@@ -1765,6 +1769,10 @@
     // Cartas ESPECIALES de campeones — muestran el AÑO del galardón en vez de la media
     { id:"win-kobe",  slug:"winner-kobe",  nombre:"Kobe · Campeón", equipo:"Los Angeles Lakers", media:99, rankLabel:"2010", rank:"champ", foto:"promo-cards/winner-kobe.jpg",  winner:true, trade:true },
     { id:"win-jokic", slug:"winner-jokic", nombre:"Jokić · MVP",    equipo:"Denver Nuggets",     media:99, rankLabel:"2023", rank:"champ", foto:"promo-cards/winner-jokic.jpg", winner:true, trade:true },
+    // Leyendas PSA 10 — recompensa por completar el álbum (se elige 1)
+    { id:"legend-jordan", slug:"legend-jordan", nombre:"Michael Jordan", equipo:"Chicago Bulls",      media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/01-michael-jordan.jpg", trade:true },
+    { id:"legend-magic",  slug:"legend-magic",  nombre:"Magic Johnson",  equipo:"Los Angeles Lakers", media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/02-magic-johnson.jpg", trade:true },
+    { id:"legend-larry",  slug:"legend-larry",  nombre:"Larry Bird",     equipo:"Boston Celtics",     media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/03-larry-bird.jpg", trade:true },
   ];
   const PROMO_BY = Object.fromEntries(PROMO.map(c=>[c.id,c]));
   // PAQUETES de la tienda (cada uno con su precio y código propio)
@@ -2880,8 +2888,21 @@
     try{ renderAlbum(); renderAlbum90s(); renderAlbumSummer(); renderTienda(); }catch(e){}
     toast(`Convertiste <b>${extra}</b> repetida${extra>1?'s':''} en <b>${polvos}</b> polvos 🍶`);
   }
+  // vista simple para promos que no son de un jugador base (coach, winner, PSA10)
+  function openPromoPreview(id){
+    const c=PROMO_BY[id]; if(!c) return; const body=$("#sheet-body"); if(!body) return;
+    body.innerHTML = `<div class="detail">
+      <div class="detail-card">${promoCardHTML(c,{owned:true})}</div>
+      <div class="detail-info">
+        <div class="eyebrow">${esc(c.equipo)}</div>
+        <h2>${esc(c.nombre)}</h2>
+        <div class="team-line">Carta especial${c.rankLabel?` · ${esc(c.rankLabel)}`:""}</div>
+      </div></div>`;
+    showSheet();
+  }
   function openDetail(slug){
-    const p = BY[slug] || LEG_BY[slug] || SUMMER_BY[slug]; if(!p) return;
+    const p = BY[slug] || LEG_BY[slug] || SUMMER_BY[slug];
+    if(!p){ const pr=PROMO.find(c=>c.slug===slug); if(pr) return openPromoPreview(pr.id); return; }
     const isLeg = !!LEG_BY[slug];
     const isSummer = !!SUMMER_BY[slug];
     const v = displayVariant(slug) || (promosForSlug(slug).length ? "promo" : "normal");
@@ -3155,7 +3176,30 @@
         newly.push(t);
       }
     }
+    checkAlbumComplete();
     return newly;
+  }
+  // Al completar el álbum (las 150) se elige UNA leyenda PSA 10 (solo una vez)
+  const LEGEND_PICKS = ["legend-jordan","legend-magic","legend-larry"];
+  function checkAlbumComplete(){
+    if(state.legendPick) return;
+    if(PLAYERS.filter(p=>ownsAny(p.slug)).length < PLAYERS.length) return;
+    showLegendChoice();
+  }
+  function showLegendChoice(){
+    const body=$("#sheet-body"); if(!body) return;
+    body.innerHTML = `<div class="picker-head"><h3>¡Álbum completo! 🏆</h3></div>
+      <p style="padding:0 20px 4px;color:var(--muted);font-size:13px">Elige <b>UNA</b> leyenda <b>PSA 10</b> como premio. Solo puedes elegir una.</p>
+      <div class="picker-grid"><div class="grid pk-grid2">${LEGEND_PICKS.map(id=>{ const c=PROMO_BY[id]; return `<div class="ver" data-legend="${id}" role="button" tabindex="0">${promoCardHTML(c,{owned:true})}<span class="ver-name">Elegir</span></div>`; }).join("")}</div></div>`;
+    body.querySelectorAll("[data-legend]").forEach(b=>b.addEventListener("click", ()=>pickLegend(b.dataset.legend)));
+    showSheet();
+  }
+  function pickLegend(id){
+    if(state.legendPick){ closeSheet(); return; }
+    if(!PROMO_BY[id]) return;
+    state.legendPick=id; grantPromo([id]); save(); closeSheet();
+    try{ renderAll(); }catch(e){}
+    toast(`¡Elegiste a <b>${esc(PROMO_BY[id].nombre)}</b> PSA 10! 🏆`);
   }
   function renderRewards(){
     const done=teamsCompletedCount();
@@ -3190,7 +3234,7 @@
     { id:"album150",  t:"Completa el álbum (150 cartas)",   goal:150, cur:_msOwned, r:{coins:3500, rewardPacks:2} },
     { id:"teams5",    t:"Completa 5 equipos",               goal:5,   cur:teamsCompletedCount, r:{coins:800} },
     { id:"teams30",   t:"Completa los 30 equipos",          goal:30,  cur:teamsCompletedCount, r:{coins:2000, rewardPacks:3} },
-    { id:"leg10",     t:"Consigue 10 leyendas 90s",         goal:10,  cur:_msLegends, r:{coins:700} },
+    { id:"legendpsa", t:"Completa el álbum y elige tu leyenda PSA 10", goal:1, cur:()=>state.legendPick?1:0, r:{coins:1000} },
     { id:"baskets500",t:"Encesta 500 canastas en total",    goal:500, cur:()=>state.missions.stats.totalBaskets||0, r:{coins:1000} },
     { id:"score150",  t:"Haz 150 puntos en una partida",    goal:150, cur:()=>state.missions.stats.bestScore||0, r:{coins:600} },
     { id:"streak8",   t:"Racha de 8 en Encestes",           goal:8,   cur:()=>state.missions.stats.maxStreak||0, r:{coins:500} },
@@ -3855,7 +3899,9 @@
   /* =====================================================
      NAV / TOAST / EVENTOS
      ===================================================== */
+  const LEGENDS_ENABLED = false;   // Leyendas 90s retiradas (reemplazadas por la elección PSA 10 al completar el álbum)
   function showView(v){
+    if(v==="noventas" && !LEGENDS_ENABLED){ v="album"; }
     $$(".tab").forEach(t=>t.setAttribute("aria-selected", String(t.dataset.view===v)));
     $$(".view").forEach(s=>s.classList.toggle("active", s.id==="view-"+v));
     if(v==="misiones") renderMissions();
@@ -3871,6 +3917,7 @@
   function toast(html){ const t=$("#toast"); t.innerHTML=html; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2200); }
 
   function bindEvents(){
+    if(!LEGENDS_ENABLED){ $$('.tab[data-view="noventas"]').forEach(t=>t.style.display="none"); const bn=$("#banner-90s"); if(bn) bn.style.display="none"; }
     $$(".tab").forEach(t=>t.addEventListener("click",()=>showView(t.dataset.view)));
     $("#bell").addEventListener("click", openMessages);
     $("#banner-90s")?.addEventListener("click", ()=>showView("noventas"));
@@ -3888,6 +3935,7 @@
     });
     $("#shop-polvos")?.addEventListener("click", e=>{
       const pv=e.target.closest("[data-polvo-buy]"); if(pv){ buyPolvoItem(pv.dataset.polvoBuy); return; }
+      const pc=e.target.closest(".pcard[data-promo]"); if(pc){ openPromoPreview(pc.dataset.promo); return; }
     });
     if(IS_LOCAL){ const db=$("#btn-dust-all"); if(db){ db.style.display=""; db.innerHTML=`Transformar repetidas en ${bottleSVG(18)} polvos`; db.addEventListener("click", dustAllDuplicates); } }
     $("#redeem-form")?.addEventListener("submit", e=>{ e.preventDefault(); redeemCode($("#redeem-input").value); $("#redeem-input").value=""; });
