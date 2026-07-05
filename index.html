@@ -1153,6 +1153,7 @@
           <h2>Tu colección</h2>
           <p>150 estrellas reales de la NBA con su media de NBA 2K26. Abre sobres para desbloquearlas y completa el álbum.</p>
           <p id="teams-done" class="teams-done">Equipos completos: <b>0</b> / 30 · cada equipo completo te da un Sobre de Recompensa</p>
+          <button id="btn-dust-all" class="btn btn-ghost btn-dust" style="display:none; margin-top:10px">Transformar todas las repetidas en polvo</button>
         </div>
       </div>
       <div class="controls">
@@ -2868,6 +2869,17 @@
     toast(`Convertida en <b>${dust}</b> polvos 🍶`);
     openDetail(slug);
   }
+  // convertir TODAS las repetidas (deja 1 de cada) en polvos, en todas las categorías
+  function dustAllDuplicates(){
+    let extra=0, polvos=0;
+    Object.keys(state.owned||{}).forEach(slug=>{ const c=state.owned[slug]||0; if(c>1){ const n=c-1; const p=BY[slug]||LEG_BY[slug]||SUMMER_BY[slug]; polvos+=n*dustValue(p,false); extra+=n; state.owned[slug]=1; } });
+    Object.keys(state.finals||{}).forEach(slug=>{ const c=state.finals[slug]||0; if(c>1){ const n=c-1; polvos+=n*dustValue(BY[slug],true); extra+=n; state.finals[slug]=1; } });
+    Object.keys(state.promo||{}).forEach(id=>{ const c=state.promo[id]||0; if(c>1){ const n=c-1; polvos+=n*200; extra+=n; state.promo[id]=1; } });
+    if(!extra){ toast("No tienes cartas repetidas"); return; }
+    addPolvos(polvos); save();
+    try{ renderAlbum(); renderAlbum90s(); renderAlbumSummer(); renderTienda(); }catch(e){}
+    toast(`Convertiste <b>${extra}</b> repetida${extra>1?'s':''} en <b>${polvos}</b> polvos 🍶`);
+  }
   function openDetail(slug){
     const p = BY[slug] || LEG_BY[slug] || SUMMER_BY[slug]; if(!p) return;
     const isLeg = !!LEG_BY[slug];
@@ -3736,9 +3748,9 @@
   }
   // ---- TIENDA DE POLVOS (cartas y skins especiales; solo en localhost) ----
   const POLVO_SHOP = [
-    { id:"pv-kobe",    promo:"win-kobe",  price:600 },
-    { id:"pv-jokic",   promo:"win-jokic", price:600 },
-    { id:"pv-leyenda", skin:"leyenda",    price:900 },
+    { id:"pv-kobe",    promo:"win-kobe",  price:1300 },
+    { id:"pv-jokic",   promo:"win-jokic", price:1300 },
+    { id:"pv-leyenda", skin:"leyenda",    price:700 },
   ];
   function renderPolvosStore(){
     const head=$("#polvos-head"), sec=$("#polvos-section"); if(!head||!sec) return;
@@ -3877,6 +3889,7 @@
     $("#shop-polvos")?.addEventListener("click", e=>{
       const pv=e.target.closest("[data-polvo-buy]"); if(pv){ buyPolvoItem(pv.dataset.polvoBuy); return; }
     });
+    if(IS_LOCAL){ const db=$("#btn-dust-all"); if(db){ db.style.display=""; db.addEventListener("click", dustAllDuplicates); } }
     $("#redeem-form")?.addEventListener("submit", e=>{ e.preventDefault(); redeemCode($("#redeem-input").value); $("#redeem-input").value=""; });
     // sala de intercambio
     $("#tr-pick")?.addEventListener("click", roomPick);
