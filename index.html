@@ -1771,9 +1771,9 @@
     { id:"win-kobe",  slug:"winner-kobe",  nombre:"Kobe · Campeón", equipo:"Los Angeles Lakers", media:99, rankLabel:"2010", rank:"champ", foto:"promo-cards/winner-kobe.jpg",  winner:true, trade:true },
     { id:"win-jokic", slug:"winner-jokic", nombre:"Jokić · MVP",    equipo:"Denver Nuggets",     media:99, rankLabel:"2023", rank:"champ", foto:"promo-cards/winner-jokic.jpg", winner:true, trade:true },
     // Leyendas PSA 10 — recompensa por completar el álbum (se elige 1)
-    { id:"legend-jordan", slug:"legend-jordan", nombre:"Michael Jordan", equipo:"Chicago Bulls",      media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/01-michael-jordan.jpg", trade:true },
-    { id:"legend-magic",  slug:"legend-magic",  nombre:"Magic Johnson",  equipo:"Los Angeles Lakers", media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/02-magic-johnson.jpg", trade:true },
-    { id:"legend-larry",  slug:"legend-larry",  nombre:"Larry Bird",     equipo:"Boston Celtics",     media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/03-larry-bird.jpg", trade:true },
+    { id:"legend-jordan", slug:"legend-jordan", nombre:"Michael Jordan", posicion:"SG", equipo:"Chicago Bulls",      media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/01-michael-jordan.jpg", trade:true },
+    { id:"legend-magic",  slug:"legend-magic",  nombre:"Magic Johnson",  posicion:"PG", equipo:"Los Angeles Lakers", media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/02-magic-johnson.jpg", trade:true },
+    { id:"legend-larry",  slug:"legend-larry",  nombre:"Larry Bird",     posicion:"SF", equipo:"Boston Celtics",     media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/03-larry-bird.jpg", trade:true },
   ];
   const PROMO_BY = Object.fromEntries(PROMO.map(c=>[c.id,c]));
   // PAQUETES de la tienda (cada uno con su precio y código propio)
@@ -3635,7 +3635,23 @@
   /* =====================================================
      TIENDA
      ===================================================== */
+  // slab PSA real (grado 10) para las leyendas de premio de álbum
+  function legendPsaHTML(c){
+    const g=10;
+    const inner = cardHTML(c, {owned:true, count:0, variant:"normal", photoOverride:c.foto, nameOverride:c.nombre, noFoil:true});
+    return `<div class="psa ghi" data-slug="${c.slug}" data-variant="graded">
+      <div class="psa-label">
+        <div class="psa-l-text">
+          <div class="psa-l1">${esc(c.nombre)} · ${c.media}</div>
+          <div class="psa-l2">DUNK GRADING · CERT ${certNo(c.slug,g)} <span class="psa-logo"><b>P</b><i>S</i><b>A</b></span></div>
+        </div>
+        <div class="psa-grade"><b>${g}</b><span>${gradeLabel(g)}</span></div>
+      </div>
+      <div class="psa-window">${inner}</div>
+    </div>`;
+  }
   function promoCardHTML(c, {owned=true}={}){
+    if(c && c.rank==="psa10") return legendPsaHTML(c);
     const t=teamOf(c.equipo);
     const badge=`<span class="promo-badge" title="Carta comprada (Promo)">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#0a0a0a" stroke="#fff" stroke-width="1.4" d="M12 1.6l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 23l-6 -2.6 1.4-6.8L2.3 8.6l6.9-.7z"/></svg>
