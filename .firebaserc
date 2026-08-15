@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "dunk-fd827"
-  }
+  },
+  "targets": {
+    "dunk-fd827": {
+      "hosting": {
+        "main": [
+          "dunk-fd827"
+        ],
+        "pruevas": [
+          "dunk-pruevas"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

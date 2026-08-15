@@ -2124,6 +2124,7 @@
       subscribeScores();                       // tabla de clasificación en vivo
       ensurePsaEvent();
       save(); checkTeamRewards(); updateAccountUI(); hideAuth(); renderAll(); renderPsaBadge();
+      try{ await fantasySyncInbox(); }catch(e){}
     } else {
       authUser=null; currentUid=null; cloudReady=false; myProfile=null; updateAccountUI(); showAuth();
     }
@@ -3158,7 +3159,7 @@
   };
 
   // ---- MENSAJES / BANDEJA ----
-  const unclaimedCount = () => (state.messages||[]).filter(m=> m.type==="psa" ? !m.read : !m.claimed).length;
+  const unclaimedCount = () => (state.messages||[]).filter(m=> (m.type==="psa"||m.type==="trade") ? !m.read : !m.claimed).length;
   function renderMessages(){
     const n=unclaimedCount(); const badge=$("#bell-badge");
     if(!badge) return;
@@ -3179,6 +3180,12 @@
           <div class="msg-ico"><span class="psa-logo"><b>P</b><i>S</i><b>A</b></span></div>
           <div class="msg-body"><h4>Evento PSA · Viernes de graduación</h4>
             <p>Hoy puedes graduar tus cartas. Abre una carta del álbum y pulsa "Graduar".</p></div>
+        </div>`;
+      if(m.type==="trade") return `
+        <div class="msg">
+          <div class="msg-ico">🏀</div>
+          <div class="msg-body"><h4>Fantasy — Transferencias</h4>
+            <p>${esc(m.text)}</p></div>
         </div>`;
       return `
       <div class="msg ${m.claimed?'claimed':''}">
@@ -3210,7 +3217,7 @@
   }
   function openMessages(){
     // marcar el aviso PSA como leído (quita el globo)
-    (state.messages||[]).forEach(m=>{ if(m.type==="psa") m.read=true; });
+    (state.messages||[]).forEach(m=>{ if(m.type==="psa"||m.type==="trade") m.read=true; });
     save();
     const body=$("#sheet-body");
     body.innerHTML=`<div class="picker-head"><h3>Mensajes</h3></div><div class="msg-list" id="msg-list"></div>`;
@@ -3782,13 +3789,17 @@
      ===================================================== */
   const FANTASY_EXCLUDED = ["Oklahoma City Thunder","Philadelphia 76ers","New York Knicks","San Antonio Spurs"];
   const FANTASY_ALL_TEAMS = Object.keys(TEAMS).filter(t=>TEAMS[t].id);                          // los 30 reales
-  const FANTASY_POOL_A = FANTASY_ALL_TEAMS.slice(0,15), FANTASY_POOL_B = FANTASY_ALL_TEAMS.slice(15);
-  const FANTASY_DAY_MS = 12*60*60*1000;   // medio día real = 1 día de temporada -> 2 días de Fantasy por día real
+  const FANTASY_DAY_MS = 24*60*60*1000;   // 1 día de temporada = 1 día real
+  const FANTASY_KICKOFF_HOURS = [12, 15, 18, 20.5];   // 4 horarios por día (Ciudad de México): 12pm, 3pm, 6pm, 8:30pm
   const FANTASY_ELIGIBLE  = FANTASY_ALL_TEAMS.filter(t=>!FANTASY_EXCLUDED.includes(t));          // asignables (24)
-  const FANTASY_SEASON_DAYS = 10;
+  const FANTASY_SEASON_DAYS = 20;   // 20 días x 4 partidos = 80 de temporada regular, + Copa NBA + Playoffs
   const FANTASY_START_COINS = 1000;
   const FANTASY_WIN_REWARD = 150, FANTASY_LOSS_REWARD = 50;
-  const FANTASY_TYPE_WIN_BONUS = { "copa-final":400, "playoff-qf":200, "playoff-sf":350, "playoff-final":600 };
+  // premios de Copa NBA / Playoffs en dinero real ($M, se suman al presupuesto) — proporciones basadas en los
+  // bonos reales de la NBA 2025-26 (Copa: campeón $530,933 / subcampeón $212,373 por jugador;
+  // Playoffs: bono acumulado por ronda hasta ~$1.75M para el campeón), escalados a la economía del juego.
+  const FANTASY_TYPE_WIN_BONUS  = { "copa-final":12, "playoff-qf":10, "playoff-sf":20, "playoff-final":40 };
+  const FANTASY_TYPE_LOSS_BONUS = { "copa-final":5,  "playoff-final":18 };   // subcampeón también cobra, como en la vida real
   const FANTASY_QUARTER_GAME_SEC = 12*60;   // 12:00 de reloj de juego por cuarto
   const FANTASY_SPEED = 6;                  // 6x -> cada cuarto dura 120s reales
   // línea de tiempo real de un partido: cuarto (120s reales) + descanso, x4, con medio tiempo tras el Q2
@@ -3803,20 +3814,37 @@
   ];
   const FANTASY_TOTAL_REAL = FANTASY_SEG.reduce((s,x)=>s+x.dur,0);   // 540s ≈ 9 min
 
-  const FANTASY_START_BUDGET = 150;   // millones de $ para fichajes en Transferencias (aparte de los balones Fantasy)
   function ensureFantasyState(){
     if(!state.fantasy) state.fantasy={ coins:FANTASY_START_COINS };
     if(typeof state.fantasy.coins!=="number") state.fantasy.coins=FANTASY_START_COINS;
-    if(typeof state.fantasy.budget!=="number") state.fantasy.budget=FANTASY_START_BUDGET;
   }
   const fantasyTeamSlug = t => t.toLowerCase().replace(/[^a-z0-9]+/g,"-");
-  const fantasyRoster = team => PLAYERS.filter(p=>p.equipo===team);
+  // equipo real de un jugador esta temporada: por defecto el de medias.json, pero si se tradeó
+  // (fantasySeasonData.playerMoves) manda ese — así aparece en la plantilla nueva y desaparece de la vieja.
+  function fantasyEffectiveTeam(p){
+    const moved = fantasySeasonData && fantasySeasonData.playerMoves && fantasySeasonData.playerMoves[p.slug];
+    return moved || p.equipo;
+  }
+  const fantasyRoster = team => PLAYERS.filter(p=>fantasyEffectiveTeam(p)===team);
   // precio de fichaje en millones de $ — mismo para todos, siempre, fijo según su media (nada de azar)
   function fantasyPlayerPrice(p){
     const m=p.media||75;
     return Math.max(1, Math.round((2 + Math.max(0,m-68)*2.1) * 10) / 10);
   }
   const fantasyFmtMoney = m => `$${m}M`;
+  // presupuesto balanceado: el payroll influye pero no aplasta — un equipo apilado nunca queda sin nada,
+  // uno barato nunca se vuelve absurdamente rico. Todos quedan jugables entre $15M y $65M.
+  const FANTASY_BUDGET_MID = 45, FANTASY_BUDGET_MIN = 15, FANTASY_BUDGET_MAX = 65;
+  const FANTASY_PAYROLL_REF = 320, FANTASY_BUDGET_SLOPE = 0.12;
+  function fantasyTeamBudget(team){
+    const payroll = fantasyRoster(team).reduce((s,p)=>s+fantasyPlayerPrice(p), 0);
+    const raw = FANTASY_BUDGET_MID - (payroll-FANTASY_PAYROLL_REF)*FANTASY_BUDGET_SLOPE;
+    const base = Math.max(FANTASY_BUDGET_MIN, Math.min(FANTASY_BUDGET_MAX, Math.round(raw*10)/10));
+    // bono real por Copa/Playoffs y ajustes de trades con dinero — compartido, visible para todos
+    const bonus = (fantasySeasonData && fantasySeasonData.budgetBonus && fantasySeasonData.budgetBonus[team]) || 0;
+    return Math.round((base+bonus)*10)/10;
+  }
+  const fantasyMyBudget = () => fantasyTeamBudget(fantasyMyTeam);
 
   // ---- generación del partido: resultado y jugadas quedan fijos desde el primer vistazo ----
   function fantasyPickScore(){ return 92 + Math.floor(Math.random()*34); }   // 92–125
@@ -3933,18 +3961,28 @@
     return { gameSec:2880, onBreak:null, finished:true };
   }
 
-  // ---- calendario ----
-  function fantasyGenerateSchedule(myTeam, seasonNumber){
-    const games=[]; let gi=0;
+  // medianoche (Ciudad de México) del día calendario que contiene ts — usa el huso real vía Intl, sin offset fijo
+  function fantasyMexicoMidnight(ts){
+    const fmt = new Intl.DateTimeFormat("en-US", { timeZone:"America/Mexico_City", hour12:false,
+      hour:"2-digit", minute:"2-digit", second:"2-digit" });
+    const parts = Object.fromEntries(fmt.formatToParts(new Date(ts)).map(p=>[p.type,p.value]));
+    let h=parseInt(parts.hour,10); if(h===24) h=0;
+    const msIntoDay = (h*3600+parseInt(parts.minute,10)*60+parseInt(parts.second,10))*1000;
+    return ts - msIntoDay;
+  }
+  // ---- calendario: 4 partidos por día en horarios distintos (Ciudad de México), 20 días = 80 partidos ----
+  function fantasyGenerateSchedule(myTeam, seasonNumber, startedAt){
+    const games=[];
+    const midnight0 = fantasyMexicoMidnight(startedAt||Date.now());
+    const pool = FANTASY_ALL_TEAMS.filter(t=>t!==myTeam);
+    let lastOpp=null, gi=0;
     for(let day=1; day<=FANTASY_SEASON_DAYS; day++){
-      // días impares -> rivales del grupo A (15), días pares -> grupo B (15), así no repites siempre contra los mismos
-      const pool = (day%2===1 ? FANTASY_POOL_A : FANTASY_POOL_B).filter(t=>t!==myTeam);
-      const usePool = pool.length ? pool : FANTASY_ALL_TEAMS.filter(t=>t!==myTeam);
-      const n = 2 + Math.floor(Math.random()*2);
-      for(let k=0;k<n;k++){
+      for(let s=0; s<FANTASY_KICKOFF_HOURS.length; s++){
         gi++;
-        const opp = usePool[Math.floor(Math.random()*usePool.length)];
-        games.push({ id:`s${seasonNumber}-${fantasyTeamSlug(myTeam)}-${gi}`, day, opponent:opp, status:"scheduled", copaGroup: gi<=FANTASY_COPA_GROUP_GAMES });
+        let opp; do{ opp = pool[Math.floor(Math.random()*pool.length)]; }while(opp===lastOpp && pool.length>1);
+        lastOpp=opp;
+        const scheduledAt = midnight0 + (day-1)*24*60*60*1000 + FANTASY_KICKOFF_HOURS[s]*60*60*1000;
+        games.push({ id:`s${seasonNumber}-${fantasyTeamSlug(myTeam)}-${day}-${s}`, day, opponent:opp, status:"scheduled", scheduledAt, copaGroup: gi<=FANTASY_COPA_GROUP_GAMES });
       }
     }
     return games;
@@ -3968,9 +4006,9 @@
     try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(e){}
     toast(`🏆 ¡Clasificaste a la Final de la Copa NBA! Nuevo partido disponible.`);
   }
-  // ---- Playoffs: al terminar los 10 días de temporada regular, si ganaste suficientes partidos,
+  // ---- Playoffs: al terminar los 20 días de temporada regular, si ganaste suficientes partidos,
   // se generan hasta 3 rondas extra (Cuartos y Semis a 1 partido, Final a mejor de 3). ----
-  const FANTASY_PLAYOFF_WINS_NEEDED = 16;   // de 26 partidos de temporada regular (sin contar Copa)
+  const FANTASY_PLAYOFF_WINS_NEEDED = 48;   // de 80 partidos de temporada regular (60%, sin contar Copa)
   const FANTASY_PLAYOFF_ROUNDS = ["playoff-qf","playoff-sf","playoff-final"];
   const FANTASY_PLAYOFF_ROUND_LABEL = { "playoff-qf":"Cuartos de Playoffs", "playoff-sf":"Semifinal de Playoffs", "playoff-final":"Final de Playoffs" };
   function fantasyRegularGames(){
@@ -4011,6 +4049,22 @@
     }
   }
   let fantasyPlayoffChampAnnounced=false;
+
+  // ---- buzón de avisos de Fantasy (ej. "se aceptó tu oferta") -> se mezcla con Mensajes ----
+  async function fantasySyncInbox(){
+    if(!currentUid || !window.DunkFire || !window.DunkFire.fantasyPullInbox) return;
+    let items=[];
+    try{ items = await window.DunkFire.fantasyPullInbox(currentUid); }catch(e){ return; }
+    if(!state.fantasyInboxSeen) state.fantasyInboxSeen=[];
+    const fresh = items.filter(m=>!state.fantasyInboxSeen.includes(m.id));
+    if(!fresh.length) return;
+    if(!state.messages) state.messages=[];
+    fresh.forEach(m=>{
+      state.messages.push({ type:"trade", ts:m.createdAt, text:m.text });
+      state.fantasyInboxSeen.push(m.id);
+    });
+    save(); renderMessages(); drawMessages();
+  }
 
   // ---- misiones exclusivas de Fantasy (recompensa en balones Fantasy, aparte de las normales) ----
   function ensureFantasyMissions(){
@@ -4335,7 +4389,8 @@
   function fantasyOpenTeamDetail(team){
     const roster=fantasyRoster(team), isMine=team===fantasyMyTeam;
     const body=$("#sheet-body");
-    body.innerHTML = `<div class="picker-head"><h3>${esc(team)}</h3></div>` +
+    body.innerHTML = `<div class="picker-head"><h3>${esc(team)}</h3></div>
+      <p style="padding:0 20px;color:var(--muted);font-size:12.5px">Presupuesto disponible: <b>${esc(fantasyFmtMoney(fantasyTeamBudget(team)))}</b></p>` +
       (roster.length ? roster.map(p=>`<div class="ft-roster-row" data-stat-slug="${esc(p.slug)}" style="cursor:pointer">
           <div class="ft-roster-photo"><img src="${esc(p.foto)}" onerror="this.style.opacity=0"></div>
           <span class="ft-roster-name">${esc(p.nombre)}</span>
@@ -4360,8 +4415,8 @@
           <option value="">— Ninguno —</option>
           ${myRoster.map(mp=>`<option value="${esc(mp.slug)}">${esc(mp.nombre)} (${mp.media}) · ${esc(fantasyFmtMoney(fantasyPlayerPrice(mp)))}</option>`).join("")}
         </select>
-        <label style="font-size:12px;color:var(--muted);margin-top:10px;display:block">Dinero a ofrecer (opcional, tienes ${esc(fantasyFmtMoney(state.fantasy.budget||0))})</label>
-        <input type="number" id="ft-offer-amount" min="0" max="${state.fantasy.budget||0}" step="0.1" placeholder="Ej. 15.5">
+        <label style="font-size:12px;color:var(--muted);margin-top:10px;display:block">Dinero a ofrecer (opcional, tienes ${esc(fantasyFmtMoney(fantasyMyBudget()))})</label>
+        <input type="number" id="ft-offer-amount" min="0" max="${fantasyMyBudget()}" step="0.1" placeholder="Ej. 15.5">
         <p style="font-size:11px;color:var(--muted);margin-top:6px">En millones de $. Puedes ofrecer jugador, dinero, o los dos juntos.</p>
         <button class="btn btn-primary" id="ft-offer-submit" style="width:100%;margin-top:10px">Enviar oferta</button>
       </div>`;
@@ -4372,7 +4427,7 @@
     const offeredSlug = $("#ft-offer-player")?.value || null;
     const amt = +($("#ft-offer-amount")?.value||0);
     if(!offeredSlug && (!amt || amt<=0)){ toast("Ofrece un jugador, dinero, o los dos"); return; }
-    if(amt > (state.fantasy.budget||0)){ toast("No tienes suficiente dinero"); return; }
+    if(amt > fantasyMyBudget()){ toast("No tienes suficiente dinero"); return; }
     const offer = { fromUid: currentUid, fromTeam: fantasyMyTeam, toTeam, playerSlug };
     if(offeredSlug) offer.offeredSlug = offeredSlug;
     if(amt>0) offer.amount = amt;
@@ -4436,7 +4491,7 @@
     try{
       const res = await window.DunkFire.fantasyJoin(currentUid, FANTASY_ELIGIBLE, FANTASY_SEASON_DAYS, FANTASY_DAY_MS);
       fantasyMyTeam = res.team; fantasySeasonData = res.season;
-      toast(`¡Te tocó <b>${esc(res.team)}</b>! Temporada ${esc(String(res.season.seasonNumber))} de Fantasy`);
+      toast(`¡Te tocó <b>${esc(res.team)}</b>!`);
       await renderFantasy();
     }catch(e){ toast(e.message||"No se pudo unir a Fantasy"); }
   }
@@ -4448,11 +4503,13 @@
       await renderFantasy();
     }catch(e){ toast(e.message||"No se pudo iniciar la temporada"); }
   }
+  // reiniciar temporada: SOLO por chat (Claude ejecuta window.DunkFire.fantasyResetSeason cuando el
+  // comisionado lo pide) — sin botón en la app, a propósito.
   async function fantasyEnterTeam(){
     fantasyHideAll(); $("#fantasy-body").hidden=false;
     let sched = await window.DunkFire.fantasyGetSchedule(fantasyMyTeam);
     if(!sched || !sched.createdAt || sched.createdAt < fantasySeasonData.startedAt){
-      const games = fantasyGenerateSchedule(fantasyMyTeam, fantasySeasonData.seasonNumber);
+      const games = fantasyGenerateSchedule(fantasyMyTeam, fantasySeasonData.seasonNumber, fantasySeasonData.startedAt);
       await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, games);
       sched = { games, createdAt: Date.now() };
     }
@@ -4482,12 +4539,12 @@
       <div class="fantasy-head-logo" style="background:linear-gradient(135deg,${t.c1},${t.c2})">${logo}</div>
       <div class="fantasy-head-id">
         <div class="fantasy-head-team">${esc(fantasyMyTeam)}</div>
-        <div class="fantasy-head-meta">Temporada ${esc(String(fantasySeasonData.seasonNumber))} · ${daysLeft>0?`termina en ${daysLeft} día${daysLeft>1?"s":""}`:"terminada"}</div>
+        <div class="fantasy-head-meta">${daysLeft>0?`termina en ${daysLeft} día${daysLeft>1?"s":""}`:"terminada"}</div>
       </div>
       <div class="fantasy-head-stats">
         <div class="fantasy-stat"><b>${wins}-${losses}</b><span>Récord</span></div>
         <div class="fantasy-stat"><b>${state.fantasy.coins}</b><span>🏀 Fantasy</span></div>
-        <div class="fantasy-stat"><b>${esc(fantasyFmtMoney(state.fantasy.budget||0))}</b><span>Presupuesto</span></div>
+        <div class="fantasy-stat"><b>${esc(fantasyFmtMoney(fantasyMyBudget()))}</b><span>Presupuesto</span></div>
         ${extraLine}
       </div>`;
   }
@@ -4496,19 +4553,20 @@
     const now=Date.now();
     const wrap=$("#fantasy-sched"); wrap.innerHTML="";
     const maxDay = Math.max(FANTASY_SEASON_DAYS, ...fantasySchedule.games.map(g=>g.day));
+    const fmtKick = ts => new Date(ts).toLocaleString("es-MX", {timeZone:"America/Mexico_City", day:"numeric", month:"short", hour:"numeric", minute:"2-digit"});
     for(let day=1; day<=maxDay; day++){
       const dayGames=fantasySchedule.games.filter(g=>g.day===day);
       if(!dayGames.length) continue;
-      const unlocked = now >= fantasySeasonData.startedAt + (day-1)*FANTASY_DAY_MS;
       const box=document.createElement("div"); box.className="fantasy-day";
       const lbl = day<=FANTASY_SEASON_DAYS ? `Día ${day}` : (FANTASY_TYPE_LABEL[dayGames[0].type] || `Día ${day}`);
       box.innerHTML = `<div class="fantasy-day-lbl">${esc(lbl)}</div>` + dayGames.map(g=>{
-        const locked = !g.type && !unlocked;   // partidos de copa/playoffs se generan solo cuando ya los ganaste, siempre disponibles
+        const unlocked = g.type ? true : now >= (g.scheduledAt||0);   // copa/playoffs: disponibles al instante en cuanto se generan
+        const locked = !unlocked;
         const tag = g.status==="final" ? `<span class="fantasy-game-result ${g.won?"win":"loss"}">${g.won?"GANASTE":"PERDISTE"} ${g.finalHome!=null?esc(String(g.finalHome))+"-"+esc(String(g.finalAway)):""}</span>`
-          : locked ? `<span class="fantasy-game-tag">🔒 día ${day}</span>`
+          : locked ? `<span class="fantasy-game-tag">🔒 ${g.scheduledAt?esc(fmtKick(g.scheduledAt)):"día "+day}</span>`
           : `<span class="fantasy-game-tag">Disponible</span>`;
         return `<button class="fantasy-game-row ${locked?"locked":""}" ${locked?"disabled":""} data-game="${esc(g.id)}" data-opponent="${esc(g.opponent)}" data-day="${day}">
-          <span class="fantasy-vs">vs ${esc(g.opponent)}</span>${tag}</button>`;
+          <span class="fantasy-vs">vs ${esc(g.opponent)}${g.scheduledAt&&!locked&&g.status!=="final"?` · ${esc(fmtKick(g.scheduledAt))}`:""}</span>${tag}</button>`;
       }).join("");
       wrap.appendChild(box);
     }
@@ -4647,15 +4705,19 @@
     const won = g.finalHome>g.finalAway;   // mi equipo siempre es "home" en su propio calendario
     ensureFantasyState();
     const e = fantasySchedule ? fantasySchedule.games.find(x=>x.id===fantasyLiveGameId) : null;
-    const bonus = (won && e && e.type) ? (FANTASY_TYPE_WIN_BONUS[e.type]||0) : 0;
-    const reward = (won ? FANTASY_WIN_REWARD : FANTASY_LOSS_REWARD) + bonus;
+    const reward = won ? FANTASY_WIN_REWARD : FANTASY_LOSS_REWARD;
     state.fantasy.coins = (state.fantasy.coins||0)+reward;
+    // premio en dinero real de Copa NBA / Playoffs (se suma al presupuesto compartido, no a los balones)
+    const moneyBonus = e && e.type ? ((won?FANTASY_TYPE_WIN_BONUS:FANTASY_TYPE_LOSS_BONUS)[e.type]||0) : 0;
+    if(moneyBonus>0){
+      try{ fantasySeasonData = await window.DunkFire.fantasyAdjustBudget(fantasyMyTeam, moneyBonus); }catch(err){}
+    }
     ensureFantasyMissions();
     state.fantasy.missions.stats.gamesPlayed=(state.fantasy.missions.stats.gamesPlayed||0)+1;
     state.fantasy.missions.daily.gamesPlayed=(state.fantasy.missions.daily.gamesPlayed||0)+1;
     if(won){ state.fantasy.missions.stats.gamesWon=(state.fantasy.missions.stats.gamesWon||0)+1; state.fantasy.missions.daily.gamesWon=(state.fantasy.missions.daily.gamesWon||0)+1; }
     save();
-    toast(`Partido terminado: <b>${g.finalHome}-${g.finalAway}</b>. ${won?"¡Ganaste!":"Perdiste."} +${reward} 🏀 Fantasy${bonus?` (incluye bono de ${FANTASY_TYPE_LABEL[e.type]})`:""}`);
+    toast(`Partido terminado: <b>${g.finalHome}-${g.finalAway}</b>. ${won?"¡Ganaste!":"Perdiste."} +${reward} 🏀 Fantasy${moneyBonus?` + ${esc(fantasyFmtMoney(moneyBonus))} (${esc(FANTASY_TYPE_LABEL[e.type])})`:""}`);
     if(fantasySchedule){
       if(e){ e.status="final"; e.won=won; e.finalHome=g.finalHome; e.finalAway=g.finalAway; }
       try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(err){}
@@ -5446,7 +5508,7 @@ window.MiniGame = (function(){
         const expired = !data || (wasStarted && Date.now() >= data.endsAt);
         if(expired){
           const teams={}; eligibleTeams.forEach(t=>{ teams[t]=null; });
-          data = { seasonNumber: data ? (data.seasonNumber||1)+1 : 1, started:false, startedAt:null, endsAt:null, seasonDays, dayMs:(dayMs||86400000), teams };
+          data = { seasonNumber: data ? (data.seasonNumber||1)+1 : 1, started:false, startedAt:null, endsAt:null, seasonDays, dayMs:(dayMs||86400000), teams, playerMoves:{}, budgetBonus:{} };
         }
         const mine = Object.keys(data.teams).find(t=>data.teams[t]===uid);
         if(mine){ tx.set(ref, data); return { team:mine, season:data }; }
@@ -5471,6 +5533,42 @@ window.MiniGame = (function(){
         return data;
       });
     },
+    // reinicia la temporada de cero (solo comisionado, lo filtra la regla de Firestore): borra el mapa de equipos
+    fantasyResetSeason: async (eligibleTeams, seasonDays, dayMs)=>{
+      const ref=doc(db,"fantasySeason","current");
+      const snap=await getDoc(ref);
+      const prev=snap.exists()?snap.data():null;
+      const teams={}; eligibleTeams.forEach(t=>{ teams[t]=null; });
+      const data={ seasonNumber: prev?(prev.seasonNumber||1)+1:1, started:false, startedAt:null, endsAt:null, seasonDays, dayMs, teams, playerMoves:{}, budgetBonus:{} };
+      await setDoc(ref, data);
+      return data;
+    },
+    // ajusta el presupuesto compartido de un equipo (premios de Copa/Playoffs, o dinero de un trade aceptado)
+    fantasyAdjustBudget: async (team, delta)=>{
+      return await runTransaction(db, async (tx)=>{
+        const ref=doc(db,"fantasySeason","current");
+        const snap=await tx.get(ref);
+        if(!snap.exists()) throw new Error("No hay temporada activa");
+        const data=snap.data();
+        if(!data.budgetBonus) data.budgetBonus={};
+        data.budgetBonus[team] = Math.round(((data.budgetBonus[team]||0)+delta)*10)/10;
+        tx.set(ref, data);
+        return data;
+      });
+    },
+    // mueve un jugador a otro equipo esta temporada (ejecución de trade, solo comisionado)
+    fantasyMovePlayer: async (slug, toTeam)=>{
+      return await runTransaction(db, async (tx)=>{
+        const ref=doc(db,"fantasySeason","current");
+        const snap=await tx.get(ref);
+        if(!snap.exists()) throw new Error("No hay temporada activa");
+        const data=snap.data();
+        if(!data.playerMoves) data.playerMoves={};
+        data.playerMoves[slug]=toTeam;
+        tx.set(ref, data);
+        return data;
+      });
+    },
     fantasyGetSchedule: async (team)=>{ const s=await getDoc(doc(db,"fantasySchedules",team)); return s.exists()?s.data():null; },
     fantasySaveSchedule: (team, games)=> setDoc(doc(db,"fantasySchedules",team), { games, createdAt:Date.now() }),
     fantasyGetGame: async (id)=>{ const s=await getDoc(doc(db,"fantasyGames",id)); return s.exists()?s.data():null; },
@@ -5486,6 +5584,25 @@ window.MiniGame = (function(){
     fantasyMyOffers: async (uid)=>{
       const qs=await getDocs(query(collection(db,"fantasyTrades"), where("fromUid","==",uid)));
       return qs.docs.map(d=>d.data()).sort((a,b)=>b.createdAt-a.createdAt);
+    },
+    // ofertas que le mandaron A este equipo (para que el comisionado las revise en el chat)
+    fantasyOffersForTeam: async (team)=>{
+      const qs=await getDocs(query(collection(db,"fantasyTrades"), where("toTeam","==",team)));
+      return qs.docs.map(d=>d.data()).sort((a,b)=>b.createdAt-a.createdAt);
+    },
+    fantasyAllPendingOffers: async ()=>{
+      const qs=await getDocs(query(collection(db,"fantasyTrades"), where("status","==","pending")));
+      return qs.docs.map(d=>d.data()).sort((a,b)=>b.createdAt-a.createdAt);
+    },
+    fantasyUpdateOffer: (id, patch)=> updateDoc(doc(db,"fantasyTrades",id), patch),
+    // ---- buzón privado (avisos de trades, etc.) ----
+    fantasyCreateInbox: (toUid, team, text, visibleAt)=>{
+      const id=`i${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+      return setDoc(doc(db,"fantasyInbox",id), { id, toUid, team, text, createdAt:Date.now(), visibleAt, read:false });
+    },
+    fantasyPullInbox: async (uid)=>{
+      const qs=await getDocs(query(collection(db,"fantasyInbox"), where("toUid","==",uid)));
+      return qs.docs.map(d=>d.data()).filter(m=>m.visibleAt<=Date.now()).sort((a,b)=>a.createdAt-b.createdAt);
     },
     // ---- NOTICIAS (las publica el comisionado) ----
     fantasyGetNews: async ()=>{

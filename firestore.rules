@@ -60,12 +60,22 @@ service cloud.firestore {
     match /fantasyLineups/{team} {
       allow read, write: if request.auth != null;
     }
-    // Ofertas de mercado: cualquiera autenticado crea la suya; nadie edita/borra desde el cliente
-    // (las resuelve el comisionado con acceso admin, fuera de estas reglas).
+    // Ofertas de mercado: cualquiera autenticado crea la suya; solo el comisionado puede
+    // aceptar/rechazar (cambia el status), vía Claude en el chat.
     match /fantasyTrades/{id} {
       allow read: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.fromUid == request.auth.uid;
-      allow update, delete: if false;
+      allow update: if request.auth != null && request.auth.token.email == "emilianocros27@gmail.com";
+      allow delete: if false;
+    }
+    // Buzón privado de avisos de Fantasy (ej. "se aceptó tu oferta"): el comisionado los crea,
+    // cada quien solo puede leer/marcar-leído los suyos.
+    match /fantasyInbox/{id} {
+      allow read: if request.auth != null && resource.data.toUid == request.auth.uid;
+      allow create: if request.auth != null && request.auth.token.email == "emilianocros27@gmail.com";
+      allow update: if request.auth != null && resource.data.toUid == request.auth.uid
+                    && request.resource.data.toUid == resource.data.toUid;
+      allow delete: if false;
     }
     // Noticias de la temporada: cualquiera autenticado puede leer; publicarlas las hace el comisionado
     // (el dueño de la cuenta, vía Claude) — no hay UI de redactar dentro del juego.
