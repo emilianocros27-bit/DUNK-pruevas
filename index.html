@@ -35,6 +35,7 @@
   }
 
   *{box-sizing:border-box}
+  [hidden]{display:none !important;}
   html{-webkit-text-size-adjust:100%}
   body{
     margin:0; background:var(--bg); color:var(--text);
@@ -108,6 +109,13 @@
     filter:drop-shadow(0 1px 1px rgba(0,0,0,.45));}
   .coins-chip{flex:0 0 auto; display:flex; align-items:center; gap:7px; padding:7px 12px;
     background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-pill);}
+  .fantasy-badge{flex:0 0 auto; display:flex; align-items:center; gap:8px; padding:7px 14px; cursor:pointer;
+    background:linear-gradient(135deg, rgba(242,85,44,.22), rgba(242,85,44,.08)); border:1px solid rgba(242,85,44,.5);
+    border-radius:var(--radius-pill); font-family:var(--display); font-weight:700; font-size:12.5px; color:var(--text);
+    animation:fbPulse 2s ease-in-out infinite;}
+  .fantasy-badge b{color:#ffd76b;}
+  @keyframes fbPulse{0%,100%{box-shadow:0 0 0 0 rgba(242,85,44,.35)}50%{box-shadow:0 0 0 5px rgba(242,85,44,0)}}
+  @media(max-width:900px){ .fantasy-badge span.fb-full{display:none;} }
   .coins-chip b{font-family:var(--display); font-weight:700; font-size:14px; color:#ffd76b;}
   .pack-buy .coin-ico{width:14px; height:14px; vertical-align:-2px;}
   .pack-buy.cant-afford{opacity:.5;}
@@ -173,8 +181,6 @@
   .card-img{position:absolute; inset:0; z-index:1;}
   .card-img img{width:100%; height:100%; object-fit:cover; object-position:center 16%;
     -webkit-mask-image:linear-gradient(180deg,#000 60%, transparent 99%); mask-image:linear-gradient(180deg,#000 60%, transparent 99%);}
-  /* cartas de Verano: cubren toda la carta (cover) y sin difuminado abajo para ver el arte */
-  .card.summer .card-img img{object-fit:cover; -webkit-mask-image:none; mask-image:none;}
   .card-img::after{content:""; position:absolute; inset:0;
     background:linear-gradient(180deg, transparent 38%, color-mix(in srgb,var(--c2) 70%,#000) 96%);}
 
@@ -217,75 +223,6 @@
   .card-info p{margin:3px 0 0; font-size:11px; color:rgba(255,255,255,.78); text-transform:uppercase; letter-spacing:.08em; text-shadow:0 1px 4px rgba(0,0,0,.8);}
   .card-dup{position:absolute; z-index:5; top:10px; right:10px; font-family:var(--display); font-weight:600; font-size:12px;
     background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.22); padding:2px 8px; border-radius:var(--radius-pill);}
-  .card-summer{position:absolute; z-index:6; top:10px; right:10px; font-family:var(--display); font-weight:700; font-size:11px;
-    letter-spacing:.06em; color:#3a2200; background:linear-gradient(135deg,#ffd24d,#ff9e3d 55%,#1fb6c9);
-    padding:3px 9px; border-radius:var(--radius-pill); box-shadow:0 2px 8px rgba(0,0,0,.35);}
-
-  /* ===== SPLASH DE TEMPORADA ===== */
-  .season-splash{position:fixed; inset:0; z-index:300; display:none; place-items:center;
-    background:#06070b url("temporada-bg.jpg") center/cover no-repeat;}
-  .season-splash.show{display:grid; animation:fade .35s ease both;}
-  .season-splash::before{content:""; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(6,7,11,.45), rgba(6,7,11,.78));}
-  .ss-card{position:relative; z-index:1; text-align:center; padding:24px;}
-  .ss-title{font-family:var(--display); font-weight:800; letter-spacing:.02em; line-height:.92;
-    font-size:clamp(48px,16vw,120px); color:#fff; text-transform:uppercase;
-    text-shadow:0 6px 30px rgba(0,0,0,.6), 0 2px 0 rgba(255,158,61,.5);
-    animation:ssPop .6s cubic-bezier(.2,1.3,.4,1) both;}
-  .ss-sub{margin-top:14px; font-family:var(--display); font-weight:700; letter-spacing:.18em;
-    font-size:clamp(18px,5vw,30px); text-transform:uppercase;
-    color:#ffd76b; text-shadow:0 2px 14px rgba(0,0,0,.6);
-    animation:ssRise .6s ease .12s both;}
-  .ss-go{margin-top:30px; font-size:18px; padding:14px 40px; animation:ssRise .6s ease .25s both;}
-  @keyframes ssPop{0%{transform:scale(.6); opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1); opacity:1}}
-  @keyframes ssRise{0%{transform:translateY(16px); opacity:0}100%{transform:translateY(0); opacity:1}}
-  @media(prefers-reduced-motion:reduce){ .ss-title,.ss-sub,.ss-go{animation:none !important;} }
-
-  /* ===== FICHA DE VERANO (sola) ===== */
-  /* colección de verano: cuadrícula pequeña de 7 cartas */
-  .grid-verano{grid-template-columns:repeat(auto-fill, minmax(96px,1fr)); gap:10px; max-width:760px; margin:0 auto;}
-  .ficha-zone{max-width:520px; margin:30px auto 8px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px;}
-  .ficha-coin{background:none; border:0; padding:0; cursor:pointer; line-height:0; border-radius:50%;
-    filter:drop-shadow(0 10px 26px rgba(255,158,61,.4)); transition:transform .18s var(--ease);
-    animation:fichaFloat 3.2s ease-in-out infinite;}
-  .ficha-coin:hover{transform:scale(1.06) rotate(-4deg);}
-  .ficha-coin:active{transform:scale(.94);}
-  @keyframes fichaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
-  .ficha-title{font-family:var(--display); font-weight:700; font-size:24px; letter-spacing:.02em; text-transform:uppercase;}
-  .ficha-sub{color:var(--muted); font-size:14px; max-width:420px; margin:0;}
-  .ficha-sub b{color:#ffd76b;}
-  .ficha-buy{margin-top:4px;}
-  .ficha-buy.cant-afford{opacity:.5;}
-
-  /* ===== RESULTADO DE LA FICHA (overlay animado) ===== */
-  .fres{position:fixed; inset:0; z-index:120; display:none; place-items:center; padding:24px;
-    background:rgba(6,7,11,.82); backdrop-filter:blur(7px);}
-  .fres.show{display:grid; animation:fade .25s ease both;}
-  .fres-in{display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px; max-width:420px;}
-  .fres-ico{width:96px; height:96px; display:block;}
-  .fres-title{font-family:var(--display); font-weight:700; font-size:30px; text-transform:uppercase; letter-spacing:.02em;}
-  .fres-sub{color:var(--muted); font-size:15px; margin:0;}
-  .fres-amount{font-family:var(--display); font-weight:700; font-size:46px; color:#ffd76b; display:flex; align-items:center; gap:10px;}
-  .fres-amount .coin-ico{width:34px; height:34px;}
-  .fres .btn{margin-top:6px;}
-  .fres-pop{animation:fresPop .5s cubic-bezier(.2,1.3,.5,1) both;}
-  .fres-spin{animation:fresSpin .7s ease both;}
-  .fres-shake{animation:fresShake .55s ease both;}
-  .fres-rise{animation:fresRise .6s ease both;}
-  @keyframes fresPop{0%{transform:scale(.2); opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1); opacity:1}}
-  @keyframes fresSpin{0%{transform:rotateY(0) scale(.4); opacity:0}100%{transform:rotateY(720deg) scale(1); opacity:1}}
-  @keyframes fresShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-12px) rotate(-6deg)}40%{transform:translateX(10px) rotate(5deg)}60%{transform:translateX(-7px) rotate(-3deg)}80%{transform:translateX(4px)}}
-  @keyframes fresRise{0%{transform:translateY(18px); opacity:0}100%{transform:translateY(0); opacity:1}}
-  /* lluvia de balones */
-  .fres-coins{position:fixed; inset:0; pointer-events:none; overflow:hidden;}
-  .fres-coins i{position:absolute; top:-40px; width:18px; height:18px; border-radius:50%;
-    background:radial-gradient(circle at 38% 32%, #fff3c0, #ffc24d 55%, #e8861f);
-    box-shadow:0 0 0 2px rgba(185,101,15,.5) inset; animation:coinFall linear forwards;}
-  @keyframes coinFall{to{transform:translateY(110vh) rotate(540deg); opacity:.2}}
-  @media(prefers-reduced-motion:reduce){
-    .ficha-coin,.fres-pop,.fres-spin,.fres-shake,.fres-rise,.fres-coins i{animation:none !important;}
-  }
-
   /* carta bloqueada (no poseída) */
   .card.locked .card-inner{background:linear-gradient(160deg,#181a22,#0e0f15); box-shadow:0 8px 20px rgba(0,0,0,.4), inset 0 0 0 1px var(--line);}
   .card.locked .card-img,.card.locked .card-foil,.card.locked .card-shine,.card.locked .card-ovr,.card.locked .card-dup{display:none}
@@ -361,40 +298,157 @@
   .ms-count{font-family:var(--display); font-weight:700; color:var(--muted-2); font-size:13px;}
   .ms-claimed{font-size:12px; color:var(--good); font-weight:600;}
   .ms-claim{padding:9px 16px; font-size:13px;}
-  /* ===== LIGA + PASE DE BATALLA ===== */
-  .liga-countdown{text-align:center; padding:26px 16px;}
-  .liga-cd-lbl{font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;}
-  .liga-cd-time{font-family:var(--display); font-weight:800; font-size:48px; color:var(--accent); line-height:1.1; margin:6px 0;}
-  .liga-cd-sub{font-size:13px; color:var(--muted-2); max-width:320px; margin:0 auto;}
-  .liga-top{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px;}
-  @media(max-width:560px){ .liga-top{grid-template-columns:1fr;} }
-  .liga-rank,.liga-claim{background:var(--surface-2); border:1px solid var(--line); border-radius:16px; padding:16px 18px; display:flex; flex-direction:column; gap:6px; justify-content:center;}
-  .liga-rank-lbl,.liga-claim-txt{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;}
-  .liga-rank-num{font-family:var(--display); font-weight:800; font-size:40px; color:var(--accent); line-height:1;}
-  .liga-rank-sub{font-size:13px; color:var(--muted-2);}
-  .liga-claim-txt{text-transform:none; letter-spacing:0; font-size:14px; color:var(--text);}
-  .bp-wrap{background:var(--surface-2); border:1px solid var(--line); border-radius:18px; padding:18px;}
-  .bp-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
-  .bp-head h3{font-size:18px; text-transform:uppercase;}
-  .bp-xp{font-size:13px; color:var(--accent); font-family:var(--display); font-weight:700;}
-  .bp-track{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px;}
-  .bp-tier{flex:0 0 132px; display:flex; flex-direction:column; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:14px; padding:12px; opacity:.55; transition:.2s;}
-  .bp-tier.reached{opacity:1; border-color:rgba(242,85,44,.5);}
-  .bp-tier.bp-big{background:rgba(242,184,75,.08); border-color:rgba(242,184,75,.45);}
-  .bp-lvl{font-family:var(--display); font-weight:800; font-size:15px; display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;}
-  .bp-lvl span{font-size:10px; color:var(--muted); font-weight:600;}
-  .bp-rwd{flex:1; display:flex; flex-direction:column; gap:6px; padding:8px 0; border-top:1px solid var(--line);}
-  .bp-cos{display:flex; flex-direction:column; align-items:center; gap:3px; text-align:center; font-size:11px; font-weight:600; color:var(--text);}
-  .bp-cos span{line-height:1.1;}
-  .bp-cos.bp-coins{flex-direction:row; justify-content:center; gap:5px; font-size:13px;}
-  .bp-ic, .bp-cos .skin-ball{width:40px; height:40px;}
-  .bp-emoji{font-size:30px; line-height:1;}
-  .bp-title-pill{display:inline-block; padding:5px 9px; border-radius:8px; background:linear-gradient(135deg,#f0c75a,#e08a2e); color:#1a1206; font-family:var(--display); font-weight:800; font-size:11px; letter-spacing:.02em;}
-  .bp-tier.bp-big .bp-coins{color:#f0c75a;}
-  .bp-row{display:flex; align-items:center; justify-content:center; gap:6px; padding-top:8px;}
-  .bp-claim{padding:5px 10px; font-size:12px;}
-  .bp-ok{color:var(--good); font-weight:800;}
-  .bp-lock{opacity:.7; font-size:18px;}
+  .bp-ic{width:40px; height:40px;}   /* usado por los íconos de skins de aro en Tienda */
+
+  /* ===== FANTASY ===== */
+  .fantasy-join{display:flex; justify-content:center; padding:48px 16px;}
+  .fantasy-join-card{max-width:420px; text-align:center; background:var(--surface-2); border:1px solid var(--line); border-radius:20px; padding:36px 28px;}
+  .fantasy-join-ico{font-size:48px; margin-bottom:10px;}
+  .fantasy-join-card h3{font-family:var(--display); text-transform:uppercase; font-size:22px; margin-bottom:10px; letter-spacing:.02em;}
+  .fantasy-join-card p{color:var(--muted); font-size:14px; margin-bottom:22px; line-height:1.5;}
+  .fantasy-head{background:var(--surface-2); border:1px solid var(--line); border-radius:18px; padding:20px 22px; margin-bottom:22px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .fantasy-head-logo{width:56px; height:56px; border-radius:50%; display:grid; place-items:center; font-weight:800; font-family:var(--display); font-size:18px; flex:0 0 auto; box-shadow:inset 0 0 0 2px rgba(255,255,255,.18);}
+  .fantasy-head-id{display:flex; flex-direction:column; gap:2px;}
+  .fantasy-head-team{font-family:var(--display); font-size:20px; text-transform:uppercase; letter-spacing:.02em;}
+  .fantasy-head-meta{color:var(--muted); font-size:13px;}
+  .fantasy-head-stats{margin-left:auto; display:flex; gap:22px;}
+  .fantasy-stat{text-align:center;}
+  .fantasy-stat b{font-family:var(--display); font-size:24px; display:block; line-height:1;}
+  .fantasy-stat span{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+  .fantasy-day{margin-bottom:18px;}
+  .fantasy-day-lbl{font-family:var(--display); font-weight:700; text-transform:uppercase; font-size:13px; color:var(--muted); margin-bottom:8px; letter-spacing:.05em;}
+  .fantasy-game-row{display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; margin-bottom:8px; cursor:pointer; transition:.15s; width:100%; text-align:left; color:var(--text); font:inherit;}
+  .fantasy-game-row:hover{border-color:var(--accent);}
+  .fantasy-game-row.locked{opacity:.45; cursor:default;}
+  .fantasy-vs{font-family:var(--display); font-weight:700;}
+  .fantasy-game-result{margin-left:auto; font-family:var(--display); font-weight:700;}
+  .fantasy-game-result.win{color:var(--good);}
+  .fantasy-game-result.loss{color:#ff6b6b;}
+  .fantasy-game-tag{font-size:11px; color:var(--muted); text-transform:uppercase; padding:3px 8px; border-radius:var(--radius-pill); background:rgba(255,255,255,.06); margin-left:auto;}
+  .fantasy-live{max-width:520px; margin:0 auto;}
+  .fantasy-join[hidden], .fantasy-body[hidden], .fantasy-live[hidden]{display:none;}
+  .fantasy-back{margin-bottom:16px;}
+  .fantasy-scoreboard{background:linear-gradient(160deg, var(--surface-2), #0e0f15); border:1px solid var(--line); border-radius:20px; padding:24px; text-align:center;}
+  .fantasy-sb-clock{font-family:var(--display); font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px;}
+  .fantasy-sb-clock b{color:var(--accent);}
+  .fantasy-sb-teams{display:flex; align-items:center; justify-content:center; gap:20px;}
+  .fantasy-sb-team{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0;}
+  .fantasy-sb-name{font-family:var(--display); font-size:13px; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
+  .fantasy-sb-score{font-family:var(--display); font-weight:800; font-size:52px; line-height:1;}
+  .fantasy-sb-sep{font-family:var(--display); font-size:28px; color:var(--muted);}
+  .fantasy-sb-break{margin-top:14px; font-family:var(--display); font-weight:700; color:#ffd76b; text-transform:uppercase; letter-spacing:.05em; font-size:13px;}
+  .fantasy-lastplay{margin:18px 0; text-align:center; font-size:15px; min-height:22px;}
+  .fantasy-history{display:flex; flex-direction:column; gap:6px; max-height:420px; overflow-y:auto;}
+  .fantasy-hrow{display:flex; gap:12px; align-items:baseline; padding:8px 12px; background:var(--surface-2); border-radius:10px; font-size:13px;}
+  .fantasy-hrow .t{color:var(--muted); font-family:var(--display); width:44px; flex:0 0 auto;}
+  .fantasy-hrow .s{font-family:var(--display); font-weight:700; width:56px; flex:0 0 auto;}
+  .fantasy-hrow .d{color:var(--text); flex:1 1 auto;}
+  .fantasy-subnav{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
+  .fantasy-subtab{background:var(--surface-2); border:1px solid var(--line); color:var(--muted); font-family:var(--display); font-weight:700;
+    font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; padding:9px 16px; border-radius:var(--radius-pill); cursor:pointer; transition:.15s;}
+  .fantasy-subtab.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .fantasy-subview[hidden]{display:none;}
+  .fantasy-hint{color:var(--muted); font-size:13px; margin-bottom:16px; max-width:60ch;}
+  .fantasy-live-lock{text-align:center; font-size:12.5px; color:#ffd76b; background:rgba(255,215,120,.08); border:1px solid rgba(255,215,120,.25);
+    border-radius:12px; padding:9px 14px; margin-bottom:14px;}
+  .fantasy-live-actions{display:flex; justify-content:center; margin-top:14px;}
+  .fantasy-timeout-banner{text-align:center; font-family:var(--display); font-weight:800; letter-spacing:.04em; text-transform:uppercase;
+    color:#ffd76b; background:rgba(255,215,120,.1); border:1px solid rgba(255,215,120,.3); border-radius:14px; padding:14px; margin-top:14px;}
+  .fantasy-boxscore{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0;}
+  @media(max-width:560px){ .fantasy-boxscore{grid-template-columns:1fr;} }
+  .fantasy-box-team{background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:12px 14px;}
+  .fantasy-box-team-name{font-family:var(--display); font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--muted); margin-bottom:8px;}
+  .fantasy-box-row{display:flex; align-items:center; gap:8px; padding:5px 0; font-size:13px; border-top:1px solid rgba(255,255,255,.05);}
+  .fantasy-box-row:first-of-type{border-top:0;}
+  .fantasy-box-pos{color:var(--muted); font-size:11px; width:24px; flex:0 0 auto;}
+  .fantasy-box-name{flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .fantasy-box-pts{font-family:var(--display); font-weight:700; flex:0 0 auto; width:20px; text-align:right;}
+  .fantasy-box-fat{flex:0 0 auto; width:34px; height:5px; border-radius:3px; background:rgba(255,255,255,.08); overflow:hidden;}
+  .fantasy-box-fat-bar{display:block; height:100%; background:linear-gradient(90deg,#ff6b6b,#ffd76b 55%,var(--good)); border-radius:3px; transition:width .3s;}
+  .fantasy-box-star{color:#ffd76b; font-size:11px; flex:0 0 auto;}
+  /* ---- cancha/formación estilo FUT ---- */
+  .ff-wrap{max-width:640px; margin:0 auto;}
+  .ff-court{position:relative; aspect-ratio:4/3; border-radius:20px; overflow:hidden; margin-bottom:16px;
+    background:
+      radial-gradient(ellipse at 50% 8%, rgba(255,255,255,.10), transparent 55%),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 26px, rgba(255,255,255,.03) 26px 52px),
+      linear-gradient(160deg, #c8965c, #8f6234);
+    border:1px solid var(--line);}
+  .ff-court::before{content:""; position:absolute; inset:14px; border:2px solid rgba(255,255,255,.35); border-radius:14px; pointer-events:none;}
+  .ff-court::after{content:""; position:absolute; left:50%; top:14px; bottom:14px; width:2px; background:rgba(255,255,255,.35); transform:translateX(-50%); pointer-events:none;}
+  .ff-formation-lbl{position:absolute; top:8px; left:50%; transform:translateX(-50%); font-family:var(--display); font-weight:800;
+    text-transform:uppercase; letter-spacing:.04em; font-size:12px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.6); z-index:2;}
+  .ff-slot{position:absolute; width:19%; max-width:110px; transform:translate(-50%,-50%); text-align:center; z-index:1;}
+  .ff-slot.tl{left:22%; top:30%;} .ff-slot.tr{left:78%; top:30%;}
+  .ff-slot.mid{left:50%; top:58%;}
+  .ff-slot.bl{left:22%; top:82%;} .ff-slot.br{left:78%; top:82%;}
+  .ff-card{background:linear-gradient(160deg, rgba(20,22,30,.92), rgba(10,11,16,.92)); border:1.5px solid var(--c1,var(--line));
+    border-radius:12px; padding:6px 5px 8px; box-shadow:0 6px 16px rgba(0,0,0,.5); position:relative; cursor:default;}
+  .ff-slot.editable .ff-card{cursor:pointer; transition:transform .15s;}
+  .ff-slot.editable .ff-card:hover{transform:translateY(-3px); border-color:var(--accent);}
+  .ff-card-empty{background:rgba(255,255,255,.06); border:1.5px dashed rgba(255,255,255,.3); border-radius:12px;
+    padding:14px 5px; cursor:pointer; font-size:22px; color:rgba(255,255,255,.6);}
+  .ff-ovr{position:absolute; top:4px; left:6px; font-family:var(--display); font-weight:800; font-size:16px; color:#ffd76b; line-height:1;}
+  .ff-pos{position:absolute; top:20px; left:6px; font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em;}
+  .ff-photo{width:44px; height:44px; border-radius:50%; overflow:hidden; margin:0 auto 4px; background:var(--surface-2); border:1px solid var(--line);}
+  .ff-photo img{width:100%; height:100%; object-fit:cover;}
+  .ff-name{font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.01em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .ff-stats{display:flex; justify-content:center; gap:6px; margin-top:3px; font-size:9px; color:var(--muted);}
+  .ff-stats b{color:var(--text);}
+  .ff-chem{position:absolute; right:10px; bottom:10px; z-index:2; background:rgba(6,7,11,.75); border:1px solid rgba(255,255,255,.2);
+    border-radius:10px; padding:6px 10px; text-align:center; font-family:var(--display);}
+  .ff-chem b{display:block; font-size:16px; color:var(--good);}
+  .ff-chem span{font-size:8.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em;}
+  .ff-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+  .ff-hint2{text-align:center; color:var(--muted); font-size:12px; margin:-6px 0 14px;}
+  .ff-picker-row{display:flex; align-items:center; gap:12px; padding:11px 14px; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:12px; margin-bottom:8px; cursor:pointer; transition:.15s;}
+  .ff-picker-row:hover{border-color:var(--accent);}
+  .ff-picker-photo{width:36px; height:36px; border-radius:50%; overflow:hidden; flex:0 0 auto; background:var(--surface);}
+  .ff-picker-photo img{width:100%; height:100%; object-fit:cover;}
+  .ff-picker-name{flex:1 1 auto; font-weight:600;}
+  .ff-picker-meta{color:var(--muted); font-size:12px;}
+  .fantasy-transfer-row.clickable{cursor:pointer; transition:.15s;}
+  .fantasy-transfer-row.clickable:hover{border-color:var(--accent);}
+  .ft-roster-row{display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:12px; margin-bottom:8px;}
+  .ft-roster-photo{width:38px; height:38px; border-radius:50%; overflow:hidden; flex:0 0 auto; background:var(--surface);}
+  .ft-roster-photo img{width:100%; height:100%; object-fit:cover;}
+  .ft-roster-name{flex:1 1 auto; font-weight:600; min-width:0;}
+  .ft-roster-meta{color:var(--muted); font-size:12px; flex:0 0 auto; margin-right:6px;}
+  .ft-offer-type{display:flex; gap:8px; margin:14px 20px;}
+  .ft-offer-type button{flex:1; padding:10px; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); color:var(--text); font:inherit; cursor:pointer;}
+  .ft-offer-type button.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .ft-offer-body{padding:0 20px 20px;}
+  .ft-offer-body input, .ft-offer-body select{width:100%; padding:11px 14px; border-radius:12px; border:1px solid var(--line);
+    background:var(--surface); color:var(--text); font:inherit; margin-bottom:12px;}
+  .fantasy-offer-row{display:flex; align-items:center; gap:10px; padding:11px 14px; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:12px; margin-bottom:8px; font-size:13px;}
+  .fantasy-offer-desc{flex:1 1 auto;}
+  .fantasy-offer-status{font-size:11px; text-transform:uppercase; letter-spacing:.04em; padding:3px 9px; border-radius:var(--radius-pill);}
+  .fantasy-offer-status.pending{background:rgba(255,215,120,.14); color:#ffd76b;}
+  .fantasy-offer-status.accepted{background:rgba(60,200,140,.16); color:var(--good);}
+  .fantasy-offer-status.rejected{background:rgba(255,90,90,.14); color:#ff6b6b;}
+  .fantasy-standings-row{display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; margin-bottom:6px;}
+  .fantasy-standings-row.mine{border-color:var(--accent);}
+  .fs-rank{width:22px; color:var(--muted); font-family:var(--display); font-weight:700;}
+  .fs-team{flex:1 1 auto; font-weight:600;}
+  .fs-rec{font-family:var(--display); font-weight:700; color:var(--accent);}
+  .fs-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; padding:4px 20px 4px;}
+  .fs-grid-3{grid-template-columns:repeat(3,1fr);}
+  .fs-stat{background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:10px 6px; text-align:center;}
+  .fs-stat b{display:block; font-family:var(--display); font-weight:800; font-size:17px;}
+  .fs-stat span{font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em;}
+  .fantasy-news-card{background:var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:10px;}
+  .fantasy-news-date{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;}
+  .fantasy-news-title{font-family:var(--display); font-weight:700; font-size:15px; margin-bottom:4px;}
+  .fantasy-news-text{font-size:13.5px; color:var(--text); line-height:1.5;}
+  .fantasy-transfer-row{padding:14px 16px; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; margin-bottom:10px;}
+  .fantasy-transfer-top{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .fantasy-transfer-name{font-family:var(--display); font-weight:700; text-transform:uppercase; font-size:14px; flex:1 1 auto;}
+  .fantasy-transfer-tag{font-size:11px; text-transform:uppercase; letter-spacing:.04em; padding:3px 9px; border-radius:var(--radius-pill); color:var(--muted); background:rgba(255,255,255,.06);}
+  .fantasy-transfer-tag.mine{background:rgba(60,200,140,.16); color:var(--good);}
+  .fantasy-transfer-roster{color:var(--muted); font-size:12.5px;}
   .ms-cardprev{flex:0 0 auto; width:58px;}
   .ms-cardprev .pcard{width:58px; min-width:58px;}
   .tab-90s[aria-selected="true"]{color:#cdb0ff;}
@@ -985,6 +1039,20 @@
   .skin-ball.fire{animation:skinFire 1.1s ease-in-out infinite;}
   @keyframes skinFire{0%,100%{box-shadow:0 0 16px 3px rgba(255,110,40,.8), 0 0 30px 9px rgba(255,60,0,.4);}
     50%{box-shadow:0 0 24px 7px rgba(255,140,40,.95), 0 0 44px 14px rgba(255,70,0,.55);}}
+  .pf-medals{margin-bottom:26px;}
+  .pf-medal{position:relative; display:flex; align-items:center; gap:16px; padding:16px 20px; border-radius:18px;
+    background:linear-gradient(135deg, rgba(255,215,120,.14), rgba(20,22,30,.5) 60%);
+    border:1px solid rgba(255,214,120,.35); overflow:hidden;
+    box-shadow:0 10px 26px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);}
+  .pf-medal::before{content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background:repeating-linear-gradient(115deg, transparent 0 10%, rgba(255,255,255,.06) 10% 12%, transparent 12% 22%);}
+  .pf-medal-ico{position:relative; z-index:1; flex:0 0 auto; width:52px; height:52px; border-radius:50%;
+    display:grid; place-items:center; background:radial-gradient(circle at 35% 30%, #fff6d8, #ffd76b 45%, #c9911a 100%);
+    box-shadow:0 4px 14px rgba(255,180,40,.5), inset 0 0 0 2px rgba(255,255,255,.5);}
+  .pf-medal-ico svg{width:28px; height:28px; color:#5a3a06;}
+  .pf-medal-txt{position:relative; z-index:1; display:flex; flex-direction:column; gap:2px;}
+  .pf-medal-txt b{font-family:var(--display); font-weight:700; font-size:15px; text-transform:uppercase; letter-spacing:.02em; color:#ffe9b0;}
+  .pf-medal-txt span{font-size:12.5px; color:var(--muted-2);}
   .pf-section{margin-bottom:26px;}
   .pf-sec-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
   .pf-sec-head h3{font-size:18px; text-transform:uppercase; letter-spacing:.02em;}
@@ -1056,17 +1124,6 @@
   <div class="bg-arena" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- SPLASH DE TEMPORADA (al iniciar) -->
-  <div class="season-splash" id="season-splash" role="dialog" aria-label="Temporada 2">
-    <div class="ss-card">
-      <div class="ss-text">
-        <div class="ss-title">YA LLEGÓ<br>EL VERANO</div>
-        <div class="ss-sub">Temporada 2</div>
-        <button class="btn btn-primary ss-go" id="season-go">¡Vamos!</button>
-      </div>
-    </div>
-  </div>
-
   <header class="nav">
     <div class="nav-in">
       <div class="brand">
@@ -1084,8 +1141,9 @@
         <button class="tab" role="tab" data-view="trueques" aria-selected="false">Trades</button>
         <button class="tab" role="tab" data-view="misiones" aria-selected="false">Misiones</button>
         <button class="tab" role="tab" data-view="juego" aria-selected="false">Encestes</button>
-        <button class="tab" role="tab" data-view="liga" aria-selected="false">Liga</button>
+        <button class="tab" role="tab" data-view="fantasy" aria-selected="false">Fantasy</button>
       </nav>
+      <button class="fantasy-badge" id="fantasy-badge" hidden title="Volver al partido en vivo"></button>
       <div class="coins-chip" title="Balones (gana jugando Encestes)"><span class="coin-ico"></span><b class="coin-amount">0</b></div>
       <button class="bell" id="bell" aria-label="Mensajes" title="Mensajes">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1096,7 +1154,7 @@
       </button>
       <div class="progress-chip" title="Cartas distintas coleccionadas">
         <div class="ring" id="prog-ring"><b id="prog-pct">0%</b></div>
-        <span><b id="prog-count">0</b> / 150</span>
+        <span><b id="prog-count">0</b> / <span id="prog-total">150</span></span>
       </div>
       <button class="acct" id="acct" hidden aria-label="Cuenta"><span id="acct-ini">?</span></button>
       <div class="acct-menu" id="acct-menu">
@@ -1157,8 +1215,8 @@
       <div class="view-head">
         <div>
           <h2>Tu colección</h2>
-          <p>150 estrellas reales de la NBA con su media de NBA 2K26. Abre sobres para desbloquearlas y completa el álbum.</p>
-          <p id="teams-done" class="teams-done">Equipos completos: <b>0</b> / 30 · cada equipo completo te da un Sobre de Recompensa</p>
+          <p>184 estrellas reales de la NBA con su media de NBA 2K26. Abre sobres para desbloquearlas y completa el álbum.</p>
+          <p id="teams-done" class="teams-done">Equipos completos: <b>0</b> / 30 · cada equipo completo te da balones</p>
           <button id="btn-dust-all" class="btn btn-ghost btn-dust" style="display:none; margin-top:10px">Transformar todas las repetidas en polvo</button>
         </div>
       </div>
@@ -1236,36 +1294,6 @@
         </div>
       </div>
       <div class="pack-stats">Sobres abiertos: <b id="packs-opened">0</b> · Cartas obtenidas: <b id="cards-total">0</b></div>
-
-      <!-- FICHA DE VERANO (sola, sin rectángulo de sobre) -->
-      <div class="ficha-zone">
-        <button class="ficha-coin" id="btn-ficha" aria-label="Comprar ficha de verano por 500 balones">
-          <svg viewBox="0 0 100 100" width="150" height="150" aria-hidden="true">
-            <defs><radialGradient id="fvg" cx="50%" cy="42%" r="62%">
-              <stop offset="0%" stop-color="#fff6c8"/><stop offset="55%" stop-color="#ffc24d"/><stop offset="100%" stop-color="#e8861f"/>
-            </radialGradient></defs>
-            <circle cx="50" cy="50" r="46" fill="url(#fvg)" stroke="#b9650f" stroke-width="3"/>
-            <circle cx="50" cy="50" r="38" fill="none" stroke="#ffe9a8" stroke-width="2" opacity=".7"/>
-            <circle cx="50" cy="50" r="13" fill="#fff3c0"/>
-            <g stroke="#fff3c0" stroke-width="4" stroke-linecap="round">
-              <line x1="50" y1="20" x2="50" y2="30"/><line x1="50" y1="70" x2="50" y2="80"/>
-              <line x1="20" y1="50" x2="30" y2="50"/><line x1="70" y1="50" x2="80" y2="50"/>
-              <line x1="29" y1="29" x2="36" y2="36"/><line x1="64" y1="64" x2="71" y2="71"/>
-              <line x1="71" y1="29" x2="64" y2="36"/><line x1="36" y1="64" x2="29" y2="71"/>
-            </g>
-          </svg>
-        </button>
-        <div class="ficha-title">Ficha de Verano</div>
-        <p class="ficha-sub">Puede no darte nada, darte <b>balones</b>, una <b>carta exclusiva de Verano</b> o el <b>balón especial de Verano</b>.</p>
-        <button class="btn btn-primary ficha-buy" id="btn-ficha-buy">Comprar ficha · <span class="coin-ico"></span> 500</button>
-      </div>
-
-      <!-- COLECCIÓN DE VERANO (debajo de la ficha) -->
-      <div class="noventas-album-head">
-        <h3>Tu colección de verano</h3>
-        <p id="verano-count" class="teams-done">Tienes <b>0</b> / 7 cartas de verano</p>
-      </div>
-      <div class="grid grid-verano" id="album-verano"></div>
     </section>
 
     <!-- ===== TIENDA ===== -->
@@ -1360,23 +1388,108 @@
       </div>
     </section>
 
-    <!-- ===== LIGA (competitivo) ===== -->
-    <section class="view" id="view-liga" role="tabpanel">
-      <div class="view-head"><div>
-        <h2>Liga</h2>
-        <p>Temporada nueva: compite por el mejor puntaje de Encestes. El top 3 reclama balones cada hora.</p>
-      </div></div>
-      <div class="liga-top" id="liga-top"></div>
-      <div class="bp-wrap">
-        <div class="bp-head">
-          <h3>Pase de batalla</h3>
-          <span id="bp-xp" class="bp-xp">Nivel 1</span>
+    <!-- ===== FANTASY ===== -->
+    <section class="view" id="view-fantasy" role="tabpanel">
+      <div class="view-head">
+        <div>
+          <h2>Fantasy</h2>
+          <p>Tu equipo NBA por una temporada corta. Partidos en vivo, mercado y trades.</p>
         </div>
-        <div class="bp-track" id="bp-track"></div>
       </div>
-      <div class="pf-sec-head" style="margin-top:26px"><h3>Clasificación</h3></div>
-      <ol class="lb-list" id="liga-list"><li class="pf-empty" style="list-style:none">Cargando…</li></ol>
+
+      <!-- estado: sin unirse todavia -->
+      <div id="fantasy-join" class="fantasy-join" hidden>
+        <div class="fantasy-join-card">
+          <div class="fantasy-join-ico">🏀</div>
+          <h3 id="fantasy-join-title">Fantasy</h3>
+          <p id="fantasy-join-sub">Te toca un equipo NBA al azar (sin repetir con nadie) por 10 días. Partidos en vivo, mercado y trades.</p>
+          <button class="btn btn-primary" id="fantasy-join-btn">Unirme a la temporada</button>
+        </div>
+      </div>
+
+      <!-- estado: ya tengo equipo pero la temporada todavía no arranca -->
+      <div id="fantasy-pending" class="fantasy-join" hidden>
+        <div class="fantasy-join-card">
+          <div class="fantasy-join-ico">⏳</div>
+          <h3>Ya tienes equipo: <span id="fantasy-pending-team"></span></h3>
+          <p id="fantasy-pending-sub">Esperando que el comisionado inicie la temporada.</p>
+          <p id="fantasy-pending-list" style="color:var(--muted);font-size:12.5px"></p>
+          <button class="btn btn-primary" id="fantasy-start-btn" hidden>Iniciar temporada ahora</button>
+        </div>
+      </div>
+
+      <!-- estado: ya tengo equipo -->
+      <div id="fantasy-body" class="fantasy-body" hidden>
+        <div class="fantasy-head" id="fantasy-head"></div>
+
+        <div class="fantasy-subnav" id="fantasy-subnav" role="tablist">
+          <button class="fantasy-subtab active" data-sub="partidos" role="tab" aria-selected="true">Partidos</button>
+          <button class="fantasy-subtab" data-sub="equipo" role="tab" aria-selected="false">Equipo</button>
+          <button class="fantasy-subtab" data-sub="transfer" role="tab" aria-selected="false">Transferencias</button>
+          <button class="fantasy-subtab" data-sub="misiones" role="tab" aria-selected="false">Misiones</button>
+          <button class="fantasy-subtab" data-sub="stats" role="tab" aria-selected="false">Clasificación</button>
+          <button class="fantasy-subtab" data-sub="news" role="tab" aria-selected="false">Noticias</button>
+        </div>
+
+        <div class="fantasy-subview" id="fantasy-sub-partidos">
+          <div class="fantasy-sched" id="fantasy-sched"></div>
+        </div>
+
+        <div class="fantasy-subview" id="fantasy-sub-equipo" hidden>
+          <div id="fantasy-equipo-wrap"></div>
+        </div>
+
+        <div class="fantasy-subview" id="fantasy-sub-transfer" hidden>
+          <p class="fantasy-hint">Toca un equipo para ver su plantilla y mandar una oferta por dinero o intercambio de jugador.</p>
+          <div id="fantasy-transfer-list"></div>
+          <div class="pf-sec-head" style="margin-top:24px"><h3>Mis ofertas</h3></div>
+          <div id="fantasy-my-offers"></div>
+        </div>
+
+        <div class="fantasy-subview" id="fantasy-sub-misiones" hidden>
+          <h3 class="ms-head">🔁 Diarias</h3>
+          <div class="ms-list" id="fantasy-ms-daily"></div>
+          <h3 class="ms-head">🏆 Logros de temporada</h3>
+          <div class="ms-list" id="fantasy-ms-ach"></div>
+        </div>
+
+        <div class="fantasy-subview" id="fantasy-sub-stats" hidden>
+          <div class="pf-sec-head"><h3>Posiciones</h3></div>
+          <div id="fantasy-standings"></div>
+          <div class="pf-sec-head" style="margin-top:24px"><h3>Líderes de la liga (simulados)</h3></div>
+          <div class="fantasy-subnav" id="fantasy-stat-tabs">
+            <button class="fantasy-subtab active" data-cat="ppg">Puntos</button>
+            <button class="fantasy-subtab" data-cat="rpg">Rebotes</button>
+            <button class="fantasy-subtab" data-cat="apg">Asistencias</button>
+            <button class="fantasy-subtab" data-cat="tp">Triples</button>
+            <button class="fantasy-subtab" data-cat="bpg">Tapones</button>
+            <button class="fantasy-subtab" data-cat="spg">Robos</button>
+            <button class="fantasy-subtab" data-cat="ft">Tiro libre</button>
+          </div>
+          <div id="fantasy-stat-leaders"></div>
+        </div>
+
+        <div class="fantasy-subview" id="fantasy-sub-news" hidden>
+          <p class="fantasy-hint">Lo que va pasando en la temporada, publicado por el comisionado.</p>
+          <div id="fantasy-news-list"></div>
+        </div>
+      </div>
+
+      <!-- estado: viendo un partido -->
+      <div id="fantasy-live" class="fantasy-live" hidden>
+        <div class="fantasy-live-lock" id="fantasy-live-lock">Puedes salir cuando quieras: el partido sigue solo y verás el marcador arriba a la derecha.</div>
+        <button class="btn btn-ghost fantasy-back" id="fantasy-live-back">← Calendario</button>
+        <div class="fantasy-scoreboard" id="fantasy-scoreboard"></div>
+        <div class="fantasy-timeout-banner" id="fantasy-timeout-banner" hidden></div>
+        <div class="fantasy-live-actions" id="fantasy-live-actions">
+          <button class="btn btn-ghost" id="fantasy-timeout-btn">⏱ Tiempo muerto (<span id="fantasy-timeout-left">2</span>)</button>
+        </div>
+        <div class="fantasy-lastplay" id="fantasy-lastplay"></div>
+        <div class="fantasy-boxscore" id="fantasy-boxscore"></div>
+        <div class="fantasy-history" id="fantasy-history"></div>
+      </div>
     </section>
+
 
 
     <!-- ===== PERFIL ===== -->
@@ -1408,6 +1521,8 @@
           </div>
           <div class="pf-actions" id="pf-actions"></div>
         </div>
+
+        <div id="pf-medals" class="pf-medals" hidden></div>
 
         <div class="pf-section">
           <div class="pf-sec-head">
@@ -1450,7 +1565,7 @@
     <button class="tab" role="tab" data-view="trueques" aria-selected="false">Trades</button>
     <button class="tab" role="tab" data-view="misiones" aria-selected="false">Misiones</button>
     <button class="tab" role="tab" data-view="juego" aria-selected="false">Encestes</button>
-        <button class="tab" role="tab" data-view="liga" aria-selected="false">Liga</button>
+    <button class="tab" role="tab" data-view="fantasy" aria-selected="false">Fantasy</button>
   </nav>
 
   <!-- overlay apertura de sobre -->
@@ -1481,10 +1596,6 @@
   <!-- globo de info del comodín -->
   <div class="tn-info" id="tn-info"><div class="tn-info-in" id="tn-info-in"></div></div>
 
-  <!-- overlay resultado de la FICHA (nada / balones / balón) -->
-  <div class="fres" id="fres" aria-hidden="true">
-    <div class="fres-in" id="fres-in"></div>
-  </div>
 
   <!-- modal detalle / picker -->
   <div class="sheet" id="sheet" aria-hidden="true">
@@ -1533,7 +1644,6 @@
   /* ---- colores y CDN de equipos NBA ---- */
   const TEAMS = {
     "Leyendas 90s":{c1:"#e8b84b", c2:"#7a531a"},
-    "Verano":{c1:"#ff9e3d", c2:"#1fb6c9"},
     "Especial":{c1:"#37d39b", c2:"#136b4c"},
     "Atlanta Hawks":        {c1:"#E03A3E", c2:"#26282A", id:1610612737},
     "Boston Celtics":       {c1:"#007A33", c2:"#0c3d22", id:1610612738},
@@ -1576,18 +1686,29 @@
   // Reset de balones para TODOS: sube este id y, al cargar, cada cuenta vuelve a 300 balones (una sola vez).
   const COIN_RESET_ID = "2026-07-reset1";
   function applyCoinReset(){ if(state.coinResetId !== COIN_RESET_ID){ state.coins = 300; state.coinResetId = COIN_RESET_ID; } }
-  // Reabrir el Pase de Batalla: limpia los reclamos (para reclamar de nuevo desde el nivel 1
-  // bajo los premios nuevos) PERO conserva el XP/nivel. Sube el id para reabrir otra vez.
-  const BP_RESET_ID = "2026-07-bp1";
-  function applyBpReset(){ if(state.league && state.league.bpResetId !== BP_RESET_ID){ state.league.claimedFree={}; state.league.claimedPremium={}; state.league.bpResetId=BP_RESET_ID; } }
+  // Nueva temporada de álbum (roster 2026-27): borra el álbum de TODOS una sola vez.
+  // No toca balones, polvos ni cartas promo. Si ya habían completado el álbum viejo
+  // (o elegido su leyenda PSA10), les queda la medalla "Álbum Temporada 2025-26 completo".
+  const ALBUM_RESET_ID = "2026-08-season2";
+  function applyAlbumReset(){
+    if(state.albumResetId === ALBUM_RESET_ID) return;
+    if(state.legendPick) state.legacyAlbum2025_26 = true;
+    state.owned = {};
+    state.finals = {};
+    state.graded = {};
+    state.teamsClaimed = {};
+    state.messages = (state.messages||[]).filter(m=>!m.team);   // fuera avisos de "equipo completo" viejos
+    state.totalCards = 0;
+    state.albumResetId = ALBUM_RESET_ID;
+  }
   let PLAYERS = [];
+  let CARD_PLAYERS = [];       // PLAYERS sin banca (suplentes) — solo estos salen en sobres/álbum/completar equipo
   let BY = {};                 // slug -> player
   function defaultState(){ return { owned:{}, packs:0, totalCards:0, teamsClaimed:{}, rewardPacks:0, messages:[], finals:{}, graded:{}, display:{}, promo:{}, skins:{}, ballSkin:"clasico", coins:300, polvos:0, bestScore:0 }; }
   let state = defaultState();
 
   // ===== ECONOMÍA: monedas (se ganan jugando "Encestes") =====
   const PACK_COST = { std:150, elite:600, finals:1200, psa:1000, reward:0, noventas:1100 };
-  const TOKEN_COST = 500;   // ficha de verano
   const COINS_PER_POINT = 10;           // (legado) balones por punto — ya no se usa para la recompensa
   const COINS_PER_BASKET = 20;          // balones por CANASTA encestada (no por puntaje)
   function renderCoins(){
@@ -1619,12 +1740,12 @@
   function giveAll(){
     PLAYERS.forEach(p=>{ state.owned[p.slug]=1; });
     LEGENDS_90S.forEach(p=>{ state.owned[p.slug]=1; });        // leyendas 90s
-    SUMMER_CARDS.forEach(p=>{ state.owned[p.slug]=1; });       // cartas de verano
+    PROMO.forEach(c=>{ state.promo[c.id]=(state.promo[c.id]||0)+1; }); // cartas promo
     Object.keys(FINALS_CARD).forEach(s=>{ state.finals[s]=1; });
     PLAYERS.forEach(p=>{ state.graded[p.slug]=[1,2,3,4,5,6,7,8,9,10]; });
     state.totalCards = Math.max(state.totalCards, PLAYERS.length);
     save(); checkTeamRewards(); renderAll();
-    return "OK: todas las cartas (incluye 90s y Verano) + Finals + PSA 1-10";
+    return "OK: todas las cartas (incluye 90s y promos) + Finals + PSA 1-10";
   }
   function resetAccount(){ applyState(defaultState()); save(); renderAll(); return "OK: cuenta reiniciada (sin cartas, 300 balones)"; }
   // Da TODAS las básicas + solo las cartas Finals indicadas por slug.
@@ -1675,27 +1796,26 @@
     console.log("%c CÓDIGO (1 uso) "+code+" ", "background:#f2552c;color:#fff;font-size:16px;padding:4px 8px;border-radius:6px;");
     return code;
   }
-  // Genera un código de UN SOLO USO que da sobres + tiradas de Ficha de Verano.
-  // Uso: DunkDev.makeRewardCode("VERANO3", { packs:3, ficha:1 })  |  DunkDev.makeRewardCode()=código aleatorio
+  // Genera un código de UN SOLO USO que da sobres.
+  // Uso: DunkDev.makeRewardCode("CODE", { packs:3 })  |  DunkDev.makeRewardCode()=código aleatorio
   async function makeRewardCodeDev(code, opts){
     if(!window.DunkFire || !window.DunkFire.makeCode){ console.warn("Necesitas conexión/Firebase para generar códigos."); return; }
     const o = opts || (typeof code==="object" ? code : {}) || {};
-    const payload = { reward:true, packs:Math.max(0,o.packs|0), ficha:Math.max(0,o.ficha|0) };
+    const payload = { reward:true, packs:Math.max(0,o.packs|0) };
     const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     const rnd=n=>Array.from({length:n},()=>chars[Math.floor(Math.random()*chars.length)]).join("");
     const finalCode = (typeof code==="string" && code.trim()) ? code.trim().toUpperCase() : `DUNK-${rnd(4)}-${rnd(4)}`;
     try{ await window.DunkFire.makeCode(finalCode, payload); }
     catch(e){ console.warn("No se pudo generar (¿reglas de Firestore?):", e); return; }
-    console.log("%c CÓDIGO (1 uso) "+finalCode+"  → "+payload.packs+" sobres + "+payload.ficha+" ficha ", "background:#f2552c;color:#fff;font-size:16px;padding:4px 8px;border-radius:6px;");
+    console.log("%c CÓDIGO (1 uso) "+finalCode+"  → "+payload.packs+" sobres ", "background:#f2552c;color:#fff;font-size:16px;padding:4px 8px;border-radius:6px;");
     return finalCode;
   }
-  // borra tu récord de la clasificación y de la liga (consola: DunkDev.clearMyScore())
+  // borra tu récord de la clasificación (consola: DunkDev.clearMyScore())
   async function clearMyScore(){
-    state.bestScore=0; if(state.league) state.league.best=0; try{ localStorage.removeItem('basket_best'); }catch(e){}
+    state.bestScore=0; try{ localStorage.removeItem('basket_best'); }catch(e){}
     save();
     if(window.DunkFire && window.DunkFire.deleteMyScore && currentUid){ try{ await window.DunkFire.deleteMyScore(currentUid); }catch(e){} }
-    try{ renderLiga(); }catch(e){}
-    return currentUid ? "OK: tu récord fue borrado de la tabla (scores + liga)" : "No has iniciado sesión: inicia sesión con tu cuenta y vuelve a correrlo";
+    return currentUid ? "OK: tu récord fue borrado de la tabla" : "No has iniciado sesión: inicia sesión con tu cuenta y vuelve a correrlo";
   }
   window.DunkDev = { giveAll, giveBasicsAndFinals, coins:(n)=>addCoins(n), reset:resetAccount, givePromo:givePromoDev, makeCode:makeCodeDev, makeBundleCode:makeBundleCodeDev, makeRewardCode:makeRewardCodeDev, clearMyScore };
 
@@ -1710,8 +1830,9 @@
   const eventActive = () => EVENT.on && Date.now() < new Date(EVENT.end).getTime();
   function applyEventBoost(){
     if(!eventActive()) return;
+    // solo los 10 con carta Finals real (FINALS_CARD) — no cualquiera que hoy juegue en Spurs/Knicks
     PLAYERS.forEach(p=>{
-      if(EVENT.teams.includes(p.equipo)){
+      if(Object.prototype.hasOwnProperty.call(FINALS_CARD, p.slug)){
         p.finals = true;
         p.finalsOvr = Math.min(99, p.media + EVENT.boost);  // media del evento (se muestra con flechitas)
       }
@@ -1775,6 +1896,25 @@
     { id:"legend-jordan", slug:"legend-jordan", nombre:"Michael Jordan", posicion:"SG", equipo:"Chicago Bulls",      media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/01-michael-jordan.jpg", trade:true },
     { id:"legend-magic",  slug:"legend-magic",  nombre:"Magic Johnson",  posicion:"PG", equipo:"Los Angeles Lakers", media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/02-magic-johnson.jpg", trade:true },
     { id:"legend-larry",  slug:"legend-larry",  nombre:"Larry Bird",     posicion:"SF", equipo:"Boston Celtics",     media:99, rankLabel:"PSA 10", rank:"psa10", foto:"legends-90s/03-larry-bird.jpg", trade:true },
+    // Cartas conmemorativas (antes "Ficha de Verano", ahora parte fija de la colección de promos)
+    { id:"vrn-nikola-jokic",    slug:"vrn-nikola-jokic",    nombre:"Nikola Jokić",     posicion:"C",  equipo:"Denver Nuggets",       media:99, foto:"verano-cards/nikola-jokic.jpg",    trade:true },
+    { id:"vrn-kobe-bryant",     slug:"vrn-kobe-bryant",     nombre:"Kobe Bryant",      posicion:"SG", equipo:"Los Angeles Lakers",   media:98, foto:"verano-cards/kobe-bryant.jpg",     trade:true },
+    { id:"vrn-shaquille-oneal", slug:"vrn-shaquille-oneal", nombre:"Shaquille O'Neal", posicion:"C",  equipo:"Los Angeles Lakers",   media:98, foto:"verano-cards/shaquille-oneal.jpg", trade:true },
+    { id:"vrn-stephen-curry",   slug:"vrn-stephen-curry",   nombre:"Stephen Curry",    posicion:"PG", equipo:"Golden State Warriors",media:97, foto:"verano-cards/stephen-curry.jpg",   trade:true },
+    { id:"vrn-kyrie-irving",    slug:"vrn-kyrie-irving",    nombre:"Kyrie Irving",     posicion:"PG", equipo:"Cleveland Cavaliers",  media:95, foto:"verano-cards/kyrie-irving.jpg",    trade:true },
+    { id:"vrn-kevin-durant",    slug:"vrn-kevin-durant",    nombre:"Kevin Durant",     posicion:"SF", equipo:"Golden State Warriors",media:94, foto:"verano-cards/kevin-durant.jpg",    trade:true },
+    { id:"vrn-klay-thompson",   slug:"vrn-klay-thompson",   nombre:"Klay Thompson",    posicion:"SG", equipo:"Golden State Warriors",media:92, foto:"verano-cards/klay-thompson.jpg",   trade:true },
+    // Edición NBA Finals (las 10 con arte propio, antes solo del Sobre Finales) — ahora parte fija de promos
+    { id:"finals-victor-wembanyama", slug:"finals-victor-wembanyama", nombre:"Victor Wembanyama", posicion:"C",  equipo:"San Antonio Spurs", media:99, rankLabel:"FINALS", foto:"finals-cards/Spurs/victor-wembanyama.jpg", trade:true },
+    { id:"finals-deaaron-fox",       slug:"finals-deaaron-fox",       nombre:"De'Aaron Fox",      posicion:"PG", equipo:"San Antonio Spurs", media:88, rankLabel:"FINALS", foto:"finals-cards/Spurs/deaaron-fox.jpg",       trade:true },
+    { id:"finals-devin-vassell",     slug:"finals-devin-vassell",     nombre:"Devin Vassell",     posicion:"SG", equipo:"San Antonio Spurs", media:85, rankLabel:"FINALS", foto:"finals-cards/Spurs/devin-vassell.jpg",     trade:true },
+    { id:"finals-stephon-castle",    slug:"finals-stephon-castle",    nombre:"Stephon Castle",    posicion:"SG", equipo:"San Antonio Spurs", media:85, rankLabel:"FINALS", foto:"finals-cards/Spurs/stephon-castle.jpg",    trade:true },
+    { id:"finals-harrison-barnes",   slug:"finals-harrison-barnes",   nombre:"Harrison Barnes",   posicion:"SF", equipo:"San Antonio Spurs", media:80, rankLabel:"FINALS", foto:"finals-cards/Spurs/harrison-barnes.jpg",   trade:true },
+    { id:"finals-jalen-brunson",     slug:"finals-jalen-brunson",     nombre:"Jalen Brunson",     posicion:"PG", equipo:"New York Knicks",   media:96, rankLabel:"FINALS", foto:"finals-cards/Knicks/jalen-brunson.jpg",    trade:true },
+    { id:"finals-karl-anthony-towns",slug:"finals-karl-anthony-towns",nombre:"Karl-Anthony Towns",posicion:"C",  equipo:"New York Knicks",   media:95, rankLabel:"FINALS", foto:"finals-cards/Knicks/karl-anthony-towns.jpg",trade:true },
+    { id:"finals-mikal-bridges",     slug:"finals-mikal-bridges",     nombre:"Mikal Bridges",     posicion:"SF", equipo:"New York Knicks",   media:87, rankLabel:"FINALS", foto:"finals-cards/Knicks/mikal-bridges.jpg",    trade:true },
+    { id:"finals-mitchell-robinson", slug:"finals-mitchell-robinson", nombre:"Mitchell Robinson", posicion:"C",  equipo:"New York Knicks",   media:83, rankLabel:"FINALS", foto:"finals-cards/Knicks/mitchell-robinson.jpg",trade:true },
+    { id:"finals-og-anunoby",        slug:"finals-og-anunoby",        nombre:"OG Anunoby",        posicion:"SF", equipo:"New York Knicks",   media:88, rankLabel:"FINALS", foto:"finals-cards/Knicks/og-anunoby.jpg",       trade:true },
   ];
   const PROMO_BY = Object.fromEntries(PROMO.map(c=>[c.id,c]));
   // PAQUETES de la tienda (cada uno con su precio y código propio)
@@ -1830,7 +1970,6 @@
     window.__netCos = net ? {color:net.color, glow:net.glow} : null;
     window.__trailCos = tr ? {color:tr.color} : null;
   }
-  function addLeagueXp(n){ ensureLeague(); if(!n) return; state.league.xp=(state.league.xp||0)+n; save(); try{ if(document.getElementById('view-liga').classList.contains('active')) renderLiga(); }catch(e){} }
   const LEGENDS_90S = [
     {slug:"michael-jordan",nombre:"Michael Jordan",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/01-michael-jordan.jpg"}, {slug:"magic-johnson",nombre:"Magic Johnson",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/02-magic-johnson.jpg"},
     {slug:"larry-bird",nombre:"Larry Bird",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/03-larry-bird.jpg"}, {slug:"hakeem-olajuwon",nombre:"Hakeem Olajuwon",media:99,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/04-hakeem-olajuwon.jpg"},
@@ -1864,18 +2003,6 @@
     {slug:"shareef-abdur-rahim",nombre:"Shareef Abdur-Rahim",media:85,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/59-shareef-abdur-rahim.jpg"}, {slug:"antonio-mcdyess",nombre:"Antonio McDyess",media:85,posicion:"LEG",equipo:"Leyendas 90s",foto:"legends-90s/60-antonio-mcdyess.jpg"},
   ];
   const LEG_BY = Object.fromEntries(LEGENDS_90S.map(p=>[p.slug,p]));
-  // ===== CARTAS EXCLUSIVAS DE VERANO (solo salen en la Ficha de Verano) =====
-  // SOLO estas 7, con las imágenes propias de verano-cards/. No salen otras.
-  const SUMMER_CARDS = [
-    { slug:"vrn-nikola-jokic",     nombre:"Nikola Jokić",      media:99, posicion:"C",  equipo:"Verano", foto:"verano-cards/nikola-jokic.jpg",    summer:true },
-    { slug:"vrn-kobe-bryant",      nombre:"Kobe Bryant",       media:98, posicion:"SG", equipo:"Verano", foto:"verano-cards/kobe-bryant.jpg",     summer:true },
-    { slug:"vrn-shaquille-oneal",  nombre:"Shaquille O'Neal",  media:98, posicion:"C",  equipo:"Verano", foto:"verano-cards/shaquille-oneal.jpg", summer:true },
-    { slug:"vrn-stephen-curry",    nombre:"Stephen Curry",     media:97, posicion:"PG", equipo:"Verano", foto:"verano-cards/stephen-curry.jpg",   summer:true },
-    { slug:"vrn-kyrie-irving",     nombre:"Kyrie Irving",      media:95, posicion:"PG", equipo:"Verano", foto:"verano-cards/kyrie-irving.jpg",    summer:true },
-    { slug:"vrn-kevin-durant",     nombre:"Kevin Durant",      media:94, posicion:"SF", equipo:"Verano", foto:"verano-cards/kevin-durant.jpg",    summer:true },
-    { slug:"vrn-klay-thompson",    nombre:"Klay Thompson",     media:92, posicion:"SG", equipo:"Verano", foto:"verano-cards/klay-thompson.jpg",   summer:true },
-  ];
-  const SUMMER_BY = Object.fromEntries(SUMMER_CARDS.map(c=>[c.slug,c]));
   const SKIN_BY = Object.fromEntries(BALL_SKINS.map(s=>[s.id,s]));
   const ownsSkin = id => id==="clasico" || !!(state.skins && state.skins[id]);
   const equippedSkinId = () => (state.ballSkin && SKIN_BY[state.ballSkin]) ? state.ballSkin : "clasico";
@@ -1905,8 +2032,8 @@
     if(!payload || typeof payload!=="object") return 0;
     let n=0;
     if(payload.basics){
-      PLAYERS.forEach(p=>{ if(!((state.owned[p.slug]||0)>0)){ state.owned[p.slug]=1; n++; } });
-      state.totalCards = Math.max(state.totalCards||0, PLAYERS.length);
+      CARD_PLAYERS.forEach(p=>{ if(!((state.owned[p.slug]||0)>0)){ state.owned[p.slug]=1; n++; } });
+      state.totalCards = Math.max(state.totalCards||0, CARD_PLAYERS.length);
     }
     (payload.finals||[]).forEach(s=>{ if(FINALS_CARD[s]){ state.finals[s]=(state.finals[s]||0)+1; n++; } });
     if(payload.promo && payload.promo.length){ n += grantPromo(payload.promo); }
@@ -1940,7 +2067,7 @@
     return bestGrade(s);
   }
 
-  function load(){ try{ const r=JSON.parse(localStorage.getItem(LS)); if(r){ state=Object.assign(state,r);} }catch(e){} applyCoinReset(); applyBpReset();
+  function load(){ try{ const r=JSON.parse(localStorage.getItem(LS)); if(r){ state=Object.assign(state,r);} }catch(e){} applyCoinReset(); applyAlbumReset();
     if(!state.finals) state.finals={}; if(!state.graded) state.graded={}; if(!state.display) state.display={}; if(!state.messages) state.messages=[];
     if(!state.promo) state.promo={}; if(typeof state.coins!=="number") state.coins=300;
     if(!state.skins) state.skins={}; if(!state.ballSkin) state.ballSkin="clasico"; syncBallSkin(); }
@@ -1959,10 +2086,10 @@
     if(!state.messages) state.messages=[]; if(!state.promo) state.promo={}; if(typeof state.coins!=="number") state.coins=300;
     if(!state.skins) state.skins={}; if(!state.ballSkin) state.ballSkin="clasico";
     applyCoinReset();   // reset de balones a 300 (una vez por cuenta, según COIN_RESET_ID)
-    applyBpReset();     // reabrir el Pase (limpia reclamos, conserva XP/nivel)
+    applyAlbumReset();  // nueva temporada de álbum (una vez por cuenta, según ALBUM_RESET_ID)
     syncBallSkin();
   }
-  function renderAll(){ renderEvent(); renderCoins(); renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); renderAlbumSummer(); try{ applyCosmetics(); }catch(e){} }
+  function renderAll(){ renderEvent(); renderCoins(); renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); try{ applyCosmetics(); }catch(e){} }
   function updateAccountUI(){
     const b=$("#acct"); if(!b) return;
     if(authUser){ b.hidden=false; $("#acct-ini").textContent=(authUser[0]||"?").toUpperCase(); $("#acct-name").textContent=authUser; }
@@ -2075,6 +2202,18 @@
     $("#pf-name").textContent = "@" + (prof.username||"jugador");
     $("#pf-meta").textContent = isMe ? authUser : "";
 
+    // medallas
+    const medalsEl=$("#pf-medals");
+    if(medalsEl){
+      if(isMe && state.legacyAlbum2025_26){
+        medalsEl.hidden=false;
+        medalsEl.innerHTML = `<div class="pf-medal">
+          <div class="pf-medal-ico"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18 2H6v2H2.5v3.5A4.5 4.5 0 0 0 7 12h.6A5.5 5.5 0 0 0 11 15.4V18H7.5v2.2h9V18H13v-2.6A5.5 5.5 0 0 0 16.4 12h.6a4.5 4.5 0 0 0 4.5-4.5V4H18V2zM6 9.9A2.5 2.5 0 0 1 4.5 7.5V6H6v3.9zm13.5-2.4A2.5 2.5 0 0 1 18 9.9V6h1.5v1.5z"/><rect x="6.5" y="20.6" width="11" height="1.7" rx=".85"/></svg></div>
+          <div class="pf-medal-txt"><b>Álbum Temporada 2025-26 completo</b><span>Las 150 cartas coleccionadas antes del cambio de temporada</span></div>
+        </div>`;
+      } else { medalsEl.hidden=true; medalsEl.innerHTML=""; }
+    }
+
     // acciones
     const act=$("#pf-actions"); act.innerHTML="";
     if(isMe){
@@ -2101,7 +2240,7 @@
     const list=(prof.showcase||[]).map(s=>{
       const variant = s.variant||"normal";
       if(variant.indexOf("promo:")===0){ const pc=PROMO_BY[variant.slice(6)]; return pc?{promo:pc}:null; }
-      const p = BY[s.slug] || LEG_BY[s.slug] || SUMMER_BY[s.slug];
+      const p = BY[s.slug] || LEG_BY[s.slug];
       return p ? {p, variant} : null;
     }).filter(Boolean);
     if(!list.length){ wrap.innerHTML=`<div class="pf-empty">${isMe?"Aún no expones cartas. Toca \"Editar vitrina\".":"Sin cartas en la vitrina."}</div>`; return; }
@@ -2177,7 +2316,6 @@
       items.push({slug:p.slug, variant:v, ord:ovr(p), html:cardHTML(p,{owned:true,count:0,variant:v})});
     }});
     LEGENDS_90S.forEach(p=>{ if(ownsNormal(p.slug)) items.push({slug:p.slug, variant:"normal", ord:ovr(p), html:cardHTML(p,{owned:true,count:0,variant:"normal"})}); });
-    SUMMER_CARDS.forEach(p=>{ if(ownsNormal(p.slug)) items.push({slug:p.slug, variant:"normal", ord:ovr(p), html:cardHTML(p,{owned:true,count:0,variant:"normal"})}); });
     PROMO.forEach(c=>{ if(ownsPromo(c.id)) items.push({slug:c.slug, variant:"promo:"+c.id, ord:c.media||90, html:promoCardHTML(c,{owned:true})}); });
     items.sort((a,b)=>b.ord-a.ord);
     const keyOf = it => it.slug+"|"+it.variant;
@@ -2259,7 +2397,7 @@
   // valor de una carta segun su media (+ extra si es Finals especial)
   function cardValue(c){
     if(c.variant && c.variant.indexOf("promo:")===0){ const pc=PROMO_BY[c.variant.slice(6)]; const m=pc?pc.media:95; return m>=98?600 : m>=95?450 : 320; }
-    const p=BY[c.slug]||LEG_BY[c.slug]||SUMMER_BY[c.slug]; if(!p) return 0;
+    const p=BY[c.slug]||LEG_BY[c.slug]; if(!p) return 0;
     const m=ovr(p);
     let v = m>=95?420 : m>=90?260 : m>=85?150 : m>=80?90 : m>=75?55 : 30;
     if(c.variant==="finals") v=Math.round(v*1.6);
@@ -2318,7 +2456,7 @@
     if(!arr||!arr.length) return `<span class="t-empty">—</span>`;
     return arr.map(c=>{
       if(c.variant && c.variant.indexOf("promo:")===0){ const pc=PROMO_BY[c.variant.slice(6)]; return pc?`<div class="t-cardwrap">${promoCardHTML(pc,{owned:true})}</div>`:""; }
-      const p=BY[c.slug]||LEG_BY[c.slug]||SUMMER_BY[c.slug]; if(!p) return "";
+      const p=BY[c.slug]||LEG_BY[c.slug]; if(!p) return "";
       const variant = c.variant==="finals" ? "finals" : "normal";
       return `<div class="t-cardwrap">${cardHTML(p,{owned:true,count:0,variant})}</div>`;
     }).join("");
@@ -2330,7 +2468,6 @@
     PLAYERS.forEach(p=>{ if((state.owned[p.slug]||0)>0) owned.push({slug:p.slug,variant:"normal",p});
       if((state.finals[p.slug]||0)>0) owned.push({slug:p.slug,variant:"finals",p}); });
     LEGENDS_90S.forEach(p=>{ if((state.owned[p.slug]||0)>0) owned.push({slug:p.slug,variant:"normal",p}); });
-    SUMMER_CARDS.forEach(p=>{ if((state.owned[p.slug]||0)>0) owned.push({slug:p.slug,variant:"normal",p}); });
     PROMO.forEach(c=>{ if(c.trade && ownsPromo(c.id)) owned.push({slug:c.slug, variant:"promo:"+c.id, p:c}); });   // cartas coach intercambiables
     const isPromo=o=>o.variant.indexOf("promo:")===0;
     owned.sort((a,b)=>{ const ap=isPromo(a)?1:0, bp=isPromo(b)?1:0; return ap!==bp ? bp-ap : ovr(b.p)-ovr(a.p); });   // promo primero, luego por media
@@ -2367,190 +2504,17 @@
   let scoresSub=null, scoresCache=[];
   function subscribeScores(){
     if(scoresSub || !window.DunkFire || !window.DunkFire.watchScores) return;
-    scoresSub = window.DunkFire.watchScores(list=>{ scoresCache=list; renderLeaderboard(list); renderLiga(); }, 10);
+    scoresSub = window.DunkFire.watchScores(list=>{ scoresCache=list; renderLeaderboard(list); }, 10);
   }
   function myDisplayName(){ return (myProfile&&myProfile.username) ? "@"+myProfile.username : (authUser? authUser.split("@")[0] : "jugador"); }
   const IS_LOCAL = ['localhost','127.0.0.1','0.0.0.0','::1',''].includes(location.hostname);
   function submitMyScore(score){
-    // pase de batalla SIEMPRE progresa (también en localhost para poder probarlo):
-    // XP estable por partida = 20 fijo + score/3 (tope 250). El "best" alimenta el ranking.
-    ensureLeague();
-    state.league.best = Math.max(state.league.best||0, score);
-    state.league.xp = (state.league.xp||0) + 20 + Math.min(Math.round((score||0)/3), 250);
-    save(); try{ renderLiga(); }catch(e){}
-    // SOLO la subida a la tabla real (nube) se omite en localhost
-    if(IS_LOCAL) return;
-    if(!window.DunkFire || !window.DunkFire.submitScore){ renderLiga(); return; }
-    if(!currentUid){ toast("Inicia sesión para guardar tu récord en la tabla"); renderLiga(); return; }
+    if(IS_LOCAL) return;   // solo se omite la subida a la tabla real (nube) en localhost
+    if(!window.DunkFire || !window.DunkFire.submitScore) return;
+    if(!currentUid){ toast("Inicia sesión para guardar tu récord en la tabla"); return; }
     window.DunkFire.submitScore(currentUid, myDisplayName(), score)
       .then(ok=>{ if(ok) toast("Récord guardado ✓"); })
       .catch(()=>{ toast("No se pudo guardar tu récord (revisa tu conexión)"); });
-    // a la tabla de la liga solo una vez que la liga ya abrió (1 h tras el lanzamiento)
-    if(leagueOpen() && window.DunkFire.submitLeague){ window.DunkFire.submitLeague(currentUid, myDisplayName(), state.league.best).catch(()=>{}); }
-    renderLiga();
-  }
-  /* ===== LIGA + PASE DE BATALLA ===== */
-  let leagueSub=null, leagueCache=[];
-  function ensureLeague(){
-    if(!state.league) state.league={ best:0, xp:0, premium:false, claimedFree:{}, claimedPremium:{}, claimHour:"" };
-    const L=state.league;
-    if(!L.claimedFree) L.claimedFree={}; if(!L.claimedPremium) L.claimedPremium={};
-  }
-  function subscribeLeague(){
-    if(leagueSub || !window.DunkFire || !window.DunkFire.watchLeague) return;
-    leagueSub = window.DunkFire.watchLeague(list=>{ leagueCache=list; renderLiga(); }, 50);
-  }
-  const HOUR_REWARD = {1:500, 2:300, 3:200};
-  // La tabla de clasificación de la liga arranca 1 hora después del lanzamiento.
-  // Antes de esa hora se muestra una cuenta regresiva; después, el mejor puntaje
-  // del minijuego entra automáticamente y solo se muestra el TOP 3.
-  const LEAGUE_START_MS = 1782276502331;   // la liga ya está abierta desde ahora
-  const leagueOpen = () => Date.now() >= LEAGUE_START_MS;
-  function leagueCountdownText(){
-    let ms = LEAGUE_START_MS - Date.now(); if(ms<0) ms=0;
-    const h=Math.floor(ms/3600000), m=Math.floor(ms%3600000/60000), s=Math.floor(ms%60000/1000);
-    return (h?h+":":"")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
-  }
-  let leagueTick=null;
-  // Pase de batalla: UN SOLO track de 60 niveles. Casi todos dan balones (relleno)
-  // y en niveles clave cae algo bueno (sobre, carta de Verano, skin de balón, cosmético), intercalado.
-  const BP_REWARDS = {
-    3:{title:'novato'}, 7:{frame:'bronce'}, 10:{skin:'atardecer'}, 13:{net:'neon'},
-    17:{trail:'chispas'}, 20:{frame:'plata', coins:400}, 23:{title:'veterano'},
-    25:{skin:'nebula'}, 30:{net:'fuego'}, 33:{trail:'hielo'}, 38:{frame:'oro'},
-    40:{summer:1, coins:600}, 43:{skin:'campeon'}, 48:{title:'elite'}, 50:{skin:'retro90s'},
-    55:{frame:'mvp'}, 57:{summer:1}, 60:{skin:'leyenda', title:'mvp', coins:3000},
-  };
-  function bpReward(i){
-    const L=i+1;
-    if(BP_REWARDS[L]) return BP_REWARDS[L];
-    if(L%5===0) return {rewardPacks:1};                       // 5,15,35,45 → sobre
-    return {coins: Math.round((80 + i*10)/5)*5};              // relleno básico: balones escalando
-  }
-  const BP_TIERS = (function(){
-    const out=[]; let xp=0;
-    for(let i=0;i<60;i++){ xp += Math.round((20 + i*7)/5)*5; out.push({xp, r:bpReward(i)}); }
-    return out;
-  })();
-  const bpBig = r => !!(r && (r.skin || r.summer || r.rewardPacks || r.promo || r.net || r.frame || r.title || r.trail));
-  function bpLevel(){ ensureLeague(); const xp=state.league.xp||0; let n=0; BP_TIERS.forEach(t=>{ if(xp>=t.xp) n++; }); return n; }
-  // tabla de la liga = mismos récords globales del minijuego (como la clasificación normal) + sembrados
-  function leagueBoard(){
-    const arr=(leagueCache||[]).slice();
-    // incluye tu mejor récord local aunque aún no haya subido a la nube (evita que te nieguen rango/premio siendo top)
-    if(currentUid){ const myBest=(state.league&&state.league.best)||0; if(myBest>0) arr.push({uid:currentUid, username:myDisplayName(), score:myBest}); }
-    const by={}; arr.forEach(r=>{ const k=r.uid||r.username||"jugador"; if(!by[k]||(r.score||0)>(by[k].score||0)) by[k]=r; });
-    return Object.values(by).sort((a,b)=>(b.score||0)-(a.score||0));
-  }
-  function leagueRank(){ const list=leagueBoard(); const i=list.findIndex(r=>r.uid===currentUid); return i>=0 ? i+1 : 0; }
-  function hourKey(){ return new Date().toISOString().slice(0,13); }
-  function claimHourReward(){
-    ensureLeague();
-    const rank=leagueRank(); const rew=HOUR_REWARD[rank];
-    if(!rew){ toast("Solo el top 3 reclama premio por hora"); return; }
-    if(state.league.claimHour===hourKey()){ toast("Ya reclamaste tu premio esta hora"); return; }
-    state.league.claimHour=hourKey(); addCoins(rew); save(); renderLiga();
-    toast(`¡Premio de liga! +<b>${rew}</b> balones (#${rank})`);
-  }
-  function claimBP(idx){
-    ensureLeague();
-    const t=BP_TIERS[idx]; if(!t) return;
-    if((state.league.xp||0) < t.xp){ toast("Aún no alcanzas ese nivel"); return; }
-    const store = state.league.claimedFree;   // track único (reusa el store de "gratis")
-    if(store[idx]){ return; }
-    store[idx]=true;
-    const got=msApplyReward(t.r);
-    save(); renderLiga(); renderRewards();
-    toast(`¡Nivel ${idx+1} reclamado! ${got||'✓'}`);
-  }
-  function rewardLabel(r){ if(!r) return ""; const p=[];
-    if(r.coins) p.push(`<span class="coin-ico"></span> ${r.coins}`);
-    if(r.rewardPacks) p.push(`🎁 ${r.rewardPacks} sobre${r.rewardPacks>1?'s':''}`);
-    if(r.skin && SKIN_BY[r.skin]) p.push(`🏀 ${SKIN_BY[r.skin].nombre}`);
-    if(r.net && COSMETICS.net[r.net]) p.push(`${COSMETICS.net[r.net].name}`);
-    if(r.frame && COSMETICS.frame[r.frame]) p.push(`${COSMETICS.frame[r.frame].name}`);
-    if(r.trail && COSMETICS.trail[r.trail]) p.push(`${COSMETICS.trail[r.trail].name}`);
-    if(r.title && COSMETICS.title[r.title]) p.push(`Título "${COSMETICS.title[r.title].name}"`);
-    if(r.summer) p.push(`🃏 Carta Verano${r.summer>1?' x'+r.summer:''}`);
-    if(r.promo && PROMO_BY[r.promo]) p.push(`carta ${esc(PROMO_BY[r.promo].nombre)}`);
-    return p.join(" + "); }
-  // ===== mini-previews VISUALES de las recompensas del pase =====
-  const bpNetSVG = col => `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="13" rx="14" ry="4.5" fill="none" stroke="${col}" stroke-width="2.6"/><g fill="none" stroke="${col}" stroke-width="1.4" opacity=".9"><path d="M11 14 16 34 24 38 32 34 37 14"/><path d="M16 15 19 35M24 15.5V38M32 15 29 35"/><path d="M13 22H35M15 29H33"/></g></svg>`;
-  const bpFrameSVG = c => { const gid="bpfr"+c.c1.replace('#',''); return `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c.c1}"/><stop offset="1" stop-color="${c.c2}"/></linearGradient></defs><circle cx="24" cy="24" r="17" fill="none" stroke="url(#${gid})" stroke-width="5"/><circle cx="24" cy="24" r="10.5" fill="#11131b"/></svg>`; };
-  const bpTrailSVG = col => `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><g fill="${col}"><circle cx="12" cy="32" r="2.2" opacity=".35"/><circle cx="18" cy="28" r="3" opacity=".55"/><circle cx="25" cy="23" r="4" opacity=".8"/></g><circle cx="34" cy="16" r="6.5" fill="${col}"/></svg>`;
-  const bpSummerSVG = () => `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="8" width="20" height="32" rx="3" fill="#13202b" stroke="#1fb6c9" stroke-width="2"/><circle cx="24" cy="19" r="4.6" fill="#ffd24d"/><path d="M16 35 22 27 27 32 32 24 32 38H16Z" fill="#1fb6c9"/></svg>`;
-  function bpRewardHTML(r){ if(!r) return ""; const out=[];
-    if(r.skin && SKIN_BY[r.skin]){ const s=SKIN_BY[r.skin]; out.push(`<div class="bp-cos">${skinBallSVG(s)}<span>${esc(s.nombre)}</span></div>`); }
-    if(r.net && COSMETICS.net[r.net]){ const c=COSMETICS.net[r.net]; out.push(`<div class="bp-cos">${bpNetSVG(c.color)}<span>${esc(c.name)}</span></div>`); }
-    if(r.frame && COSMETICS.frame[r.frame]){ const c=COSMETICS.frame[r.frame]; out.push(`<div class="bp-cos">${bpFrameSVG(c)}<span>${esc(c.name)}</span></div>`); }
-    if(r.trail && COSMETICS.trail[r.trail]){ const c=COSMETICS.trail[r.trail]; out.push(`<div class="bp-cos">${bpTrailSVG(c.color)}<span>${esc(c.name)}</span></div>`); }
-    if(r.title && COSMETICS.title[r.title]){ const c=COSMETICS.title[r.title]; out.push(`<div class="bp-cos"><span class="bp-title-pill">${esc(c.name)}</span></div>`); }
-    if(r.summer){ out.push(`<div class="bp-cos">${bpSummerSVG()}<span>Carta Verano</span></div>`); }
-    if(r.rewardPacks){ out.push(`<div class="bp-cos"><span class="bp-emoji">🎁</span><span>${r.rewardPacks} Sobre${r.rewardPacks>1?'s':''}</span></div>`); }
-    if(r.coins){ out.push(`<div class="bp-cos bp-coins"><span class="coin-ico"></span><span>${r.coins}</span></div>`); }
-    return out.join(""); }
-  function renderLiga(){
-    ensureLeague();
-    // tu posición + premio por hora
-    const top=$("#liga-top");
-    if(top){
-      const rank=leagueRank();
-      const claimable = HOUR_REWARD[rank] && state.league.claimHour!==hourKey();
-      top.innerHTML = `
-        <div class="liga-rank">
-          <span class="liga-rank-lbl">Tu posición</span>
-          <span class="liga-rank-num">${rank? "#"+rank : "—"}</span>
-          <span class="liga-rank-sub">Mejor puntaje: ${state.league.best||0}</span>
-        </div>
-        <div class="liga-claim">
-          ${HOUR_REWARD[rank] ? `<div class="liga-claim-txt">Premio por hora (#${rank}): <b>${HOUR_REWARD[rank]}</b> 🏀</div>
-             <button class="btn ${claimable?'btn-primary':'btn-ghost'}" id="liga-claim-btn" ${claimable?'':'disabled'}>${claimable?'Reclamar':'Reclamado esta hora'}</button>`
-            : `<div class="liga-claim-txt">Llega al top 3 para ganar balones cada hora.</div>`}
-        </div>`;
-    }
-    // pase de batalla
-    const lvl=bpLevel();
-    const xpEl=$("#bp-xp"); if(xpEl) xpEl.textContent=`Nivel ${lvl} · ${state.league.xp||0} XP`;
-    const track=$("#bp-track");
-    if(track){
-      track.innerHTML = BP_TIERS.map((t,i)=>{
-        const reached=(state.league.xp||0)>=t.xp;
-        const claimed=state.league.claimedFree[i];
-        const btn = claimed?`<span class="bp-ok">✓</span>` : reached?`<button class="btn btn-primary bp-claim" data-bp="${i}">Reclamar</button>`:`<span class="bp-lock">🔒</span>`;
-        return `<div class="bp-tier ${reached?'reached':''} ${bpBig(t.r)?'bp-big':''}">
-          <div class="bp-lvl">Nv ${i+1}<span>${t.xp} XP</span></div>
-          <div class="bp-rwd">${bpRewardHTML(t.r)}</div>
-          <div class="bp-row">${btn}</div>
-        </div>`;
-      }).join("");
-    }
-    // tabla (solo TOP 3) — antes de la hora de inicio: cuenta regresiva
-    const ol=$("#liga-list");
-    if(ol){
-      if(!leagueOpen()){
-        ol.innerHTML = `<li class="pf-empty liga-countdown" style="list-style:none">
-          <div class="liga-cd-lbl">La tabla de clasificación inicia en</div>
-          <div class="liga-cd-time" id="liga-cd-time">${leagueCountdownText()}</div>
-          <div class="liga-cd-sub">Cuando arranque, el mejor puntaje del minijuego entra solo al <b>Top 3</b>.</div>
-        </li>`;
-      } else {
-        const list=leagueBoard().slice(0,3);
-        ol.innerHTML = list.length ? list.map((r,i)=>`<li class="lb-row ${r.uid===currentUid?'me':''}">
-          <span class="lb-rank">${i+1}</span>
-          <span class="lb-name">${esc(r.username||"jugador")}${r.uid===currentUid?" (tú)":""}</span>
-          <span class="lb-pts">${r.score||0}</span></li>`).join("")
-          : `<li class="pf-empty" style="list-style:none">Aún nadie en el Top 3. ¡Juega Encestes para entrar!</li>`;
-      }
-    }
-  }
-  // refresca la cuenta regresiva cada segundo mientras la liga no abre
-  function startLeagueTick(){
-    if(leagueTick || leagueOpen()) return;
-    leagueTick = setInterval(()=>{
-      const t=$("#liga-cd-time");
-      if(leagueOpen()){ clearInterval(leagueTick); leagueTick=null; renderLiga(); return; }
-      if(t) t.textContent = leagueCountdownText();
-    }, 1000);
   }
   function renderLeaderboard(list){
     const ol=$("#lb-list"); if(!ol) return;
@@ -2647,7 +2611,7 @@
   function feeOf(t){ const p=t.pick||{}; if(!p[t.from]||!p[t.to]) return 0; return tradeFee([p[t.from]],[p[t.to]]); }
   function slotCard(c){
     if(c && c.variant && c.variant.indexOf("promo:")===0){ const pc=PROMO_BY[c.variant.slice(6)]; return pc?`<div class="t-cardwrap">${promoCardHTML(pc,{owned:true})}</div>`:`<span class="tr-empty">—</span>`; }
-    const p=c&&(BY[c.slug]||LEG_BY[c.slug]||SUMMER_BY[c.slug]); if(!p) return `<span class="tr-empty">—</span>`;
+    const p=c&&(BY[c.slug]||LEG_BY[c.slug]); if(!p) return `<span class="tr-empty">—</span>`;
     return `<div class="t-cardwrap">${cardHTML(p,{owned:true,count:0,variant:c.variant==="finals"?"finals":"normal"})}</div>`; }
   function renderRoom(t){
     roomTrade=t; const ou=otherOf(t);
@@ -2764,15 +2728,14 @@
     const f = noFoil ? {foil:0, glow:0} : foilFor(ovr(p));
     const nm = nameOverride || p.nombre;
     const boosted = p.finals || isFinals;   // muestra media mejorada + original
-    return `<button class="card ${p.finals?'finals':''} ${isFinals?'fcard':''} ${p.summer?'summer':''}" style="--c1:${t.c1};--c2:${t.c2};--foil:${f.foil}" data-glow="${f.glow}" data-slug="${p.slug}" data-variant="${isFinals?'finals':'normal'}" aria-label="${esc(nm)}, media ${ovr(p)}${isFinals?' edición Finals':''}">
+    return `<button class="card ${p.finals?'finals':''} ${isFinals?'fcard':''}" style="--c1:${t.c1};--c2:${t.c2};--foil:${f.foil}" data-glow="${f.glow}" data-slug="${p.slug}" data-variant="${isFinals?'finals':'normal'}" aria-label="${esc(nm)}, media ${ovr(p)}${isFinals?' edición Finals':''}">
       <div class="card-inner">
-        <div class="card-img"><img loading="lazy" src="${esc(photo)}" alt="${esc(p.nombre)}" ${foco} ${p.summer&&p.fallback?`data-fb="${esc(p.fallback)}" onerror="if(this.dataset.fb){this.src=this.dataset.fb;this.removeAttribute('data-fb');}else{this.style.opacity=0;}"`:`onerror="this.style.opacity=0"`}></div>
+        <div class="card-img"><img loading="lazy" src="${esc(photo)}" alt="${esc(p.nombre)}" ${foco} onerror="this.style.opacity=0"></div>
         ${logo?`<div class="card-logo" style="background-image:url('${logo}')"></div>`:""}
         <div class="card-foil"></div>
         <div class="card-shine"></div>
         ${isFinals ? `<div class="fcard-mark"><span class="fc-word">Finals</span></div>`
-                   : (p.summer?`<div class="card-summer">VERANO</div>`
-                   : (p.finals?`<div class="card-star">★</div>`:""))}
+                   : (p.finals?`<div class="card-star">★</div>`:"")}
         ${isFinals && p.equipo==="New York Knicks" ? `<div class="champ-badge"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M3 7l4 4 5-6 5 6 4-4-1.5 11h-15L3 7z"/><rect x="4.5" y="18.5" width="15" height="2.4" rx="1" fill="currentColor"/></svg>Campeón</div>` : ""}
         <div class="card-ovr"><b>${boosted?ovr(p):p.media}</b>${boosted?`<span class="ovr-orig">${p.media}</span>`:""}<span>${p.posicion}</span></div>
         ${count>1?`<div class="card-dup">×${count}</div>`:""}
@@ -2784,16 +2747,17 @@
      ÁLBUM
      ===================================================== */
   function renderProgress(){
-    const uniq = PLAYERS.filter(p=>ownsAny(p.slug)).length;
-    const pct = Math.round(uniq/PLAYERS.length*100);
+    const uniq = CARD_PLAYERS.filter(p=>ownsAny(p.slug)).length;
+    const pct = Math.round(uniq/CARD_PLAYERS.length*100);
     $("#prog-count").textContent = uniq;
+    $("#prog-total").textContent = CARD_PLAYERS.length;
     $("#prog-pct").textContent = pct+"%";
     $("#prog-ring").style.setProperty("--p", pct);
   }
 
   function renderAlbum(){
     const grid = $("#album-grid");
-    let list = PLAYERS.slice();
+    let list = CARD_PLAYERS.slice();
     const q = albumFilter.q.trim().toLowerCase();
     if(q) list = list.filter(p => p.nombre.toLowerCase().includes(q) || p.equipo.toLowerCase().includes(q));
     if(albumFilter.team) list = list.filter(p => p.equipo === albumFilter.team);
@@ -2832,15 +2796,6 @@
     const have=LEGENDS_90S.filter(p=>ownsNormal(p.slug)||ownsGraded(p.slug)).length;
     const c=$("#noventas-count"); if(c) c.innerHTML=`Tienes <b>${have}</b> / ${LEGENDS_90S.length} leyendas`;
   }
-  // Álbum de cartas exclusivas de verano
-  function renderAlbumSummer(){
-    const grid=$("#album-verano"); if(!grid) return;
-    const list=SUMMER_CARDS.slice().sort((a,b)=>b.media-a.media || a.nombre.localeCompare(b.nombre));
-    grid.innerHTML = list.map(p=> cardHTML(p, {owned:ownsNormal(p.slug), count:state.owned[p.slug]||0, variant:"normal"})).join("");
-    const have=SUMMER_CARDS.filter(p=>ownsNormal(p.slug)).length;
-    const c=$("#verano-count"); if(c) c.innerHTML=`Tienes <b>${have}</b> / ${SUMMER_CARDS.length} cartas de verano`;
-  }
-
   /* tilt + lámina siguiendo el puntero (delegado, sin re-render) */
   function bindTilt(root){
     root.addEventListener("pointermove", e=>{
@@ -2864,7 +2819,7 @@
   // valor en polvos de convertir una carta repetida (por rareza/tipo)
   function dustValue(p, isFinals){ const m=p?ovr(p):80; let d=m>=97?60 : m>=90?30 : m>=85?15 : 8; if(isFinals) d=Math.round(d*1.6); return d; }
   function dustValueFor(slug, v){
-    const p=BY[slug]||LEG_BY[slug]||SUMMER_BY[slug];
+    const p=BY[slug]||LEG_BY[slug];
     if(v==="promo"){ return 100; }
     return dustValue(p, v==="finals");
   }
@@ -2876,19 +2831,19 @@
     else { toast("Esta versión no se puede convertir"); return; }
     const dust=dustValueFor(slug, v);
     addPolvos(dust); save();
-    try{ renderAlbum(); renderAlbum90s(); renderAlbumSummer(); renderTienda(); }catch(e){}
+    try{ renderAlbum(); renderAlbum90s(); renderTienda(); }catch(e){}
     toast(`Convertida en <b>${dust}</b> polvos 🍶`);
     openDetail(slug);
   }
   // convertir TODAS las repetidas (deja 1 de cada) en polvos, en todas las categorías
   function dustAllDuplicates(){
     let extra=0, polvos=0;
-    Object.keys(state.owned||{}).forEach(slug=>{ const c=state.owned[slug]||0; if(c>1){ const n=c-1; const p=BY[slug]||LEG_BY[slug]||SUMMER_BY[slug]; polvos+=n*dustValue(p,false); extra+=n; state.owned[slug]=1; } });
+    Object.keys(state.owned||{}).forEach(slug=>{ const c=state.owned[slug]||0; if(c>1){ const n=c-1; const p=BY[slug]||LEG_BY[slug]; polvos+=n*dustValue(p,false); extra+=n; state.owned[slug]=1; } });
     Object.keys(state.finals||{}).forEach(slug=>{ const c=state.finals[slug]||0; if(c>1){ const n=c-1; polvos+=n*dustValue(BY[slug],true); extra+=n; state.finals[slug]=1; } });
     // las PROMO NO se convierten en masivo (solo manual, una por una desde su carta)
     if(!extra){ toast("No tienes cartas repetidas"); return; }
     addPolvos(polvos); save();
-    try{ renderAlbum(); renderAlbum90s(); renderAlbumSummer(); renderTienda(); }catch(e){}
+    try{ renderAlbum(); renderAlbum90s(); renderTienda(); }catch(e){}
     toast(`Convertiste <b>${extra}</b> repetida${extra>1?'s':''} en <b>${polvos}</b> polvos 🍶`);
   }
   // vista simple para promos que no son de un jugador base (coach, winner, PSA10)
@@ -2904,16 +2859,15 @@
     showSheet();
   }
   function openDetail(slug){
-    const p = BY[slug] || LEG_BY[slug] || SUMMER_BY[slug];
+    const p = BY[slug] || LEG_BY[slug];
     if(!p){ const pr=PROMO.find(c=>c.slug===slug); if(pr) return openPromoPreview(pr.id); return; }
     const isLeg = !!LEG_BY[slug];
-    const isSummer = !!SUMMER_BY[slug];
     const v = displayVariant(slug) || (promosForSlug(slug).length ? "promo" : "normal");
     const inLineup = lineup.includes(slug);
     const gIdxShown = gradedIndex(slug)>=0 ? gradedIndex(slug) : bestGradedIndex(slug);
     const selKey = v==="graded" ? ("graded:#"+gIdxShown) : v==="promo" ? (state.display[slug]||"") : v;
     const variants = [];
-    if(ownsNormal(slug)) variants.push({key:"normal", variant:"normal", label:isSummer?"Verano":isLeg?"Leyenda":"Normal"});
+    if(ownsNormal(slug)) variants.push({key:"normal", variant:"normal", label:isLeg?"Leyenda":"Normal"});
     if(ownsFinals(slug)) variants.push({key:"finals", variant:"finals", label:"Finals"});
     gradesOf(slug).forEach((e,i)=> variants.push({key:"graded:#"+i, variant:"graded", gradeIdx:i, label:"PSA "+gNum(e)}));
     promosForSlug(slug).forEach(pc=> variants.push({key:"promo:"+pc.id, promo:pc, label:"Promo"}));
@@ -2927,7 +2881,7 @@
         <div class="detail-info">
           <div class="eyebrow">${esc(p.posicion)} · ${esc(p.equipo)}</div>
           <h2>${esc(p.nombre)}</h2>
-          <div class="team-line">${isSummer?"Carta exclusiva de Verano":isLeg?"Leyenda de los 90":(v==="finals"?"Edición NBA Finals":"Carta NBA 2K26")}</div>
+          <div class="team-line">${isLeg?"Leyenda de los 90":(v==="finals"?"Edición NBA Finals":"Carta NBA 2K26")}</div>
           ${variants.length>1 ? `<div class="ver-label">Tus versiones · elige cuál exponer</div>
             <div class="ver-row">${variants.map(ent=>`
               <div class="ver ${ent.key===selKey?'sel':''}" data-ver="${ent.key}" role="button" tabindex="0">
@@ -3032,19 +2986,19 @@
       for(let i=0;i<n;i++){ const p=drawOne(LEGENDS_90S, taken); picks.push(p); taken.add(p.slug); }
     } else if(kind==="elite" || kind==="reward"){
       const minMedia = kind==="reward" ? 90 : 88;          // recompensa garantiza 90+
-      const tops = PLAYERS.filter(p=>ovr(p)>=minMedia);
+      const tops = CARD_PLAYERS.filter(p=>ovr(p)>=minMedia);
       const first = drawOne(tops, taken); picks.push(first); taken.add(first.slug);
-      for(let i=0;i<n-1;i++){ const p=drawOne(PLAYERS, taken); picks.push(p); taken.add(p.slug); }
+      for(let i=0;i<n-1;i++){ const p=drawOne(CARD_PLAYERS, taken); picks.push(p); taken.add(p.slug); }
     } else {
-      for(let i=0;i<n;i++){ const p=drawOne(PLAYERS, taken); picks.push(p); taken.add(p.slug); }
+      for(let i=0;i<n;i++){ const p=drawOne(CARD_PLAYERS, taken); picks.push(p); taken.add(p.slug); }
     }
     // mejor carta al final para clímax
     picks.sort((a,b)=>ovr(a)-ovr(b));
     let out = picks.map(p=>({p, variant:"normal"}));
     let gotGraded=null;
     if(kind==="psa" && Math.random()<0.08){
-      const pool=PLAYERS.filter(p=>ovr(p)>=80);
-      const sp=drawOne(pool.length?pool:PLAYERS, new Set());
+      const pool=CARD_PLAYERS.filter(p=>ovr(p)>=80);
+      const sp=drawOne(pool.length?pool:CARD_PLAYERS, new Set());
       const grade=rollGrade();
       gotGraded={p:sp,grade};
       out[out.length-1] = {p:sp, variant:"graded", grade};   // graduada rara, como clímax
@@ -3055,113 +3009,43 @@
       else state.owned[it.p.slug]=(state.owned[it.p.slug]||0)+1;
     });
     state.packs++; state.totalCards+=n;
-    addLeagueXp(30);                                   // XP del pase por abrir un sobre
     ensureMissions(); state.missions.daily.packs++;   // misión diaria: abrir sobre
     if(kind==="reward") state.rewardPacks=Math.max(0,(state.rewardPacks||0)-1);
     const newlyDone = checkTeamRewards();   // ¿algún equipo completado con estas cartas?
     save();
-    renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); renderAlbumSummer();
+    renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s();
     runOpener(out, kind);
     if(gotGraded) toast(`¡Carta graduada! <b>${esc(gotGraded.p.nombre)}</b> · PSA ${gotGraded.grade}`);
     newlyDone.forEach(t=> toast(`¡Equipo completo: <b>${esc(t)}</b>! Tienes un mensaje para reclamar tu recompensa`));
   }
   function renderPackStats(){ $("#packs-opened").textContent=state.packs; $("#cards-total").textContent=state.totalCards; }
-  // ---- FICHA DE VERANO (sorpresa): nada / balones / carta de verano / balón de verano ----
-  function buySummerToken(){
-    if(!spendCoins(TOKEN_COST)){ toast(`Te faltan balones. Juega <b>Encestes</b> para ganar más.`); showView("juego"); return; }
-    spinFicha();
-  }
-  // Tirada de la Ficha de Verano SIN cobrar balones (para códigos de regalo).
-  function spinFicha(){
-    const r=Math.random();
-    if(r<0.55){                       // 55% nada
-      showFichaResult("nada");
-    } else if(r<0.90){                 // 35% balones
-      const amt=100+Math.floor(Math.random()*9)*25;   // 100–300
-      addCoins(amt);
-      showFichaResult("balones", {amt});
-    } else if(r<0.95){                 // 5% carta de verano (5 de cada 100)
-      const c=SUMMER_CARDS[Math.floor(Math.random()*SUMMER_CARDS.length)];
-      if(c){
-        state.owned[c.slug]=(state.owned[c.slug]||0)+1;
-        state.totalCards=(state.totalCards||0)+1;
-        save(); renderProgress(); renderPackStats(); renderAlbumSummer();
-        runOpener([{p:c, variant:"normal"}], "verano", {skipPack:true, noAgain:true});   // sin sobre: solo revelado de posición/media
-      }
-    } else {                          // 5% balón de verano
-      if(!state.skins) state.skins={};
-      if(ownsSkin("verano")){ const amt=400; addCoins(amt); showFichaResult("balones", {amt, dupBall:true}); }
-      else { state.skins["verano"]=1; save(); equipSkin("verano"); renderSkins(); showFichaResult("balon"); }
-    }
-    renderFichaBtn();
-  }
-  // ---- CÓDIGO DE REGALO: abre N sobres normales (todo en un destape) + N tiradas de Ficha ----
+  // ---- CÓDIGO DE REGALO: abre N sobres normales (todo en un destape) ----
   function claimRewardCode(payload){
     const packs = Math.max(0, payload.packs|0);
-    const fichas = Math.max(0, payload.ficha|0);
     if(packs>0){
       const out=[];
       for(let s=0; s<packs; s++){
         const taken=new Set();
-        for(let i=0;i<5;i++){ const p=drawOne(PLAYERS, taken); taken.add(p.slug); out.push({p, variant:"normal"}); }
+        for(let i=0;i<5;i++){ const p=drawOne(CARD_PLAYERS, taken); taken.add(p.slug); out.push({p, variant:"normal"}); }
       }
       out.sort((a,b)=>ovr(a.p)-ovr(b.p));   // mejor carta al final
       out.forEach(it=>{ state.owned[it.p.slug]=(state.owned[it.p.slug]||0)+1; });
       state.packs+=packs; state.totalCards+=out.length;
-      addLeagueXp(30*packs);
       ensureMissions(); state.missions.daily.packs+=packs;
       checkTeamRewards(); save();
-      renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s(); renderAlbumSummer();
-      if(fichas>0) afterOpenerOnce=()=>{ for(let i=0;i<fichas;i++) spinFicha(); };
+      renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s();
       runOpener(out, "std", {noAgain:true, endHint:`¡${out.length} cartas!`});
-    } else if(fichas>0){
-      for(let i=0;i<fichas;i++) spinFicha();
     }
   }
-  function closeFres(){ const o=$("#fres"); if(o){ o.classList.remove("show"); o.setAttribute("aria-hidden","true"); o.querySelector(".fres-coins")?.remove(); } }
-  function showFichaResult(type, data){
-    data=data||{};
-    const o=$("#fres"), box=$("#fres-in"); if(!o||!box) return;
-    let html="";
-    const icoNada=`<svg class="fres-ico fres-shake" viewBox="0 0 64 64" fill="none" stroke="#7a8089" stroke-width="4" stroke-linecap="round"><circle cx="32" cy="32" r="25"/><line x1="15" y1="15" x2="49" y2="49"/></svg>`;
-    const icoCoin=`<svg class="fres-ico fres-spin" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="#ffc24d" stroke="#b9650f" stroke-width="3"/><circle cx="32" cy="32" r="20" fill="none" stroke="#fff3c0" stroke-width="2.5"/><line x1="32" y1="20" x2="32" y2="44" stroke="#b9650f" stroke-width="3.5" stroke-linecap="round"/><path d="M27 25h8a4 4 0 0 1 0 8h-8M27 33h9a4 4 0 0 1 0 8h-9" fill="none" stroke="#b9650f" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    const icoBall=`<svg class="fres-ico fres-spin" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="#ff7a2e" stroke="#1a1a1a" stroke-width="3"/><g fill="none" stroke="#1a1a1a" stroke-width="3"><line x1="5" y1="32" x2="59" y2="32"/><line x1="32" y1="5" x2="32" y2="59"/><path d="M14 11c8 7 12 13 12 21s-4 14-12 21"/><path d="M50 11c-8 7-12 13-12 21s4 14 12 21"/></g></svg>`;
-    if(type==="nada"){
-      html=`${icoNada}
-        <div class="fres-title fres-rise">Nada esta vez</div>
-        <p class="fres-sub fres-rise">La ficha no dio premio. ¡Vuelve a intentarlo!</p>`;
-    } else if(type==="balones"){
-      html=`${icoCoin}
-        <div class="fres-title fres-rise">${data.dupBall?"Ya tenías el balón":"¡Balones!"}</div>
-        <div class="fres-amount fres-pop"><span class="coin-ico"></span>+${data.amt}</div>
-        ${data.dupBall?`<p class="fres-sub fres-rise">Ya tenías el <b>Balón de Verano</b>, así que recibes balones.</p>`:""}`;
-    } else if(type==="balon"){
-      html=`${icoBall}
-        <div class="fres-title fres-rise">¡Balón de Verano!</div>
-        <p class="fres-sub fres-rise">Balón especial de Verano desbloqueado y equipado.</p>`;
-    }
-    box.innerHTML = html + `<button class="btn btn-primary fres-rise" id="fres-ok">Genial</button>`;
-    o.classList.add("show"); o.setAttribute("aria-hidden","false");
-    if(type==="balones" && !data.dupBall){
-      const rain=document.createElement("div"); rain.className="fres-coins";
-      let s=""; for(let i=0;i<14;i++){ const left=Math.round(i*7+ (i%3)*3); const dur=(1.1+(i%5)*0.22).toFixed(2); const del=((i%7)*0.12).toFixed(2);
-        s+=`<i style="left:${left}%; animation-duration:${dur}s; animation-delay:${del}s"></i>`; }
-      rain.innerHTML=s; o.appendChild(rain);
-    }
-    box.querySelector("#fres-ok").addEventListener("click", closeFres);
-    o.addEventListener("click", e=>{ if(e.target===o) closeFres(); }, {once:true});
-  }
-  function renderFichaBtn(){ const b=$("#btn-ficha-buy"); if(b) b.classList.toggle("cant-afford", (state.coins||0) < TOKEN_COST); }
   function renderShop(){
     const map={std:"#btn-std",psa:"#btn-psa"};
     for(const k in map){ const b=document.querySelector(map[k]); if(!b) continue;
       b.classList.toggle("cant-afford", (state.coins||0) < PACK_COST[k]); }
-    renderFichaBtn();
   }
 
   // ---- RECOMPENSAS POR EQUIPO ----
   function rosterByTeam(){
-    const m={}; PLAYERS.forEach(p=>{ (m[p.equipo]=m[p.equipo]||[]).push(p.slug); }); return m;
+    const m={}; CARD_PLAYERS.forEach(p=>{ (m[p.equipo]=m[p.equipo]||[]).push(p.slug); }); return m;
   }
   function teamsCompletedCount(){
     const m=rosterByTeam(); let n=0;
@@ -3179,35 +3063,12 @@
         newly.push(t);
       }
     }
-    checkAlbumComplete();
     return newly;
-  }
-  // Al completar el álbum (las 150) se elige UNA leyenda PSA 10 (solo una vez)
-  const LEGEND_PICKS = ["legend-jordan","legend-magic","legend-larry"];
-  function checkAlbumComplete(){
-    if(state.legendPick) return;
-    if(PLAYERS.filter(p=>ownsAny(p.slug)).length < PLAYERS.length) return;
-    showLegendChoice();
-  }
-  function showLegendChoice(){
-    const body=$("#sheet-body"); if(!body) return;
-    body.innerHTML = `<div class="picker-head"><h3>¡Álbum completo! 🏆</h3></div>
-      <p style="padding:0 20px 4px;color:var(--muted);font-size:13px">Elige <b>UNA</b> leyenda <b>PSA 10</b> como premio. Solo puedes elegir una.</p>
-      <div class="picker-grid"><div class="grid pk-grid2">${LEGEND_PICKS.map(id=>{ const c=PROMO_BY[id]; return `<div class="ver" data-legend="${id}" role="button" tabindex="0">${promoCardHTML(c,{owned:true})}<span class="ver-name">Elegir</span></div>`; }).join("")}</div></div>`;
-    body.querySelectorAll("[data-legend]").forEach(b=>b.addEventListener("click", ()=>pickLegend(b.dataset.legend)));
-    showSheet();
-  }
-  function pickLegend(id){
-    if(state.legendPick){ closeSheet(); return; }
-    if(!PROMO_BY[id]) return;
-    state.legendPick=id; grantPromo([id]); save(); closeSheet();
-    try{ renderAll(); }catch(e){}
-    toast(`¡Elegiste a <b>${esc(PROMO_BY[id].nombre)}</b> PSA 10! 🏆`);
   }
   function renderRewards(){
     const done=teamsCompletedCount();
     const td=$("#teams-done");
-    if(td) td.innerHTML=`Equipos completos: <b>${done}</b> / 30 · completa un equipo y reclama tu recompensa en Mensajes`;
+    if(td) td.innerHTML=`Equipos completos: <b>${done}</b> / 30 · completa un equipo y reclama ${TEAM_COMPLETE_REWARD} balones en Mensajes`;
     const rp=state.rewardPacks||0;
     const btn=$("#btn-reward");
     if(btn){ btn.disabled = rp<=0; btn.textContent = rp>0 ? `Abrir recompensa (${rp})` : "Sin sobres (0)"; }
@@ -3221,7 +3082,7 @@
     const m=state.missions; if(!m.claimed) m.claimed={}; if(!m.stats) m.stats={};
     if(!m.daily || m.daily.day!==msToday()) m.daily={ day:msToday(), games:0, baskets:0, golden:0, packs:0, swishes:0, claimed:{} };
   }
-  const _msOwned   = ()=> PLAYERS.filter(p=>ownsAny(p.slug)).length;
+  const _msOwned   = ()=> CARD_PLAYERS.filter(p=>ownsAny(p.slug)).length;
   const _msLegends = ()=> LEGENDS_90S.filter(p=>ownsNormal(p.slug)||ownsGraded(p.slug)).length;
   const _msGraded  = ()=> Object.keys(state.graded||{}).some(s=>gradesOf(s).length>0)?1:0;
   const DAILY_MISSIONS = [
@@ -3234,10 +3095,9 @@
   const ACH_MISSIONS = [
     { id:"cards25",   t:"Colecciona 25 cartas",             goal:25,  cur:_msOwned, r:{coins:400} },
     { id:"cards100",  t:"Colecciona 100 cartas",            goal:100, cur:_msOwned, r:{coins:1500, rewardPacks:1} },
-    { id:"album150",  t:"Completa el álbum (150 cartas)",   goal:150, cur:_msOwned, r:{coins:3500, rewardPacks:2} },
+    { id:"album150",  t:"Completa el álbum (184 cartas)",   goal:184, cur:_msOwned, r:{coins:3500, rewardPacks:2} },
     { id:"teams5",    t:"Completa 5 equipos",               goal:5,   cur:teamsCompletedCount, r:{coins:800} },
     { id:"teams30",   t:"Completa los 30 equipos",          goal:30,  cur:teamsCompletedCount, r:{coins:2000, rewardPacks:3} },
-    { id:"legendpsa", t:"Completa el álbum y elige tu leyenda PSA 10", goal:1, cur:()=>state.legendPick?1:0, r:{coins:1000} },
     { id:"baskets500",t:"Encesta 500 canastas en total",    goal:500, cur:()=>state.missions.stats.totalBaskets||0, r:{coins:1000} },
     { id:"score150",  t:"Haz 150 puntos en una partida",    goal:150, cur:()=>state.missions.stats.bestScore||0, r:{coins:600} },
     { id:"streak8",   t:"Racha de 8 en Encestes",           goal:8,   cur:()=>state.missions.stats.maxStreak||0, r:{coins:500} },
@@ -3251,10 +3111,8 @@
     if(r.promo && PROMO_BY[r.promo]){ grantPromo([r.promo]); txt.push(`carta <b>${esc(PROMO_BY[r.promo].nombre)}</b>`); }
     if(r.skin && SKIN_BY[r.skin]){ state.skins=state.skins||{}; state.skins[r.skin]=1; equipSkin(r.skin); txt.push(`🏀 balón <b>${esc(SKIN_BY[r.skin].nombre)}</b>`); }
     ["net","frame","title","trail"].forEach(type=>{ if(r[type] && COSMETICS[type] && COSMETICS[type][r[type]]){ grantCosmetic(type, r[type]); applyCosmetics(); const nm=COSMETICS[type][r[type]].name; txt.push(type==="title"?`título <b>${esc(nm)}</b>`:`<b>${esc(nm)}</b>`); } });
-    if(r.summer){ const g=grantSummerCards(r.summer); if(g) txt.push(`🃏 ${g} carta${g>1?'s':''} de Verano`); }
     return txt.join(" + ");
   }
-  function grantSummerCards(n){ let g=0; for(let k=0;k<(n||0);k++){ const c=SUMMER_CARDS[Math.floor(Math.random()*SUMMER_CARDS.length)]; if(c){ state.owned[c.slug]=(state.owned[c.slug]||0)+1; state.totalCards=(state.totalCards||0)+1; g++; } } if(g){ try{ renderAlbumSummer(); }catch(e){} } return g; }
   function claimMission(kind, id){
     ensureMissions();
     const list = kind==="daily"?DAILY_MISSIONS:ACH_MISSIONS;
@@ -3327,7 +3185,7 @@
         <div class="msg-ico">${trophy}</div>
         <div class="msg-body">
           <h4>¡Equipo completo: ${esc(m.team)}!</h4>
-          <p>${m.claimed ? "Recompensa reclamada. Ábrela en Sobres." : "Has desbloqueado un Sobre de Recompensa."}</p>
+          <p>${m.claimed ? "Recompensa reclamada." : `Has ganado <b>${TEAM_COMPLETE_REWARD}</b> balones.`}</p>
         </div>
         ${m.claimed ? `<span class="msg-done">Reclamado ✓</span>`
                     : `<button class="btn btn-primary msg-claim" data-claim="${esc(m.team)}">Reclamar</button>`}
@@ -3362,34 +3220,19 @@
     });
     showSheet();
   }
-  // abre el sobre de recompensa directamente (carta 90+ garantizada), sin pasar por Sobres
-  function openRewardPack(){
-    const n=5, picks=[], taken=new Set();
-    const tops=PLAYERS.filter(p=>ovr(p)>=90);
-    const first=drawOne(tops,taken); picks.push(first); taken.add(first.slug);
-    for(let i=0;i<n-1;i++){ const p=drawOne(PLAYERS,taken); picks.push(p); taken.add(p.slug); }
-    picks.sort((a,b)=>ovr(a)-ovr(b));
-    const out = picks.map(p=>({p, variant:"normal"}));
-    out.forEach(it=>{ state.owned[it.p.slug]=(state.owned[it.p.slug]||0)+1; });
-    state.packs++; state.totalCards+=n;
-    addLeagueXp(30);
-    const newlyDone=checkTeamRewards();
-    save();
-    renderProgress(); renderPackStats(); renderRewards(); renderMessages(); renderAlbum(); renderAlbum90s();
-    runOpener(out, "reward");
-    newlyDone.forEach(t=> toast(`¡Equipo completo: <b>${esc(t)}</b>! Tienes un mensaje para reclamar tu recompensa`));
-  }
+  const TEAM_COMPLETE_REWARD = 300;   // balones por completar un equipo (5/5 jugadores)
   function claimReward(team){
     const m=(state.messages||[]).find(x=>x.team===team && !x.claimed);
     if(!m) return;
-    m.claimed=true; save();
+    m.claimed=true;
+    addCoins(TEAM_COMPLETE_REWARD);
+    save();
     renderMessages(); drawMessages();
     closeSheet();
-    toast(`Recompensa de <b>${esc(team)}</b> reclamada`);
-    openRewardPack();   // se abre la recompensa al instante desde la notificación
+    toast(`¡Equipo <b>${esc(team)}</b> completo! +<b>${TEAM_COMPLETE_REWARD}</b> balones`);
   }
 
-  const PACK_PC = {std:"#386cff", elite:"#f2552c", finals:"#e8b84b", psa:"#d23b3b", reward:"#f2552c", noventas:"#b079ff", verano:"#ff9e3d"};
+  const PACK_PC = {std:"#386cff", elite:"#f2552c", finals:"#e8b84b", psa:"#d23b3b", reward:"#f2552c", noventas:"#b079ff"};
   let openerQueue=[], openerIdx=0, openerLast=null, openerPhase="reveal", tearTimer=null, revealTimers=[];
   function clearRevealTimers(){ revealTimers.forEach(clearTimeout); revealTimers=[]; clearTimeout(tearTimer); }
   let openerNoAgain=false, openerEndHint=null, afterOpenerOnce=null;
@@ -3775,7 +3618,8 @@
     }).join("");
     wrap.innerHTML = packCard + cards;
   }
-  // ---- skins de ARO (cosméticos net del pase; se equipan junto a los balones) ----
+  // ---- skins de ARO (cosméticos de aro; se equipan junto a los balones) ----
+  const bpNetSVG = col => `<svg class="bp-ic" viewBox="0 0 48 48" aria-hidden="true"><ellipse cx="24" cy="13" rx="14" ry="4.5" fill="none" stroke="${col}" stroke-width="2.6"/><g fill="none" stroke="${col}" stroke-width="1.4" opacity=".9"><path d="M11 14 16 34 24 38 32 34 37 14"/><path d="M16 15 19 35M24 15.5V38M32 15 29 35"/><path d="M13 22H35M15 29H33"/></g></svg>`;
   function renderNets(){
     const wrap=$("#shop-nets"); if(!wrap) return;
     ensureCos();
@@ -3873,7 +3717,6 @@
   // códigos canjeables UNA sola vez por cuenta (todos usan el mismo código)
   const ONCE_CODES = {
     "LEYENDA90": { coins:2000, pack90s:true },
-    "VERANO-3F1K-2026": { ficha:3, coins:1000 },  // 3 Fichas de Verano + 1000 balones
     "BALON-2500-T7X9": { coins:2500 },            // 2500 balones (1 uso por cuenta)
   };
   async function redeemCode(raw){
@@ -3888,12 +3731,10 @@
       const parts=[];
       if(r.coins){ addCoins(r.coins); parts.push(`+<b>${r.coins}</b> balones`); }
       if(r.promo && r.promo.length){ const n=grantPromo(r.promo); parts.push(n?`<b>${n}</b> carta${n>1?'s':''}`:`carta (ya la tenías)`); }
-      if(r.ficha){ parts.push(`<b>${r.ficha}</b> ficha${r.ficha>1?'s':''} de Verano 🃏`); }
       if(r.pack90s) parts.push("1 sobre 90s 🎁");
       save(); try{ renderAll(); }catch(e){}
       toast(`¡Código canjeado! ${parts.join(" + ")||'✓'}`);
       if(r.pack90s) openPack("noventas", true);   // sobre 90s gratis (con su animación)
-      if(r.ficha){ for(let i=0;i<r.ficha;i++) spinFicha(); }   // tiradas de Ficha de Verano gratis
       return;
     }
     // 1) códigos fijos (multiuso, para pruebas del dev)
@@ -3919,28 +3760,968 @@
   /* =====================================================
      NAV / TOAST / EVENTOS
      ===================================================== */
-  const LEGENDS_ENABLED = false;   // Leyendas 90s retiradas (reemplazadas por la elección PSA 10 al completar el álbum)
+  const LEGENDS_ENABLED = false;   // Leyendas 90s retiradas
   function showView(v){
     if(v==="noventas" && !LEGENDS_ENABLED){ v="album"; }
     $$(".tab").forEach(t=>t.setAttribute("aria-selected", String(t.dataset.view===v)));
     $$(".view").forEach(s=>s.classList.toggle("active", s.id==="view-"+v));
     if(v==="misiones") renderMissions();
-    if(v==="liga"){ subscribeScores(); subscribeLeague(); renderLiga(); startLeagueTick(); }
     if(v==="trueques") renderTrades();
     if(v==="tienda") renderTienda();
     if(v==="noventas") renderAlbum90s();
     if(v==="juego"){ subscribeScores(); renderLeaderboard(scoresCache); }
     if(window.MiniGame){ if(v==="juego") window.MiniGame.start(); else window.MiniGame.stop(); }
+    if(v==="fantasy") renderFantasy();
     window.scrollTo({top:0, behavior:"instant"});
   }
   let toastT;
   function toast(html){ const t=$("#toast"); t.innerHTML=html; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2200); }
+
+  /* =====================================================
+     FANTASY
+     ===================================================== */
+  const FANTASY_EXCLUDED = ["Oklahoma City Thunder","Philadelphia 76ers","New York Knicks","San Antonio Spurs"];
+  const FANTASY_ALL_TEAMS = Object.keys(TEAMS).filter(t=>TEAMS[t].id);                          // los 30 reales
+  const FANTASY_POOL_A = FANTASY_ALL_TEAMS.slice(0,15), FANTASY_POOL_B = FANTASY_ALL_TEAMS.slice(15);
+  const FANTASY_DAY_MS = 12*60*60*1000;   // medio día real = 1 día de temporada -> 2 días de Fantasy por día real
+  const FANTASY_ELIGIBLE  = FANTASY_ALL_TEAMS.filter(t=>!FANTASY_EXCLUDED.includes(t));          // asignables (24)
+  const FANTASY_SEASON_DAYS = 10;
+  const FANTASY_START_COINS = 1000;
+  const FANTASY_WIN_REWARD = 150, FANTASY_LOSS_REWARD = 50;
+  const FANTASY_TYPE_WIN_BONUS = { "copa-final":400, "playoff-qf":200, "playoff-sf":350, "playoff-final":600 };
+  const FANTASY_QUARTER_GAME_SEC = 12*60;   // 12:00 de reloj de juego por cuarto
+  const FANTASY_SPEED = 6;                  // 6x -> cada cuarto dura 120s reales
+  // línea de tiempo real de un partido: cuarto (120s reales) + descanso, x4, con medio tiempo tras el Q2
+  const FANTASY_SEG = [
+    {kind:"play",  from:0,    dur:120},
+    {kind:"break", at:720,    dur:15,  label:"Descanso"},
+    {kind:"play",  from:720,  dur:120},
+    {kind:"break", at:1440,   dur:30,  label:"Medio tiempo"},
+    {kind:"play",  from:1440, dur:120},
+    {kind:"break", at:2160,   dur:15,  label:"Descanso"},
+    {kind:"play",  from:2160, dur:120},
+  ];
+  const FANTASY_TOTAL_REAL = FANTASY_SEG.reduce((s,x)=>s+x.dur,0);   // 540s ≈ 9 min
+
+  const FANTASY_START_BUDGET = 150;   // millones de $ para fichajes en Transferencias (aparte de los balones Fantasy)
+  function ensureFantasyState(){
+    if(!state.fantasy) state.fantasy={ coins:FANTASY_START_COINS };
+    if(typeof state.fantasy.coins!=="number") state.fantasy.coins=FANTASY_START_COINS;
+    if(typeof state.fantasy.budget!=="number") state.fantasy.budget=FANTASY_START_BUDGET;
+  }
+  const fantasyTeamSlug = t => t.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  const fantasyRoster = team => PLAYERS.filter(p=>p.equipo===team);
+  // precio de fichaje en millones de $ — mismo para todos, siempre, fijo según su media (nada de azar)
+  function fantasyPlayerPrice(p){
+    const m=p.media||75;
+    return Math.max(1, Math.round((2 + Math.max(0,m-68)*2.1) * 10) / 10);
+  }
+  const fantasyFmtMoney = m => `$${m}M`;
+
+  // ---- generación del partido: resultado y jugadas quedan fijos desde el primer vistazo ----
+  function fantasyPickScore(){ return 92 + Math.floor(Math.random()*34); }   // 92–125
+  function fantasyPlaysFor(total){
+    const out=[]; let rem=total;
+    while(rem>0){
+      let pts;
+      if(rem<=1) pts=1;
+      else{ const r=Math.random(); pts = r<0.58?2 : r<0.92?3 : 1; if(pts>rem) pts=(rem===2?2:1); }
+      out.push(pts); rem-=pts;
+    }
+    return out;
+  }
+  const FANTASY_DESC = {
+    3:["mete un triple","anota de larga distancia","clava un triple limpio","conecta desde el perímetro"],
+    2:["anota de dos","clava un mate","encesta desde la pintura","anota con un gancho","penetra y anota"],
+    1:["anota un tiro libre"],
+  };
+  const FANTASY_MISS_DESC = ["falla un triple","falla de dos","pierde el balón","falla un tiro libre","no logra su mate","le bloquean el tiro","pierde el rebote"];
+  const fantasyPlayText = (nombre, pts) => { const o=FANTASY_DESC[pts]||FANTASY_DESC[2]; return `${nombre} ${o[Math.floor(Math.random()*o.length)]}`; };
+  const fantasyMissText = nombre => `${nombre} ${FANTASY_MISS_DESC[Math.floor(Math.random()*FANTASY_MISS_DESC.length)]}`;
+  const fantasyDefaultStarters = roster => roster.slice().sort((a,b)=>b.media-a.media).slice(0,5).map(p=>p.slug);
+  // ---- fatiga: cuánto tiempo lleva un jugador en cancha según el historial de alineaciones (events) ----
+  function fantasyStartersAtSec(events, sec){
+    let cur = events[0].starters;
+    for(const e of events){ if(e.atSec<=sec) cur=e.starters; else break; }
+    return cur;
+  }
+  function fantasyMinutesOnCourt(events, slug, uptoSec){
+    let total=0;
+    for(let i=0;i<events.length;i++){
+      const start=events[i].atSec;
+      const end = i+1<events.length ? events[i+1].atSec : uptoSec;
+      const windowEnd=Math.min(end, uptoSec);
+      if(windowEnd<=start) continue;
+      const onCourt = events[i].starters ? events[i].starters.includes(slug) : true;
+      if(onCourt) total += (windowEnd-start);
+    }
+    return total/60;
+  }
+  const fantasyFatigueMult = minutes => Math.max(0.28, 1 - minutes/42);
+  // titulares pesan más y se cansan: mientras más minutos llevan, menos probable que sigan anotando
+  function fantasyWeightedPlayer(roster, events, sec){
+    if(!roster.length) return {nombre:"Jugador", slug:"", posicion:""};
+    const starters = fantasyStartersAtSec(events, sec);
+    const weighted=[];
+    roster.forEach(p=>{
+      const isStarter = !starters || starters.includes(p.slug);
+      const base = isStarter?3:1;
+      const fatigue = fantasyFatigueMult(fantasyMinutesOnCourt(events, p.slug, sec));
+      const w = Math.max(1, Math.round(base*fatigue*4));
+      for(let i=0;i<w;i++) weighted.push(p);
+    });
+    return weighted[Math.floor(Math.random()*weighted.length)];
+  }
+  function generateFantasyGame(home, away, homeStarters, awayStarters){
+    const rosterH=fantasyRoster(home), rosterA=fantasyRoster(away);
+    const scoreH=fantasyPickScore(), scoreA=fantasyPickScore();
+    const scoring = fantasyPlaysFor(scoreH).map(pts=>({team:home,pts})).concat(fantasyPlaysFor(scoreA).map(pts=>({team:away,pts})));
+    const missCount = Math.round(scoring.length*0.55);
+    const misses = Array.from({length:missCount}, (_,i)=>({team: i%2===0?home:away, pts:0}));
+    const all = scoring.concat(misses);
+    const totalGameSec = FANTASY_QUARTER_GAME_SEC*4;
+    const times=new Set();
+    while(times.size<all.length) times.add(Math.floor(Math.random()*totalGameSec));
+    const sortedTimes=Array.from(times).sort((a,b)=>a-b);
+    for(let i=all.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [all[i],all[j]]=[all[j],all[i]]; }
+    const homeEvents=[{atSec:0, starters:(homeStarters&&homeStarters.length)?homeStarters:fantasyDefaultStarters(rosterH)}];
+    const awayEvents=[{atSec:0, starters:(awayStarters&&awayStarters.length)?awayStarters:fantasyDefaultStarters(rosterA)}];
+    let runH=0, runA=0;
+    const plays = sortedTimes.map((t,i)=>{
+      const it=all[i];
+      const roster = it.team===home ? rosterH : rosterA;
+      const events = it.team===home ? homeEvents : awayEvents;
+      const p = fantasyWeightedPlayer(roster, events, t);
+      if(it.pts>0){ if(it.team===home) runH+=it.pts; else runA+=it.pts; }
+      const text = it.pts>0 ? fantasyPlayText(p.nombre,it.pts) : fantasyMissText(p.nombre);
+      return { t, team:it.team, pts:it.pts, player:p.nombre, slug:p.slug, text, scoreH:runH, scoreA:runA };
+    });
+    return { home, away, finalHome:scoreH, finalAway:scoreA, plays,
+      lineupEvents:{ [home]:homeEvents, [away]:awayEvents },
+      status:"scheduled", liveStartedAt:null, createdAt:Date.now() };
+  }
+  // sustitución en pleno partido: solo re-asigna quién anota las jugadas AÚN NO reveladas (t>fromSec).
+  // el resultado final y el orden/puntos de las jugadas no cambian — solo el crédito de quién las hizo.
+  function fantasyRegenerateRemaining(game, team, newStarters, fromSec){
+    if(!game.lineupEvents) game.lineupEvents = { [game.home]:[{atSec:0,starters:null}], [game.away]:[{atSec:0,starters:null}] };
+    if(!game.lineupEvents[team]) game.lineupEvents[team]=[{atSec:0,starters:null}];
+    game.lineupEvents[team].push({atSec:fromSec, starters:newStarters});
+    const roster=fantasyRoster(team), events=game.lineupEvents[team];
+    game.plays = game.plays.map(pl=>{
+      if(pl.t<=fromSec || pl.team!==team) return pl;
+      const p=fantasyWeightedPlayer(roster, events, pl.t);
+      const text = pl.pts>0 ? fantasyPlayText(p.nombre, pl.pts) : fantasyMissText(p.nombre);
+      return Object.assign({}, pl, {player:p.nombre, slug:p.slug, text});
+    });
+  }
+  function fantasyClockLabel(tGame){
+    const q=Math.min(4, Math.floor(tGame/FANTASY_QUARTER_GAME_SEC)+1);
+    const rem=Math.max(0, Math.min(FANTASY_QUARTER_GAME_SEC, FANTASY_QUARTER_GAME_SEC-(tGame-(q-1)*FANTASY_QUARTER_GAME_SEC)));
+    return `Q${q} ${String(Math.floor(rem/60)).padStart(2,"0")}:${String(Math.floor(rem%60)).padStart(2,"0")}`;
+  }
+  function fantasyState(realElapsed){
+    if(realElapsed>=FANTASY_TOTAL_REAL) return { gameSec:2880, onBreak:null, finished:true };
+    let acc=0;
+    for(const seg of FANTASY_SEG){
+      if(realElapsed < acc+seg.dur){
+        const local=realElapsed-acc;
+        if(seg.kind==="play") return { gameSec: seg.from+local*FANTASY_SPEED, onBreak:null, finished:false };
+        return { gameSec: seg.at, onBreak: seg.label, finished:false };
+      }
+      acc+=seg.dur;
+    }
+    return { gameSec:2880, onBreak:null, finished:true };
+  }
+
+  // ---- calendario ----
+  function fantasyGenerateSchedule(myTeam, seasonNumber){
+    const games=[]; let gi=0;
+    for(let day=1; day<=FANTASY_SEASON_DAYS; day++){
+      // días impares -> rivales del grupo A (15), días pares -> grupo B (15), así no repites siempre contra los mismos
+      const pool = (day%2===1 ? FANTASY_POOL_A : FANTASY_POOL_B).filter(t=>t!==myTeam);
+      const usePool = pool.length ? pool : FANTASY_ALL_TEAMS.filter(t=>t!==myTeam);
+      const n = 2 + Math.floor(Math.random()*2);
+      for(let k=0;k<n;k++){
+        gi++;
+        const opp = usePool[Math.floor(Math.random()*usePool.length)];
+        games.push({ id:`s${seasonNumber}-${fantasyTeamSlug(myTeam)}-${gi}`, day, opponent:opp, status:"scheduled", copaGroup: gi<=FANTASY_COPA_GROUP_GAMES });
+      }
+    }
+    return games;
+  }
+  // ---- Copa NBA: los primeros N partidos de temporada regular son "grupo".
+  // Si ganas mayoría de esos, se agrega 1 partido extra de Final de Copa (no afecta tu récord de temporada). ----
+  const FANTASY_COPA_GROUP_GAMES = 4;
+  const FANTASY_COPA_WINS_NEEDED = 3;
+  async function fantasyCheckCopa(){
+    if(!fantasySchedule || !fantasySeasonData) return;
+    const already = fantasySchedule.games.some(g=>g.type==="copa-final");
+    if(already) return;
+    const group = fantasySchedule.games.filter(g=>g.copaGroup);
+    if(group.length < FANTASY_COPA_GROUP_GAMES || group.some(g=>g.status!=="final")) return;
+    const wins = group.filter(g=>g.won).length;
+    if(wins < FANTASY_COPA_WINS_NEEDED) return;
+    const lastDay = Math.max(...group.map(g=>g.day));
+    const pool = FANTASY_ALL_TEAMS.filter(t=>t!==fantasyMyTeam);
+    const opp = pool[Math.floor(Math.random()*pool.length)];
+    fantasySchedule.games.push({ id:`${"s"+fantasySeasonData.seasonNumber}-${fantasyTeamSlug(fantasyMyTeam)}-copaFinal`, day:lastDay, opponent:opp, status:"scheduled", type:"copa-final" });
+    try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(e){}
+    toast(`🏆 ¡Clasificaste a la Final de la Copa NBA! Nuevo partido disponible.`);
+  }
+  // ---- Playoffs: al terminar los 10 días de temporada regular, si ganaste suficientes partidos,
+  // se generan hasta 3 rondas extra (Cuartos y Semis a 1 partido, Final a mejor de 3). ----
+  const FANTASY_PLAYOFF_WINS_NEEDED = 16;   // de 26 partidos de temporada regular (sin contar Copa)
+  const FANTASY_PLAYOFF_ROUNDS = ["playoff-qf","playoff-sf","playoff-final"];
+  const FANTASY_PLAYOFF_ROUND_LABEL = { "playoff-qf":"Cuartos de Playoffs", "playoff-sf":"Semifinal de Playoffs", "playoff-final":"Final de Playoffs" };
+  function fantasyRegularGames(){
+    return fantasySchedule ? fantasySchedule.games.filter(g=>!g.type) : [];
+  }
+  function fantasyRegularWins(){
+    return fantasyRegularGames().filter(g=>g.status==="final" && g.won).length;
+  }
+  async function fantasyCheckPlayoffs(){
+    if(!fantasySchedule || !fantasySeasonData) return;
+    const reg = fantasyRegularGames();
+    if(reg.length < 1 || reg.some(g=>g.status!=="final")) return;   // temporada regular completa
+    if(fantasyRegularWins() < FANTASY_PLAYOFF_WINS_NEEDED) return;   // no clasificó
+    const lastDay = Math.max(...reg.map(g=>g.day));
+    for(const type of FANTASY_PLAYOFF_ROUNDS){
+      const roundGames = fantasySchedule.games.filter(g=>g.type===type);
+      if(type!=="playoff-final"){
+        if(roundGames.length) { if(roundGames[0].status!=="final" || !roundGames[0].won) return; continue; }
+        const pool = FANTASY_ALL_TEAMS.filter(t=>t!==fantasyMyTeam);
+        const opp = pool[Math.floor(Math.random()*pool.length)];
+        fantasySchedule.games.push({ id:`${"s"+fantasySeasonData.seasonNumber}-${fantasyTeamSlug(fantasyMyTeam)}-${type}`, day:lastDay+FANTASY_PLAYOFF_ROUNDS.indexOf(type)+1, opponent:opp, status:"scheduled", type });
+        try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(e){}
+        toast(`🏀 ¡Avanzaste a ${FANTASY_PLAYOFF_ROUND_LABEL[type]}!`);
+        return;
+      } else {
+        const wins = roundGames.filter(g=>g.status==="final" && g.won).length;
+        const losses = roundGames.filter(g=>g.status==="final" && !g.won).length;
+        if(wins>=2){ if(roundGames.length===wins+losses && !fantasyPlayoffChampAnnounced){ fantasyPlayoffChampAnnounced=true; toast(`🏆🏆 ¡CAMPEÓN DE PLAYOFFS! ¡Ganaste la Final!`); } return; }
+        if(losses>=2) return;   // perdiste la final
+        const gi = wins+losses+1;
+        if(roundGames.length>=gi) continue;
+        const opp = roundGames.length ? roundGames[0].opponent : FANTASY_ALL_TEAMS.filter(t=>t!==fantasyMyTeam)[Math.floor(Math.random()*(FANTASY_ALL_TEAMS.length-1))];
+        fantasySchedule.games.push({ id:`${"s"+fantasySeasonData.seasonNumber}-${fantasyTeamSlug(fantasyMyTeam)}-${type}-g${gi}`, day:lastDay+FANTASY_PLAYOFF_ROUNDS.indexOf(type)+gi, opponent:opp, status:"scheduled", type });
+        try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(e){}
+        toast(`🏀 Final de Playoffs — partido ${gi} disponible.`);
+        return;
+      }
+    }
+  }
+  let fantasyPlayoffChampAnnounced=false;
+
+  // ---- misiones exclusivas de Fantasy (recompensa en balones Fantasy, aparte de las normales) ----
+  function ensureFantasyMissions(){
+    ensureFantasyState();
+    if(!state.fantasy.missions) state.fantasy.missions={ claimed:{}, stats:{gamesPlayed:0,gamesWon:0,timeouts:0}, daily:null };
+    const m=state.fantasy.missions;
+    if(!m.claimed) m.claimed={}; if(!m.stats) m.stats={gamesPlayed:0,gamesWon:0,timeouts:0};
+    if(!m.daily || m.daily.day!==msToday()) m.daily={ day:msToday(), gamesPlayed:0, gamesWon:0, timeouts:0, claimed:{} };
+  }
+  const FANTASY_DAILY_MISSIONS = [
+    { id:"play1", t:"Juega 1 partido Fantasy", goal:1, cur:()=>state.fantasy.missions.daily.gamesPlayed, r:{coins:80} },
+    { id:"win1",  t:"Gana 1 partido Fantasy",  goal:1, cur:()=>state.fantasy.missions.daily.gamesWon,   r:{coins:150} },
+    { id:"to1",   t:"Pide un tiempo muerto",   goal:1, cur:()=>state.fantasy.missions.daily.timeouts,   r:{coins:50} },
+  ];
+  const FANTASY_ACH_MISSIONS = [
+    { id:"win3",   t:"Gana 3 partidos en la temporada",   goal:3,  cur:()=>state.fantasy.missions.stats.gamesWon,    r:{coins:300} },
+    { id:"win5",   t:"Gana 5 partidos en la temporada",   goal:5,  cur:()=>state.fantasy.missions.stats.gamesWon,    r:{coins:600} },
+    { id:"play10", t:"Juega 10 partidos en la temporada", goal:10, cur:()=>state.fantasy.missions.stats.gamesPlayed, r:{coins:500} },
+  ];
+  function fantasyMissionCardHTML(kind, mi){
+    const cur=Math.min(mi.cur(), mi.goal), done=mi.cur()>=mi.goal;
+    const store = kind==="daily"?state.fantasy.missions.daily.claimed:state.fantasy.missions.claimed;
+    const claimed=!!store[mi.id], pct=Math.round(cur/mi.goal*100);
+    const act = claimed ? `<span class="ms-claimed">Reclamado ✓</span>`
+      : done ? `<button class="btn btn-primary ms-claim" data-fms-kind="${kind}" data-fms-id="${mi.id}">Reclamar</button>`
+      : `<span class="ms-count">${cur}/${mi.goal}</span>`;
+    return `<div class="ms-card ${done&&!claimed?"ready":""} ${claimed?"is-claimed":""}">
+      <div class="ms-info">
+        <div class="ms-title">${esc(mi.t)}</div>
+        <div class="ms-bar"><span style="width:${pct}%"></span></div>
+        <div class="ms-reward">Recompensa: 🏀 ${mi.r.coins} Fantasy</div>
+      </div>
+      <div class="ms-act">${act}</div>
+    </div>`;
+  }
+  function renderFantasyMissions(){
+    ensureFantasyMissions();
+    const d=$("#fantasy-ms-daily"), a=$("#fantasy-ms-ach");
+    if(d) d.innerHTML=FANTASY_DAILY_MISSIONS.map(mi=>fantasyMissionCardHTML("daily",mi)).join("");
+    if(a) a.innerHTML=FANTASY_ACH_MISSIONS.map(mi=>fantasyMissionCardHTML("ach",mi)).join("");
+  }
+  function fantasyClaimMission(kind, id){
+    ensureFantasyMissions();
+    const list = kind==="daily"?FANTASY_DAILY_MISSIONS:FANTASY_ACH_MISSIONS;
+    const mi=list.find(x=>x.id===id); if(!mi) return;
+    const store = kind==="daily"?state.fantasy.missions.daily.claimed:state.fantasy.missions.claimed;
+    if(store[id] || mi.cur()<mi.goal) return;
+    store[id]=true;
+    state.fantasy.coins=(state.fantasy.coins||0)+mi.r.coins;
+    save(); renderFantasyMissions(); renderFantasyHeader();
+    toast(`¡Misión Fantasy completada! +${mi.r.coins} 🏀`);
+  }
+
+  // ---- estado / entrada ----
+  let fantasyMyTeam=null, fantasySeasonData=null, fantasySchedule=null, fantasySubTab="partidos";
+  let fantasyLiveGame=null, fantasyLiveGameId=null, fantasyLiveDay=null, fantasyLiveHistory=[], fantasyLivePlayIdx=0, fantasyLiveTimer=null;
+  let fantasyTimeoutsLeft=2, fantasyTimeoutActive=false;
+
+  function switchFantasySub(tab){
+    fantasySubTab=tab;
+    $$("#fantasy-subnav .fantasy-subtab").forEach(t=>{ const on=t.dataset.sub===tab; t.classList.toggle("active",on); t.setAttribute("aria-selected",String(on)); });
+    ["partidos","equipo","transfer","misiones","stats","news"].forEach(k=>{ const el=$("#fantasy-sub-"+k); if(el) el.hidden = k!==tab; });
+    if(tab==="equipo") renderFantasyEquipo();
+    if(tab==="transfer") renderFantasyTransfer();
+    if(tab==="misiones") renderFantasyMissions();
+    if(tab==="stats"){ renderFantasyStandings(); renderFantasyStatLeaders(); }
+    if(tab==="news") renderFantasyNews();
+  }
+  async function renderFantasyNews(){
+    const wrap=$("#fantasy-news-list"); if(!wrap) return;
+    wrap.innerHTML=`<p style="color:var(--muted);font-size:13px">Cargando…</p>`;
+    let news=[];
+    try{ news = await window.DunkFire.fantasyGetNews(); }catch(e){}
+    wrap.innerHTML = news.length ? news.map(n=>`<div class="fantasy-news-card">
+        <div class="fantasy-news-date">${new Date(n.createdAt).toLocaleDateString("es",{day:"numeric",month:"long"})}</div>
+        ${n.title?`<div class="fantasy-news-title">${esc(n.title)}</div>`:""}
+        <div class="fantasy-news-text">${esc(n.text)}</div>
+      </div>`).join("")
+      : `<p style="color:var(--muted);font-size:13px">Aún no hay noticias de la temporada.</p>`;
+  }
+  // ---- cancha / formación estilo FUT ----
+  function fantasyJitter(slug, seed){
+    let h=0; for(let i=0;i<slug.length;i++) h=(h*31+slug.charCodeAt(i)+seed)>>>0;
+    return (h%7)-3;
+  }
+  function fantasyStatPair(p){
+    const m=p.media||75, clamp=v=>Math.max(50,Math.min(99,v));
+    const a=clamp(m+fantasyJitter(p.slug,1)), b=clamp(m+fantasyJitter(p.slug,2));
+    const pos=p.posicion;
+    if(pos==="PG") return [["DRI",a],["TIR",b]];
+    if(pos==="SG") return [["TIR",a],["DEF",b]];
+    if(pos==="SF") return [["DEF",a],["FIS",b]];
+    if(pos==="PF") return [["REB",a],["FIS",b]];
+    return [["REB",a],["DEF",b]];
+  }
+  // ---- estadísticas de temporada simuladas (deterministas por jugador, no dependen de partidos reales) ----
+  function fantasyJitterN(slug, seed, n){
+    let h=0; for(let i=0;i<slug.length;i++) h=(h*31+slug.charCodeAt(i)+seed)>>>0;
+    return h%n;
+  }
+  function fantasySeasonStats(p){
+    const m=p.media||75, slug=p.slug||"x", pos=p.posicion;
+    const rebF=(pos==="C")?1.5:(pos==="PF")?1.25:(pos==="SF")?0.9:(pos==="SG")?0.6:0.5;
+    const astF=(pos==="PG")?1.6:(pos==="SG")?0.8:(pos==="SF")?0.65:0.4;
+    const blkF=(pos==="C")?1.5:(pos==="PF")?1.0:0.4;
+    const ppg=Math.max(3,(m-58)*0.5+fantasyJitterN(slug,1,40)/10);
+    const rpg=Math.max(0.6,(m-58)*0.10*rebF+fantasyJitterN(slug,2,20)/10);
+    const apg=Math.max(0.4,(m-58)*0.10*astF+fantasyJitterN(slug,3,20)/10);
+    const spg=0.6+fantasyJitterN(slug,4,14)/10;
+    const bpg=Math.max(0.1,(m-58)*0.02*blkF+fantasyJitterN(slug,5,10)/10);
+    const fg=Math.min(62, Math.round(38+(m-58)*0.42+fantasyJitterN(slug,6,7)));
+    const tp=Math.min(46, Math.round(27+Math.max(0,m-65)*0.45+fantasyJitterN(slug,7,8)));
+    const ft=Math.min(94, Math.round(66+(m-58)*0.35+fantasyJitterN(slug,8,10)));
+    // los de conteo (puntos, rebotes, etc) son promedios pero se muestran redondeados a entero, sin punto decimal
+    return { ppg:Math.round(ppg), rpg:Math.round(rpg), apg:Math.round(apg), spg:Math.round(spg), bpg:Math.round(bpg), fg, tp, ft };
+  }
+  function fantasyStatBlockHTML(p, mode){
+    const s=fantasySeasonStats(p);
+    if(mode==="pct"){
+      return `<div class="fs-grid fs-grid-3">
+        <div class="fs-stat"><b>${s.fg}%</b><span>Tiro de campo</span></div>
+        <div class="fs-stat"><b>${s.tp}%</b><span>Triples</span></div>
+        <div class="fs-stat"><b>${s.ft}%</b><span>Tiro libre</span></div>
+      </div>`;
+    }
+    return `<div class="fs-grid">
+      <div class="fs-stat"><b>${s.ppg}</b><span>PTS</span></div>
+      <div class="fs-stat"><b>${s.rpg}</b><span>REB</span></div>
+      <div class="fs-stat"><b>${s.apg}</b><span>AST</span></div>
+      <div class="fs-stat"><b>${s.spg}</b><span>ROB</span></div>
+      <div class="fs-stat"><b>${s.bpg}</b><span>TAP</span></div>
+    </div>`;
+  }
+  let fantasyStatModalMode="counts";
+  function fantasyOpenPlayerStats(slug, opts){
+    opts=opts||{};
+    const p=BY[slug]; if(!p) return;
+    fantasyStatModalMode="counts";
+    const body=$("#sheet-body");
+    const render=()=>{
+      body.innerHTML = `<div class="picker-head"><h3>${esc(p.nombre)}</h3></div>
+        <p style="padding:0 20px;color:var(--muted);font-size:12.5px">${esc(p.posicion||"")} · ${esc(p.equipo)} · Media ${p.media}</p>
+        <div class="ft-offer-type" style="margin:14px 20px 6px">
+          <button class="${fantasyStatModalMode==="counts"?"active":""}" data-fsm="counts" type="button">Promedios</button>
+          <button class="${fantasyStatModalMode==="pct"?"active":""}" data-fsm="pct" type="button">Porcentajes</button>
+        </div>
+        ${fantasyStatBlockHTML(p, fantasyStatModalMode)}
+        <p style="padding:8px 20px 0;color:var(--muted);font-size:11px;text-align:center">Estadísticas simuladas de temporada</p>
+        ${opts.subKey?`<div class="ff-actions" style="margin-top:16px"><button class="btn btn-primary" id="fs-sub-btn">🔄 Sustituir</button></div>`:""}`;
+      body.querySelectorAll("[data-fsm]").forEach(b=>b.addEventListener("click", ()=>{ fantasyStatModalMode=b.dataset.fsm; render(); }));
+      if(opts.subKey){ body.querySelector("#fs-sub-btn").addEventListener("click", ()=>fantasySlotClick(opts.subKey)); }
+    };
+    render();
+    showSheet();
+  }
+  const FANTASY_STAT_CATS = { ppg:"PTS", rpg:"REB", apg:"AST", tp:"3P%", bpg:"BLK", spg:"ROB", ft:"FT%" };
+  let fantasyStatCat="ppg";
+  async function renderFantasyStandings(){
+    const wrap=$("#fantasy-standings"); if(!wrap) return;
+    wrap.innerHTML=`<p style="color:var(--muted);font-size:13px">Cargando…</p>`;
+    const teams=(fantasySeasonData&&fantasySeasonData.teams)||{};
+    const claimed=Object.keys(teams).filter(t=>teams[t]);
+    if(!claimed.length){ wrap.innerHTML=`<p style="color:var(--muted);font-size:13px">Nadie se ha unido todavía.</p>`; return; }
+    const rows=[];
+    for(const t of claimed){
+      let sched=null; try{ sched=await window.DunkFire.fantasyGetSchedule(t); }catch(e){}
+      const games=(sched&&sched.games)||[];
+      rows.push({ team:t, w:games.filter(g=>g.status==="final"&&g.won).length, l:games.filter(g=>g.status==="final"&&!g.won).length });
+    }
+    rows.sort((a,b)=> b.w-a.w || a.l-b.l);
+    wrap.innerHTML = rows.map((r,i)=>`<div class="fantasy-standings-row ${r.team===fantasyMyTeam?"mine":""}">
+      <span class="fs-rank">${i+1}</span><span class="fs-team">${esc(r.team)}</span><span class="fs-rec">${r.w}-${r.l}</span>
+    </div>`).join("");
+  }
+  function renderFantasyStatLeaders(){
+    const wrap=$("#fantasy-stat-leaders"); if(!wrap) return;
+    const pct = fantasyStatCat==="tp" || fantasyStatCat==="ft";
+    const ranked = PLAYERS.map(p=>({p, v:parseFloat(fantasySeasonStats(p)[fantasyStatCat])}))
+      .sort((a,b)=>b.v-a.v).slice(0,15);
+    wrap.innerHTML = ranked.map((r,i)=>`<div class="fantasy-offer-row" data-stat-slug="${esc(r.p.slug)}" style="cursor:pointer">
+        <span style="width:22px;color:var(--muted);font-family:var(--display);font-weight:700">${i+1}</span>
+        <span class="fantasy-offer-desc">${esc(r.p.nombre)} <span style="color:var(--muted)">· ${esc(r.p.equipo)}</span></span>
+        <b>${r.v}${pct?"%":""}</b>
+      </div>`).join("");
+  }
+  function fantasyAssignSlots(roster, starters){
+    const bySlug=Object.fromEntries(roster.map(p=>[p.slug,p]));
+    let five=(starters||[]).map(s=>bySlug[s]).filter(Boolean);
+    const already=new Set(five.map(p=>p.slug));
+    if(five.length<5){
+      const fill=roster.slice().sort((a,b)=>b.media-a.media).filter(p=>!already.has(p.slug));
+      while(five.length<5 && fill.length) five.push(fill.shift());
+    }
+    five=five.slice(0,5);
+    const pgIdx=five.findIndex(p=>p.posicion==="PG");
+    const mid = pgIdx>=0 ? five.splice(pgIdx,1)[0] : (five.shift()||null);
+    return { tl:five[0]||null, tr:five[1]||null, mid, bl:five[2]||null, br:five[3]||null };
+  }
+  function fantasyCardHTML(p, editable){
+    if(!p) return `<div class="ff-card-empty">+</div>`;
+    const st=fantasyStatPair(p);
+    return `<div class="ff-card" data-ff-slug="${esc(p.slug)}">
+      <div class="ff-ovr">${p.media}</div>
+      <div class="ff-pos">${esc(p.posicion||"")}</div>
+      <div class="ff-photo"><img src="${esc(p.foto)}" onerror="this.style.opacity=0"></div>
+      <div class="ff-name">${esc(p.nombre.split(" ").pop())}</div>
+      <div class="ff-stats"><span>${st[0][0]} <b>${st[0][1]}</b></span><span>${st[1][0]} <b>${st[1][1]}</b></span></div>
+    </div>`;
+  }
+  function fantasyFormationHTML(team, starters, editable){
+    const roster=fantasyRoster(team);
+    const slots=fantasyAssignSlots(roster, starters);
+    const slot=(key,cls)=>`<div class="ff-slot ${cls} ${editable?"editable":""}" data-ff-key="${key}">${fantasyCardHTML(slots[key],editable)}</div>`;
+    return `<div class="ff-wrap">
+      <div class="ff-court">
+        <div class="ff-formation-lbl">${esc(team)}</div>
+        ${slot("tl","tl")}${slot("tr","tr")}${slot("mid","mid")}${slot("bl","bl")}${slot("br","br")}
+        <div class="ff-chem"><b>100</b><span>Química</span></div>
+      </div>
+      ${editable?`<p class="ff-hint2">Toca un jugador para sustituirlo. Los titulares reciben más jugadas que la banca.</p>
+      <div class="ff-actions"><button class="btn btn-primary" id="fantasy-save-lineup">💾 Guardar plantilla</button></div>`:""}
+    </div>`;
+  }
+  let fantasyEditStarters=null, fantasyEditMode=null;
+  async function fantasyLoadEditStarters(){
+    let lu=null; try{ lu=await window.DunkFire.fantasyGetLineup(fantasyMyTeam); }catch(e){}
+    const roster=fantasyRoster(fantasyMyTeam);
+    fantasyEditStarters = (lu && lu.starters && lu.starters.length) ? lu.starters.slice()
+      : roster.slice().sort((a,b)=>b.media-a.media).slice(0,5).map(p=>p.slug);
+  }
+  function fantasyRerenderEditor(){
+    const html=fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true);
+    if(fantasyEditMode==="equipo"){ const w=$("#fantasy-equipo-wrap"); if(w) w.innerHTML=html; closeSheet(); }
+    else if(fantasyEditMode==="sheet"){ $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + html; }
+  }
+  function fantasySlotClick(key){
+    const roster=fantasyRoster(fantasyMyTeam);
+    const slots=fantasyAssignSlots(roster, fantasyEditStarters);
+    const outgoing=slots[key];
+    openFantasySubPicker(incomingSlug=>{
+      if(outgoing) fantasyEditStarters=fantasyEditStarters.filter(s=>s!==outgoing.slug);
+      fantasyEditStarters.push(incomingSlug);
+      fantasyRerenderEditor();
+    });
+  }
+  // tocar un jugador en la cancha: si hay alguien, primero sus estadísticas (con botón Sustituir); si el slot está vacío, va directo al selector
+  function fantasySlotOrStats(slot){
+    const key=slot.dataset.ffKey;
+    const card=slot.querySelector(".ff-card");
+    if(card && card.dataset.ffSlug) fantasyOpenPlayerStats(card.dataset.ffSlug, {subKey:key});
+    else fantasySlotClick(key);
+  }
+  function openFantasySubPicker(onPick){
+    const roster=fantasyRoster(fantasyMyTeam);
+    const bench=roster.filter(p=>!fantasyEditStarters.includes(p.slug));
+    const body=$("#sheet-body");
+    body.innerHTML = `<div class="picker-head"><h3>Elegir jugador</h3></div>` +
+      (bench.length ? bench.map(p=>`<div class="ff-picker-row" data-slug="${esc(p.slug)}">
+          <div class="ff-picker-photo"><img src="${esc(p.foto)}" onerror="this.style.opacity=0"></div>
+          <span class="ff-picker-name">${esc(p.nombre)}</span>
+          <span class="ff-picker-meta">${esc(p.posicion||"")} · ${p.media}</span>
+        </div>`).join("")
+        : `<p style="padding:0 20px;color:var(--muted);font-size:13px">No tienes banca todavía. Cuando se agreguen más jugadores a tu roster vas a poder sustituir aquí.</p>`);
+    body.querySelectorAll("[data-slug]").forEach(row=>row.addEventListener("click", ()=>onPick(row.dataset.slug)));
+    showSheet();
+  }
+  async function fantasySaveLineupNow(){
+    try{ await window.DunkFire.fantasySaveLineup(fantasyMyTeam, {starters: fantasyEditStarters}); }
+    catch(e){ toast("No se pudo guardar la plantilla"); return; }
+    const liveGameOfMine = fantasyLiveGame && fantasyLiveGame.status!=="final" && (fantasyLiveGame.home===fantasyMyTeam || fantasyLiveGame.away===fantasyMyTeam);
+    if(liveGameOfMine){
+      const nowSec = fantasyState((Date.now()-fantasyLiveGame.liveStartedAt)/1000).gameSec;
+      fantasyRegenerateRemaining(fantasyLiveGame, fantasyMyTeam, fantasyEditStarters, nowSec);
+      window.DunkFire.fantasyUpdateGame(fantasyLiveGameId, { plays: fantasyLiveGame.plays, lineupEvents: fantasyLiveGame.lineupEvents }).catch(()=>{});
+      toast("Cambio aplicado — ya rige en el partido en curso");
+    } else {
+      toast("Plantilla guardada ✓");
+    }
+    if(fantasyEditMode==="sheet") closeSheet();
+  }
+  async function renderFantasyEquipo(){
+    const wrap=$("#fantasy-equipo-wrap"); if(!wrap) return;
+    wrap.innerHTML = `<p style="color:var(--muted);font-size:13px;text-align:center">Cargando…</p>`;
+    await fantasyLoadEditStarters();
+    fantasyEditMode="equipo";
+    wrap.innerHTML = fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true);
+  }
+  async function fantasyOpenTimeoutTeam(){
+    await fantasyLoadEditStarters();
+    fantasyEditMode="sheet";
+    $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true);
+    showSheet();
+  }
+  function renderFantasyTransfer(){
+    const wrap=$("#fantasy-transfer-list"); if(!wrap) return;
+    wrap.innerHTML = FANTASY_ALL_TEAMS.map(t=>{
+      const roster=fantasyRoster(t);
+      const isMine=t===fantasyMyTeam;
+      const tag = isMine ? `<span class="fantasy-transfer-tag mine">Tu equipo</span>` : "";
+      return `<div class="fantasy-transfer-row clickable" data-team="${esc(t)}">
+        <div class="fantasy-transfer-top"><span class="fantasy-transfer-name">${esc(t)}</span>${tag}</div>
+        <div class="fantasy-transfer-roster">${roster.map(p=>esc(p.nombre)).join(" · ")||"—"}</div>
+      </div>`;
+    }).join("");
+    renderFantasyMyOffers();
+  }
+  async function renderFantasyMyOffers(){
+    const wrap=$("#fantasy-my-offers"); if(!wrap || !currentUid) return;
+    wrap.innerHTML=`<p style="color:var(--muted);font-size:13px">Cargando…</p>`;
+    let offers=[];
+    try{ offers = await window.DunkFire.fantasyMyOffers(currentUid); }catch(e){}
+    const statusLbl = {pending:"Pendiente", accepted:"Aceptada", rejected:"Rechazada"};
+    wrap.innerHTML = offers.length ? offers.map(o=>{
+      const p=BY[o.playerSlug];
+      const parts=[];
+      if(o.offeredSlug) parts.push(`tu <b>${esc((BY[o.offeredSlug]||{}).nombre||o.offeredSlug)}</b>`);
+      if(o.amount) parts.push(`<b>${esc(fantasyFmtMoney(o.amount))}</b>`);
+      const desc = `Ofreces ${parts.join(" + ")} por ${p?esc(p.nombre):esc(o.playerSlug)} (${esc(o.toTeam)})`;
+      return `<div class="fantasy-offer-row"><span class="fantasy-offer-desc">${desc}</span><span class="fantasy-offer-status ${o.status}">${statusLbl[o.status]||o.status}</span></div>`;
+    }).join("") : `<p style="color:var(--muted);font-size:13px">Aún no has hecho ofertas.</p>`;
+  }
+  function fantasyOpenTeamDetail(team){
+    const roster=fantasyRoster(team), isMine=team===fantasyMyTeam;
+    const body=$("#sheet-body");
+    body.innerHTML = `<div class="picker-head"><h3>${esc(team)}</h3></div>` +
+      (roster.length ? roster.map(p=>`<div class="ft-roster-row" data-stat-slug="${esc(p.slug)}" style="cursor:pointer">
+          <div class="ft-roster-photo"><img src="${esc(p.foto)}" onerror="this.style.opacity=0"></div>
+          <span class="ft-roster-name">${esc(p.nombre)}</span>
+          <span class="ft-roster-meta">${esc(p.posicion||"")} · ${p.media} · ${esc(fantasyFmtMoney(fantasyPlayerPrice(p)))}</span>
+          ${isMine?"":`<button class="btn btn-primary" style="padding:8px 14px;font-size:12px" data-offer-slug="${esc(p.slug)}">Ofertar</button>`}
+        </div>`).join("")
+        : `<p style="padding:0 20px;color:var(--muted);font-size:13px">Sin jugadores.</p>`);
+    body.querySelectorAll("[data-offer-slug]").forEach(btn=>btn.addEventListener("click", ()=>fantasyOpenOfferModal(team, btn.dataset.offerSlug)));
+    showSheet();
+  }
+  function fantasyOpenOfferModal(team, playerSlug){
+    if(!currentUid){ showAuth(); return; }
+    ensureFantasyState();
+    const p=BY[playerSlug], myRoster=fantasyRoster(fantasyMyTeam);
+    const price = p ? fantasyPlayerPrice(p) : 0;
+    const body=$("#sheet-body");
+    body.innerHTML = `<div class="picker-head"><h3>Ofertar por ${esc(p?p.nombre:playerSlug)}</h3></div>
+      <p style="padding:0 20px;color:var(--muted);font-size:12.5px">Precio de mercado: <b>${esc(fantasyFmtMoney(price))}</b></p>
+      <div class="ft-offer-body">
+        <label style="font-size:12px;color:var(--muted)">Jugador de tu plantilla a cambio (opcional)</label>
+        <select id="ft-offer-player">
+          <option value="">— Ninguno —</option>
+          ${myRoster.map(mp=>`<option value="${esc(mp.slug)}">${esc(mp.nombre)} (${mp.media}) · ${esc(fantasyFmtMoney(fantasyPlayerPrice(mp)))}</option>`).join("")}
+        </select>
+        <label style="font-size:12px;color:var(--muted);margin-top:10px;display:block">Dinero a ofrecer (opcional, tienes ${esc(fantasyFmtMoney(state.fantasy.budget||0))})</label>
+        <input type="number" id="ft-offer-amount" min="0" max="${state.fantasy.budget||0}" step="0.1" placeholder="Ej. 15.5">
+        <p style="font-size:11px;color:var(--muted);margin-top:6px">En millones de $. Puedes ofrecer jugador, dinero, o los dos juntos.</p>
+        <button class="btn btn-primary" id="ft-offer-submit" style="width:100%;margin-top:10px">Enviar oferta</button>
+      </div>`;
+    body.querySelector("#ft-offer-submit").addEventListener("click", ()=>fantasySubmitOffer(team, playerSlug));
+    showSheet();
+  }
+  async function fantasySubmitOffer(toTeam, playerSlug){
+    const offeredSlug = $("#ft-offer-player")?.value || null;
+    const amt = +($("#ft-offer-amount")?.value||0);
+    if(!offeredSlug && (!amt || amt<=0)){ toast("Ofrece un jugador, dinero, o los dos"); return; }
+    if(amt > (state.fantasy.budget||0)){ toast("No tienes suficiente dinero"); return; }
+    const offer = { fromUid: currentUid, fromTeam: fantasyMyTeam, toTeam, playerSlug };
+    if(offeredSlug) offer.offeredSlug = offeredSlug;
+    if(amt>0) offer.amount = amt;
+    offer.type = offeredSlug && amt>0 ? "combo" : (offeredSlug ? "trade" : "money");
+    try{
+      await window.DunkFire.fantasyCreateTradeOffer(offer);
+      toast("Oferta enviada — queda pendiente hasta que se revise");
+      closeSheet();
+      renderFantasyMyOffers();
+    }catch(e){ toast("No se pudo enviar la oferta"); }
+  }
+
+  const FANTASY_COMMISSIONER_EMAIL = "emilianocros27@gmail.com";
+  function fantasyIsCommissioner(){ return authUser===FANTASY_COMMISSIONER_EMAIL; }
+  function fantasyHideAll(){
+    $("#fantasy-join").hidden=true; $("#fantasy-pending").hidden=true; $("#fantasy-body").hidden=true; $("#fantasy-live").hidden=true;
+  }
+  async function renderFantasy(){
+    ensureFantasyState();
+    if(!window.DunkFire) return;
+    if(fantasyLiveGame && fantasyLiveGame.status!=="final"){   // partido en curso: te devuelve a verlo, sigue corriendo aunque hayas salido
+      fantasyHideAll(); $("#fantasy-live").hidden=false;
+      renderFantasyLive(fantasyState((Date.now()-fantasyLiveGame.liveStartedAt)/1000));
+      return;
+    }
+    if(!currentUid){
+      fantasyHideAll(); $("#fantasy-join").hidden=false;
+      $("#fantasy-join-title").textContent="Inicia sesión para jugar Fantasy";
+      $("#fantasy-join-sub").textContent="Los equipos no se repiten entre jugadores: necesitamos saber quién eres.";
+      $("#fantasy-join-btn").textContent="Iniciar sesión";
+      return;
+    }
+    try{
+      const season = await window.DunkFire.fantasyGetSeason();
+      if(season && season.started===undefined) season.started = !!season.startedAt;   // compat: temporadas creadas antes del control de inicio
+      const mine = season && season.teams ? Object.keys(season.teams).find(t=>season.teams[t]===currentUid) : null;
+      if(mine && season.started && Date.now() < season.endsAt){
+        fantasyMyTeam = mine; fantasySeasonData = season;
+        await fantasyEnterTeam();
+      } else if(mine && !season.started){
+        fantasyMyTeam = mine; fantasySeasonData = season;
+        fantasyHideAll(); $("#fantasy-pending").hidden=false;
+        $("#fantasy-pending-team").textContent = mine;
+        const joined = Object.keys(season.teams).filter(t=>season.teams[t]);
+        $("#fantasy-pending-list").textContent = `Equipos ya reclamados (${joined.length}/${Object.keys(season.teams).length}): ${joined.join(", ")}`;
+        const startBtn = $("#fantasy-start-btn");
+        startBtn.hidden = !fantasyIsCommissioner();
+        $("#fantasy-pending-sub").textContent = fantasyIsCommissioner()
+          ? "Tú decides cuándo arranca. Cuando estén listos, dale a iniciar."
+          : "Esperando que el comisionado inicie la temporada.";
+      } else {
+        fantasyHideAll(); $("#fantasy-join").hidden=false;
+        $("#fantasy-join-title").textContent="Fantasy";
+        $("#fantasy-join-sub").textContent="Te toca un equipo NBA al azar (sin repetir con nadie) por 10 días. Partidos en vivo, mercado y trades.";
+        $("#fantasy-join-btn").textContent="Unirme a la temporada";
+      }
+    }catch(e){ console.error(e); toast("No se pudo cargar Fantasy (revisa tu conexión)"); }
+  }
+  async function fantasyJoinSeason(){
+    if(!currentUid){ showAuth(); return; }
+    try{
+      const res = await window.DunkFire.fantasyJoin(currentUid, FANTASY_ELIGIBLE, FANTASY_SEASON_DAYS, FANTASY_DAY_MS);
+      fantasyMyTeam = res.team; fantasySeasonData = res.season;
+      toast(`¡Te tocó <b>${esc(res.team)}</b>! Temporada ${esc(String(res.season.seasonNumber))} de Fantasy`);
+      await renderFantasy();
+    }catch(e){ toast(e.message||"No se pudo unir a Fantasy"); }
+  }
+  async function fantasyStartSeasonAction(){
+    try{
+      const season = await window.DunkFire.fantasyStartSeason();
+      fantasySeasonData = season;
+      toast("¡Temporada iniciada! El reloj ya corre para todos.");
+      await renderFantasy();
+    }catch(e){ toast(e.message||"No se pudo iniciar la temporada"); }
+  }
+  async function fantasyEnterTeam(){
+    fantasyHideAll(); $("#fantasy-body").hidden=false;
+    let sched = await window.DunkFire.fantasyGetSchedule(fantasyMyTeam);
+    if(!sched || !sched.createdAt || sched.createdAt < fantasySeasonData.startedAt){
+      const games = fantasyGenerateSchedule(fantasyMyTeam, fantasySeasonData.seasonNumber);
+      await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, games);
+      sched = { games, createdAt: Date.now() };
+    }
+    fantasySchedule = sched;
+    renderFantasyHeader();
+    renderFantasySchedule();
+    switchFantasySub("partidos");
+  }
+  function renderFantasyHeader(){
+    ensureFantasyState();
+    const t=teamOf(fantasyMyTeam);
+    const daysLeft=Math.max(0, Math.ceil((fantasySeasonData.endsAt-Date.now())/86400000));
+    const reg = fantasyRegularGames();
+    const wins=reg.filter(g=>g.status==="final"&&g.won).length;
+    const losses=reg.filter(g=>g.status==="final"&&!g.won).length;
+    const copaFinal = fantasySchedule.games.find(g=>g.type==="copa-final");
+    const playoffGames = fantasySchedule.games.filter(g=>g.type&&g.type!=="copa-final");
+    let extraLine = "";
+    if(copaFinal) extraLine += `<div class="fantasy-stat"><b>${copaFinal.status==="final"?(copaFinal.won?"🏆 Campeón":"Final perdida"):"Clasificado"}</b><span>Copa NBA</span></div>`;
+    if(playoffGames.length){
+      const pw=playoffGames.filter(g=>g.status==="final"&&g.won).length, pl=playoffGames.filter(g=>g.status==="final"&&!g.won).length;
+      const champ = playoffGames.filter(g=>g.type==="playoff-final").filter(g=>g.status==="final"&&g.won).length>=2;
+      extraLine += `<div class="fantasy-stat"><b>${champ?"🏆 Campeón":pw+"-"+pl}</b><span>Playoffs</span></div>`;
+    }
+    const logo = t.id ? `<img src="${logoURL(fantasyMyTeam)}" style="width:32px;height:32px;object-fit:contain" onerror="this.remove()">` : "";
+    $("#fantasy-head").innerHTML = `
+      <div class="fantasy-head-logo" style="background:linear-gradient(135deg,${t.c1},${t.c2})">${logo}</div>
+      <div class="fantasy-head-id">
+        <div class="fantasy-head-team">${esc(fantasyMyTeam)}</div>
+        <div class="fantasy-head-meta">Temporada ${esc(String(fantasySeasonData.seasonNumber))} · ${daysLeft>0?`termina en ${daysLeft} día${daysLeft>1?"s":""}`:"terminada"}</div>
+      </div>
+      <div class="fantasy-head-stats">
+        <div class="fantasy-stat"><b>${wins}-${losses}</b><span>Récord</span></div>
+        <div class="fantasy-stat"><b>${state.fantasy.coins}</b><span>🏀 Fantasy</span></div>
+        <div class="fantasy-stat"><b>${esc(fantasyFmtMoney(state.fantasy.budget||0))}</b><span>Presupuesto</span></div>
+        ${extraLine}
+      </div>`;
+  }
+  const FANTASY_TYPE_LABEL = { "copa-final":"🏆 Final Copa NBA", "playoff-qf":"Cuartos de Playoffs", "playoff-sf":"Semifinal de Playoffs", "playoff-final":"Final de Playoffs" };
+  function renderFantasySchedule(){
+    const now=Date.now();
+    const wrap=$("#fantasy-sched"); wrap.innerHTML="";
+    const maxDay = Math.max(FANTASY_SEASON_DAYS, ...fantasySchedule.games.map(g=>g.day));
+    for(let day=1; day<=maxDay; day++){
+      const dayGames=fantasySchedule.games.filter(g=>g.day===day);
+      if(!dayGames.length) continue;
+      const unlocked = now >= fantasySeasonData.startedAt + (day-1)*FANTASY_DAY_MS;
+      const box=document.createElement("div"); box.className="fantasy-day";
+      const lbl = day<=FANTASY_SEASON_DAYS ? `Día ${day}` : (FANTASY_TYPE_LABEL[dayGames[0].type] || `Día ${day}`);
+      box.innerHTML = `<div class="fantasy-day-lbl">${esc(lbl)}</div>` + dayGames.map(g=>{
+        const locked = !g.type && !unlocked;   // partidos de copa/playoffs se generan solo cuando ya los ganaste, siempre disponibles
+        const tag = g.status==="final" ? `<span class="fantasy-game-result ${g.won?"win":"loss"}">${g.won?"GANASTE":"PERDISTE"} ${g.finalHome!=null?esc(String(g.finalHome))+"-"+esc(String(g.finalAway)):""}</span>`
+          : locked ? `<span class="fantasy-game-tag">🔒 día ${day}</span>`
+          : `<span class="fantasy-game-tag">Disponible</span>`;
+        return `<button class="fantasy-game-row ${locked?"locked":""}" ${locked?"disabled":""} data-game="${esc(g.id)}" data-opponent="${esc(g.opponent)}" data-day="${day}">
+          <span class="fantasy-vs">vs ${esc(g.opponent)}</span>${tag}</button>`;
+      }).join("");
+      wrap.appendChild(box);
+    }
+  }
+
+  // ---- partido en vivo ----
+  async function openFantasyGame(gameId, home, away, day){
+    fantasyHideAll(); $("#fantasy-live").hidden=false;
+    $("#fantasy-scoreboard").innerHTML = `<div class="fantasy-sb-clock">Cargando…</div>`;
+    $("#fantasy-lastplay").textContent=""; $("#fantasy-history").innerHTML=""; $("#fantasy-boxscore").innerHTML="";
+    $("#fantasy-timeout-banner").hidden=true;
+    fantasyTimeoutsLeft=2; fantasyTimeoutActive=false;
+    $("#fantasy-timeout-left").textContent=fantasyTimeoutsLeft;
+    $("#fantasy-timeout-btn").disabled=false;
+    let game;
+    try{ game = await window.DunkFire.fantasyGetGame(gameId); }catch(e){ toast("No se pudo cargar el partido"); return; }
+    if(!game){
+      let homeStarters=null, awayStarters=null;
+      try{
+        const [hlu, alu] = await Promise.all([window.DunkFire.fantasyGetLineup(home), window.DunkFire.fantasyGetLineup(away)]);
+        homeStarters = hlu && hlu.starters; awayStarters = alu && alu.starters;
+      }catch(e){}
+      game = generateFantasyGame(home, away, homeStarters, awayStarters);
+      game.liveStartedAt = Date.now(); game.status="live";
+      try{ await window.DunkFire.fantasyCreateGame(gameId, game); }catch(e){ toast("No se pudo iniciar el partido"); return; }
+    } else if(!game.liveStartedAt){
+      game.liveStartedAt = Date.now(); game.status="live";
+      window.DunkFire.fantasyUpdateGame(gameId, { liveStartedAt: game.liveStartedAt, status:"live" }).catch(()=>{});
+    }
+    fantasyLiveGame=game; fantasyLiveGameId=gameId; fantasyLiveDay=day;
+    fantasyLivePlayIdx=0; fantasyLiveHistory=[];
+    startFantasyLiveTick();
+  }
+  function startFantasyLiveTick(){
+    stopFantasyLiveTick();
+    fantasyTickFrame();
+    fantasyLiveTimer = setInterval(fantasyTickFrame, 500);
+  }
+  function stopFantasyLiveTick(){ if(fantasyLiveTimer){ clearInterval(fantasyLiveTimer); fantasyLiveTimer=null; } }
+  function fantasyTickFrame(){
+    if(!fantasyLiveGame) return;
+    const realElapsed = (Date.now()-fantasyLiveGame.liveStartedAt)/1000;
+    const st = fantasyState(realElapsed);
+    while(fantasyLivePlayIdx < fantasyLiveGame.plays.length && fantasyLiveGame.plays[fantasyLivePlayIdx].t <= st.gameSec){
+      fantasyLiveHistory.push(fantasyLiveGame.plays[fantasyLivePlayIdx]);
+      fantasyLivePlayIdx++;
+    }
+    renderFantasyLive(st);
+    if(st.finished && fantasyLiveGame.status!=="final"){
+      fantasyLiveGame.status="final";
+      window.DunkFire.fantasyUpdateGame(fantasyLiveGameId, {status:"final"}).catch(()=>{});
+      fantasyFinishGame();
+      stopFantasyLiveTick();
+    }
+  }
+  // plantilla en cancha + puntos anotados hasta ahora (jugada por jugada, sirve de estadísticas en vivo)
+  function fantasyBoxScoreHTML(team, curSec){
+    const pts={};
+    fantasyLiveHistory.forEach(p=>{ if(p.team===team) pts[p.slug]=(pts[p.slug]||0)+p.pts; });
+    const events=(fantasyLiveGame.lineupEvents && fantasyLiveGame.lineupEvents[team]) || [{atSec:0,starters:null}];
+    const rows = fantasyRoster(team).map(p=>{
+      const mins=fantasyMinutesOnCourt(events, p.slug, curSec);
+      const freshPct=Math.round(fantasyFatigueMult(mins)*100);
+      return {p, pts:pts[p.slug]||0, mins, freshPct};
+    }).sort((a,b)=>b.pts-a.pts);
+    return `<div class="fantasy-box-team">
+      <div class="fantasy-box-team-name">${esc(team)}</div>
+      ${rows.map(r=>`<div class="fantasy-box-row" data-box-slug="${esc(r.p.slug)}">
+          <span class="fantasy-box-pos">${esc(r.p.posicion||"")}</span>
+          <span class="fantasy-box-name">${esc(r.p.nombre)}</span>
+          <span class="fantasy-box-fat" title="${Math.round(r.mins)} min en cancha"><span class="fantasy-box-fat-bar" style="width:${r.freshPct}%"></span></span>
+          <span class="fantasy-box-pts">${r.pts}</span>
+        </div>`).join("")
+        || `<div class="fantasy-box-row"><span class="fantasy-box-name" style="color:var(--muted)">Sin plantilla</span></div>`}
+    </div>`;
+  }
+  function renderFantasyLive(st){
+    const g=fantasyLiveGame;
+    const last=fantasyLiveHistory[fantasyLiveHistory.length-1];
+    const hs=last?last.scoreH:0, as=last?last.scoreA:0;
+    const tH=teamOf(g.home), tA=teamOf(g.away);
+    const clockHTML = st.finished ? `<b>FIN DEL PARTIDO</b>` : (st.onBreak?`<b>${esc(st.onBreak)}</b>`:esc(fantasyClockLabel(st.gameSec)));
+    $("#fantasy-scoreboard").innerHTML = `
+      <div class="fantasy-sb-clock">${clockHTML}</div>
+      <div class="fantasy-sb-teams">
+        <div class="fantasy-sb-team"><span class="fantasy-sb-name" style="color:${tH.c1}">${esc(g.home)}</span><span class="fantasy-sb-score">${hs}</span></div>
+        <div class="fantasy-sb-sep">–</div>
+        <div class="fantasy-sb-team"><span class="fantasy-sb-name" style="color:${tA.c1}">${esc(g.away)}</span><span class="fantasy-sb-score">${as}</span></div>
+      </div>`;
+    $("#fantasy-lastplay").textContent = last ? last.text : "El partido va a comenzar…";
+    $("#fantasy-boxscore").innerHTML = fantasyBoxScoreHTML(g.home, st.gameSec) + fantasyBoxScoreHTML(g.away, st.gameSec);
+    const hist=$("#fantasy-history");
+    const wasAtBottom = Math.abs(hist.scrollHeight-hist.scrollTop-hist.clientHeight) < 30;
+    hist.innerHTML = fantasyLiveHistory.map(p=>`<div class="fantasy-hrow"><span class="t">${esc(fantasyClockLabel(p.t))}</span><span class="s">${p.scoreH}-${p.scoreA}</span><span class="d">${esc(p.text)}</span></div>`).join("")
+      || `<div class="fantasy-hrow"><span class="d" style="color:var(--muted)">Sin jugadas todavía.</span></div>`;
+    if(wasAtBottom) hist.scrollTop = hist.scrollHeight;
+    $("#fantasy-live-lock").hidden = st.finished;
+    const toBtn=$("#fantasy-timeout-btn");
+    if(toBtn && !fantasyTimeoutActive) toBtn.disabled = st.finished || !!st.onBreak || fantasyTimeoutsLeft<=0;
+    renderFantasyBadge(st);
+  }
+  function renderFantasyBadge(st){
+    const b=$("#fantasy-badge"); if(!b) return;
+    const g=fantasyLiveGame;
+    if(!g || st.finished){ b.hidden=true; return; }
+    const last=fantasyLiveHistory[fantasyLiveHistory.length-1];
+    const hs=last?last.scoreH:0, as=last?last.scoreA:0;
+    const shortH=g.home.split(" ").pop(), shortA=g.away.split(" ").pop();
+    b.hidden=false;
+    b.innerHTML = `🏀 <span class="fb-full">${esc(shortH)}</span> <b>${hs}-${as}</b> <span class="fb-full">${esc(shortA)}</span> · ${st.onBreak?esc(st.onBreak):esc(fantasyClockLabel(st.gameSec))}`;
+  }
+  function fantasyRequestTimeout(){
+    if(!fantasyLiveGame || fantasyLiveGame.status==="final" || fantasyTimeoutActive || fantasyTimeoutsLeft<=0) return;
+    fantasyTimeoutsLeft--;
+    fantasyTimeoutActive=true;
+    $("#fantasy-timeout-left").textContent=fantasyTimeoutsLeft;
+    $("#fantasy-timeout-btn").disabled=true;
+    stopFantasyLiveTick();
+    const banner=$("#fantasy-timeout-banner");
+    banner.hidden=false;
+    banner.innerHTML = `⏱ Tiempo muerto — ${esc(fantasyMyTeam)}<br><button class="btn btn-ghost" id="fantasy-timeout-team-btn" style="margin-top:10px">Ver / cambiar mi equipo</button>`;
+    ensureFantasyMissions();
+    state.fantasy.missions.stats.timeouts=(state.fantasy.missions.stats.timeouts||0)+1;
+    state.fantasy.missions.daily.timeouts=(state.fantasy.missions.daily.timeouts||0)+1;
+    save();
+    setTimeout(()=>{
+      banner.hidden=true;
+      fantasyLiveGame.liveStartedAt += 10000;
+      window.DunkFire.fantasyUpdateGame(fantasyLiveGameId, {liveStartedAt:fantasyLiveGame.liveStartedAt}).catch(()=>{});
+      fantasyTimeoutActive=false;
+      startFantasyLiveTick();
+    }, 10000);
+  }
+  async function fantasyFinishGame(){
+    const g=fantasyLiveGame;
+    const won = g.finalHome>g.finalAway;   // mi equipo siempre es "home" en su propio calendario
+    ensureFantasyState();
+    const e = fantasySchedule ? fantasySchedule.games.find(x=>x.id===fantasyLiveGameId) : null;
+    const bonus = (won && e && e.type) ? (FANTASY_TYPE_WIN_BONUS[e.type]||0) : 0;
+    const reward = (won ? FANTASY_WIN_REWARD : FANTASY_LOSS_REWARD) + bonus;
+    state.fantasy.coins = (state.fantasy.coins||0)+reward;
+    ensureFantasyMissions();
+    state.fantasy.missions.stats.gamesPlayed=(state.fantasy.missions.stats.gamesPlayed||0)+1;
+    state.fantasy.missions.daily.gamesPlayed=(state.fantasy.missions.daily.gamesPlayed||0)+1;
+    if(won){ state.fantasy.missions.stats.gamesWon=(state.fantasy.missions.stats.gamesWon||0)+1; state.fantasy.missions.daily.gamesWon=(state.fantasy.missions.daily.gamesWon||0)+1; }
+    save();
+    toast(`Partido terminado: <b>${g.finalHome}-${g.finalAway}</b>. ${won?"¡Ganaste!":"Perdiste."} +${reward} 🏀 Fantasy${bonus?` (incluye bono de ${FANTASY_TYPE_LABEL[e.type]})`:""}`);
+    if(fantasySchedule){
+      if(e){ e.status="final"; e.won=won; e.finalHome=g.finalHome; e.finalAway=g.finalAway; }
+      try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(err){}
+      await fantasyCheckCopa();
+      await fantasyCheckPlayoffs();
+    }
+  }
+  function fantasyLiveBack(){
+    // el partido sigue corriendo solo aunque salgas: se ve en el marcador de arriba a la derecha
+    if(fantasyLiveGame && fantasyLiveGame.status==="final"){ stopFantasyLiveTick(); fantasyLiveGame=null; }
+    $("#fantasy-live").hidden=true; $("#fantasy-body").hidden=false;
+    renderFantasyHeader(); renderFantasySchedule();
+    switchFantasySub("partidos");
+  }
 
   function bindEvents(){
     if(!LEGENDS_ENABLED){ $$('.tab[data-view="noventas"]').forEach(t=>t.style.display="none"); const bn=$("#banner-90s"); if(bn) bn.style.display="none"; }
     $$(".tab").forEach(t=>t.addEventListener("click",()=>showView(t.dataset.view)));
     $("#bell").addEventListener("click", openMessages);
     $("#banner-90s")?.addEventListener("click", ()=>showView("noventas"));
+    $("#fantasy-badge")?.addEventListener("click", ()=>showView("fantasy"));
+
+    // fantasy
+    $("#fantasy-join-btn")?.addEventListener("click", fantasyJoinSeason);
+    $("#fantasy-start-btn")?.addEventListener("click", fantasyStartSeasonAction);
+    $("#fantasy-sched")?.addEventListener("click", e=>{
+      const b=e.target.closest(".fantasy-game-row"); if(!b || b.disabled) return;
+      openFantasyGame(b.dataset.game, fantasyMyTeam, b.dataset.opponent, +b.dataset.day);
+    });
+    $("#fantasy-live-back")?.addEventListener("click", fantasyLiveBack);
+    $("#fantasy-timeout-btn")?.addEventListener("click", fantasyRequestTimeout);
+    $("#fantasy-subnav")?.addEventListener("click", e=>{
+      const b=e.target.closest(".fantasy-subtab"); if(!b) return;
+      switchFantasySub(b.dataset.sub);
+    });
+    $("#fantasy-equipo-wrap")?.addEventListener("click", e=>{
+      const slot=e.target.closest(".ff-slot"); if(slot){ fantasySlotOrStats(slot); return; }
+      const save=e.target.closest("#fantasy-save-lineup"); if(save){ fantasySaveLineupNow(); return; }
+    });
+    $("#fantasy-transfer-list")?.addEventListener("click", e=>{
+      const row=e.target.closest(".fantasy-transfer-row"); if(!row) return;
+      fantasyOpenTeamDetail(row.dataset.team);
+    });
+    $("#fantasy-stat-tabs")?.addEventListener("click", e=>{
+      const b=e.target.closest("[data-cat]"); if(!b) return;
+      fantasyStatCat=b.dataset.cat;
+      $$("#fantasy-stat-tabs [data-cat]").forEach(x=>x.classList.toggle("active", x===b));
+      renderFantasyStatLeaders();
+    });
+    $("#fantasy-stat-leaders")?.addEventListener("click", e=>{
+      const row=e.target.closest("[data-stat-slug]"); if(!row) return;
+      fantasyOpenPlayerStats(row.dataset.statSlug, {});
+    });
+    $("#sheet")?.addEventListener("click", e=>{
+      const statRow=e.target.closest("[data-stat-slug]"); if(statRow && !e.target.closest("[data-offer-slug]")){ fantasyOpenPlayerStats(statRow.dataset.statSlug, {}); return; }
+      if(fantasyEditMode!=="sheet") return;
+      const slot=e.target.closest(".ff-slot"); if(slot){ fantasySlotOrStats(slot); return; }
+      const save=e.target.closest("#fantasy-save-lineup"); if(save){ fantasySaveLineupNow(); return; }
+    });
+    $("#fantasy-live")?.addEventListener("click", e=>{
+      if(e.target.closest("#fantasy-timeout-team-btn")) fantasyOpenTimeoutTeam();
+    });
+    $("#fantasy-sub-misiones")?.addEventListener("click", e=>{
+      const b=e.target.closest("[data-fms-id]"); if(!b) return;
+      fantasyClaimMission(b.dataset.fmsKind, b.dataset.fmsId);
+    });
 
     // tienda
     $("#shop-offers")?.addEventListener("click", e=>{ const b=e.target.closest("[data-buy]"); if(b) buyOffer(b.dataset.buy); });
@@ -3981,10 +4762,6 @@
     });
     bindTilt($("#album-grid"));
     // misiones: reclamar recompensa
-    $("#view-liga")?.addEventListener("click", e=>{
-      if(e.target.closest("#liga-claim-btn")){ claimHourReward(); return; }
-      const bp=e.target.closest(".bp-claim"); if(bp){ claimBP(+bp.dataset.bp); return; }
-    });
     $("#view-misiones")?.addEventListener("click", e=>{
       const cp=e.target.closest(".ms-cardprev"); if(cp){ showPromoFull(cp.dataset.card); return; }
       const b=e.target.closest(".ms-claim"); if(b) claimMission(b.dataset.msKind, b.dataset.msId);
@@ -3994,20 +4771,8 @@
       const slab=e.target.closest(".psa[data-slug]"); if(slab){ openDetail(slab.dataset.slug); return; }
       const card=e.target.closest(".card:not(.locked)[data-slug]"); if(card) openDetail(card.dataset.slug);
     });
-    // colección de verano
-    $("#album-verano")?.addEventListener("click", e=>{
-      const card=e.target.closest(".card:not(.locked)[data-slug]"); if(card) openDetail(card.dataset.slug);
-    });
-    if($("#album-verano")) bindTilt($("#album-verano"));
     // sobres
     $$("[data-pack]").forEach(b=>b.addEventListener("click",()=>openPack(b.dataset.pack)));
-    $("#btn-ficha")?.addEventListener("click", buySummerToken);
-    $("#btn-ficha-buy")?.addEventListener("click", buySummerToken);
-    // splash de temporada
-    const ss=$("#season-splash");
-    if(ss){ const hide=()=>{ ss.classList.remove("show"); ss.setAttribute("aria-hidden","true"); };
-      $("#season-go")?.addEventListener("click", hide);
-      ss.addEventListener("click", e=>{ if(e.target===ss) hide(); }); }
     $("#opener").addEventListener("click", e=>{
       if(e.target.closest("#opener-actions")) return;
       if(openerPhase==="pack"){ tearPack(); return; }
@@ -4063,11 +4828,12 @@
       console.error(err); return;
     }
     PLAYERS = data;
+    CARD_PLAYERS = PLAYERS.filter(p=>!p.banca);
     PLAYERS.forEach(p=>BY[p.slug]=p);
     applyEventBoost();   // boost de Finales a los equipos finalistas (si el evento está activo)
 
     // ---- MODO TEST (por URL) ----
-    //  ?todas   -> desbloquea las 150 cartas
+    //  ?todas   -> desbloquea todas las cartas
     //  ?reset   -> vuelve a empezar de cero
     const q = new URLSearchParams(location.search);
     if(q.has("reset")){ state=defaultState(); save(); }
@@ -4109,8 +4875,6 @@ window.MiniGame = (function(){
   function fmtN(n){ n=Math.round(n); return n<100000 ? ''+n : n.toExponential(2); }   // grandes → 1.23e+7
   let particles = [], rings = [], rafId = null, active = false, inited = false;
   const GROUND = () => H - 40 * S;
-  // cubeta del piso (easter egg): boca a la izquierda, apoyada en la arena
-  function bucketGeo(){ const halfW=30*S, h=44*S, cx=halfW+22*S; return { cx, halfW, h, mouthY: GROUND()-h }; }
   function roundRect(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r);
     ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
   const GRAV = 0.42;
@@ -4264,7 +5028,6 @@ window.MiniGame = (function(){
         if(Math.abs(ball.vy)<1.5*S){ if(!ball.done) miss(); } }
       ball.frames++; if(ball.frames>300 && !ball.done) miss();   // seguridad: nunca se queda atascada
       checkHoop();
-      checkBucket();
     }
     if(running && hoop.vx){ hoop.x+=hoop.vx; if(hoop.x-hoop.r<30*S||hoop.x+hoop.r>W-30*S) hoop.vx*=-1; }
     updateNet(hoop);
@@ -4288,26 +5051,6 @@ window.MiniGame = (function(){
         ball.x+=Math.cos(ang)*overlap; ball.y+=Math.sin(ang)*overlap;
         const dot=ball.vx*Math.cos(ang)+ball.vy*Math.sin(ang);
         ball.vx-=1.6*dot*Math.cos(ang); ball.vy-=1.6*dot*Math.sin(ang); ball.vx*=0.8; ball.vy*=0.8; } }
-  }
-  function checkBucket(){
-    if(!ball.flying || ball.vy<=0 || ball.eggUsed) return;   // solo una vez por intento (evita bucle)
-    const b=bucketGeo();
-    if(typeof ball.py==='number' && ball.py<=b.mouthY && ball.y>=b.mouthY){
-      const span=(ball.y-ball.py)||1, t=(b.mouthY-ball.py)/span;
-      const crossX=(typeof ball.px==='number') ? ball.px+(ball.x-ball.px)*t : ball.x;
-      if(Math.abs(crossX-b.cx) < b.halfW*0.78) easterEggDrop();
-    }
-  }
-  // EASTER EGG: al caer dentro de la cubeta, la pelota reaparece arriba, centrada, en caída libre
-  function easterEggDrop(){
-    const b=bucketGeo();
-    // solo salpicadura de agua (sin aviso)
-    for(let i=0;i<22;i++){ const a=-Math.PI/2 + (Math.random()-0.5)*1.4, sp=(2+Math.random()*5)*S;
-      particles.push({x:b.cx,y:b.mouthY,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,color: Math.random()<0.5?'#62c8f2':'#bfeaff'}); }
-    ball.x=W/2; ball.y=-ball.r; ball.vx=0; ball.vy=0; ball.rot=0; ball.vrot=0;
-    ball.flying=true; ball.canScore=true; ball.done=false; ball.touchedRim=false; ball.frames=0; ball.trail=[];
-    ball.eggUsed=true;   // ya se usó la cubeta en este intento
-    ball.px=ball.x; ball.py=ball.y;
   }
   function burst(x,y,color){ for(let i=0;i<18;i++){ const a=Math.random()*Math.PI*2, sp=(1+Math.random()*4)*S;
     particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2*S,life:1,color}); } }
@@ -4344,56 +5087,39 @@ window.MiniGame = (function(){
   }
   function drawBackground(){
     const gy=GROUND();
-    // base oscura
-    let bg=ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#1b1730'); bg.addColorStop(1,'#0c0a16');
-    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
-    // fondo veraniego secreto (muy tenue, no afecta al juego)
-    const bgImg=getTex('verano-bg.jpg');
-    if(bgImg && bgImg.complete && bgImg.naturalWidth){
-      const sc=Math.max(W/bgImg.naturalWidth, H/bgImg.naturalHeight);
-      const dw=bgImg.naturalWidth*sc, dh=bgImg.naturalHeight*sc;
-      ctx.save(); ctx.globalAlpha=0.14;
-      ctx.drawImage(bgImg,(W-dw)/2,(H-dh)/2,dw,dh);
-      ctx.restore();
-    }
-    // resplandor de focos (naranja) arriba
+    // base oscura (fondo de gimnasio, buen contraste con el balón naranja)
+    let bg=ctx.createLinearGradient(0,0,0,gy); bg.addColorStop(0,'#1b1c26'); bg.addColorStop(1,'#101119');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,gy);
+    // resplandor de focos arriba
     let glow=ctx.createRadialGradient(W/2,-30*S,8,W/2,-30*S,H*0.7);
     glow.addColorStop(0,'rgba(242,85,44,.20)'); glow.addColorStop(1,'rgba(242,85,44,0)');
-    ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=glow; ctx.fillRect(0,0,W,gy);
     // público (bokeh tenue)
-    for(let i=0;i<48;i++){ const sx=((i*97.3)%W), sy=((i*53.7)%(H*0.60));
+    for(let i=0;i<48;i++){ const sx=((i*97.3)%W), sy=((i*53.7)%(gy*0.72));
       ctx.fillStyle='rgba(255,255,255,'+(0.02+(i%5)*0.012).toFixed(3)+')';
       ctx.beginPath(); ctx.arc(sx,sy,(1+(i%3))*S,0,7); ctx.fill(); }
-    // ===== ARENA (suelo desigual con una montañita/duna a la derecha) =====
-    ctx.beginPath();
-    ctx.moveTo(0, gy+5*S);
-    ctx.lineTo(W*0.30, gy+1*S);
-    ctx.lineTo(W*0.58, gy+7*S);
-    ctx.quadraticCurveTo(W*0.82, gy-44*S, W, gy+3*S);   // duna a la derecha
-    ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
-    let sand=ctx.createLinearGradient(0,gy-44*S,0,H);
-    sand.addColorStop(0,'#f6dca0'); sand.addColorStop(1,'#d3a155');
-    ctx.fillStyle=sand; ctx.fill();
-    // brillo del borde de arena
-    ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=2*S;
-    ctx.beginPath(); ctx.moveTo(0,gy+5*S); ctx.lineTo(W*0.30,gy+1*S); ctx.lineTo(W*0.58,gy+7*S);
-    ctx.quadraticCurveTo(W*0.82,gy-44*S,W,gy+3*S); ctx.stroke();
-    // motitas de arena
-    for(let i=0;i<60;i++){ const sx=((i*71.7)%W), sy=gy+10*S+((i*37.3)%(H-gy-10*S));
-      ctx.fillStyle='rgba(120,80,30,'+(0.05+(i%4)*0.03).toFixed(3)+')';
-      ctx.beginPath(); ctx.arc(sx,sy,(0.8+(i%2))*S,0,7); ctx.fill(); }
-    // ===== CUBETA a la izquierda (easter egg) =====
-    const b=bucketGeo();
-    const botHalf=b.halfW*0.72;
-    let bg2=ctx.createLinearGradient(b.cx-b.halfW,0,b.cx+b.halfW,0);
-    bg2.addColorStop(0,'#2f9bd6'); bg2.addColorStop(.5,'#62c8f2'); bg2.addColorStop(1,'#2f9bd6');
-    ctx.fillStyle=bg2;
-    ctx.beginPath(); ctx.moveTo(b.cx-b.halfW,b.mouthY); ctx.lineTo(b.cx+b.halfW,b.mouthY);
-    ctx.lineTo(b.cx+botHalf,gy+4*S); ctx.lineTo(b.cx-botHalf,gy+4*S); ctx.closePath(); ctx.fill();
-    ctx.fillStyle='#155a82'; ctx.beginPath(); ctx.ellipse(b.cx,b.mouthY,b.halfW,6*S,0,0,7); ctx.fill();
-    ctx.fillStyle='#0d3f5e'; ctx.beginPath(); ctx.ellipse(b.cx,b.mouthY,b.halfW*0.78,4.5*S,0,0,7); ctx.fill();
-    ctx.strokeStyle='#1d6f9e'; ctx.lineWidth=2.4*S; ctx.beginPath(); ctx.ellipse(b.cx,b.mouthY,b.halfW,6*S,0,0,7); ctx.stroke();
-    ctx.beginPath(); ctx.arc(b.cx,b.mouthY,b.halfW*0.92,Math.PI*1.06,Math.PI*-0.06); ctx.stroke();
+    // ===== PISO DE DUELA (cancha normal, plano) =====
+    let floor=ctx.createLinearGradient(0,gy,0,H); floor.addColorStop(0,'#c8965c'); floor.addColorStop(1,'#8f6234');
+    ctx.fillStyle=floor; ctx.fillRect(0,gy,W,H-gy);
+    // vetas verticales de los tablones
+    const plankW=26*S;
+    ctx.lineWidth=1*S;
+    for(let x=(-((W*0.0)%plankW)); x<W; x+=plankW){
+      ctx.strokeStyle = 'rgba(0,0,0,.12)';
+      ctx.beginPath(); ctx.moveTo(x,gy); ctx.lineTo(x,H); ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.05)';
+      ctx.beginPath(); ctx.moveTo(x+2*S,gy); ctx.lineTo(x+2*S,H); ctx.stroke();
+    }
+    // brillo horizontal sutil de la duela
+    for(let i=0;i<10;i++){ const sy=gy+8*S+((i*(H-gy))/10);
+      ctx.strokeStyle='rgba(255,255,255,.045)'; ctx.lineWidth=1*S;
+      ctx.beginPath(); ctx.moveTo(0,sy); ctx.lineTo(W,sy); ctx.stroke(); }
+    // línea de cancha (arco) cerca del borde del piso
+    ctx.strokeStyle='rgba(255,255,255,.55)'; ctx.lineWidth=3*S;
+    ctx.beginPath(); ctx.arc(W/2, gy-6*S, W*0.58, 0.18*Math.PI, 0.82*Math.PI); ctx.stroke();
+    // línea de límite del piso
+    ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=2.6*S;
+    ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke();
     // viñeta
     let vg=ctx.createRadialGradient(W/2,H*0.46,H*0.28,W/2,H*0.5,H*0.78);
     vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.45)');
@@ -4692,18 +5418,7 @@ window.MiniGame = (function(){
     },
     watchScores: (cb, n)=> onSnapshot(query(collection(db,"scores"), orderBy("score","desc"), limit(n||20)),
       qs=> cb(qs.docs.map(d=>d.data())), ()=>{}),
-    deleteMyScore: (uid)=> Promise.all([ deleteDoc(doc(db,"scores",uid)).catch(()=>{}), deleteDoc(doc(db,"league",uid)).catch(()=>{}) ]),
-    // ---- LIGA (temporada nueva, ranking propio) ----
-    submitLeague: async (uid, username, score)=>{
-      return await runTransaction(db, async(tx)=>{
-        const ref=doc(db,"league",uid); const s=await tx.get(ref);
-        const prev = s.exists() ? (s.data().score||0) : 0;
-        if(score>prev){ tx.set(ref, { uid, username, score, updated:Date.now() }); return true; }
-        return false;
-      });
-    },
-    watchLeague: (cb, n)=> onSnapshot(query(collection(db,"league"), orderBy("score","desc"), limit(n||50)),
-      qs=> cb(qs.docs.map(d=>d.data())), ()=>{}),
+    deleteMyScore: (uid)=> deleteDoc(doc(db,"scores",uid)).catch(()=>{}),
     // ---- CÓDIGOS DE UN SOLO USO ----
     makeCode: async (code, cards)=>{ await setDoc(doc(db,"codes",code), { cards, used:false, createdAt:Date.now() }); return code; },
     claimCode: async (code, uid)=>{
@@ -4717,6 +5432,72 @@ window.MiniGame = (function(){
         return { ok:true, cards:d.cards||[] };
       });
     },
+    // ---- FANTASY ----
+    fantasyGetSeason: async ()=>{ const s=await getDoc(doc(db,"fantasySeason","current")); return s.exists()?s.data():null; },
+    // une al usuario a la temporada activa: si no hay o venció, crea una nueva; si ya tenía equipo, devuelve el mismo (no rerollea)
+    fantasyJoin: async (uid, eligibleTeams, seasonDays, dayMs)=>{
+      return await runTransaction(db, async (tx)=>{
+        const ref=doc(db,"fantasySeason","current");
+        const snap=await tx.get(ref);
+        let data = snap.exists() ? snap.data() : null;
+        // compat: temporadas creadas antes del control de inicio no tienen "started" — no lo escribimos aquí
+        // (eso lo haría chocar con la regla de Firestore), solo lo usamos para decidir si expiró.
+        const wasStarted = data && (data.started || data.startedAt);
+        const expired = !data || (wasStarted && Date.now() >= data.endsAt);
+        if(expired){
+          const teams={}; eligibleTeams.forEach(t=>{ teams[t]=null; });
+          data = { seasonNumber: data ? (data.seasonNumber||1)+1 : 1, started:false, startedAt:null, endsAt:null, seasonDays, dayMs:(dayMs||86400000), teams };
+        }
+        const mine = Object.keys(data.teams).find(t=>data.teams[t]===uid);
+        if(mine){ tx.set(ref, data); return { team:mine, season:data }; }
+        const free = Object.keys(data.teams).filter(t=>!data.teams[t]);
+        if(!free.length) throw new Error("No quedan equipos libres esta temporada");
+        const pick = free[Math.floor(Math.random()*free.length)];
+        data.teams[pick] = uid;
+        tx.set(ref, data);
+        return { team:pick, season:data };
+      });
+    },
+    // arranca el reloj de la temporada pendiente (solo el comisionado puede, lo filtra la regla de Firestore)
+    fantasyStartSeason: async ()=>{
+      return await runTransaction(db, async (tx)=>{
+        const ref=doc(db,"fantasySeason","current");
+        const snap=await tx.get(ref);
+        if(!snap.exists()) throw new Error("No hay temporada pendiente");
+        const data=snap.data();
+        if(data.started || data.startedAt) return data;
+        data.started=true; data.startedAt=Date.now(); data.endsAt=Date.now()+(data.seasonDays||10)*(data.dayMs||86400000);
+        tx.set(ref, data);
+        return data;
+      });
+    },
+    fantasyGetSchedule: async (team)=>{ const s=await getDoc(doc(db,"fantasySchedules",team)); return s.exists()?s.data():null; },
+    fantasySaveSchedule: (team, games)=> setDoc(doc(db,"fantasySchedules",team), { games, createdAt:Date.now() }),
+    fantasyGetGame: async (id)=>{ const s=await getDoc(doc(db,"fantasyGames",id)); return s.exists()?s.data():null; },
+    fantasyCreateGame: (id, data)=> setDoc(doc(db,"fantasyGames",id), data),
+    fantasyUpdateGame: (id, patch)=> updateDoc(doc(db,"fantasyGames",id), patch),
+    fantasyGetLineup: async (team)=>{ const s=await getDoc(doc(db,"fantasyLineups",team)); return s.exists()?s.data():null; },
+    fantasySaveLineup: (team, data)=> setDoc(doc(db,"fantasyLineups",team), Object.assign({}, data, { updated:Date.now() })),
+    fantasyCreateTradeOffer: async (offer)=>{
+      const id=`t${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+      await setDoc(doc(db,"fantasyTrades",id), Object.assign({id, status:"pending", createdAt:Date.now()}, offer));
+      return id;
+    },
+    fantasyMyOffers: async (uid)=>{
+      const qs=await getDocs(query(collection(db,"fantasyTrades"), where("fromUid","==",uid)));
+      return qs.docs.map(d=>d.data()).sort((a,b)=>b.createdAt-a.createdAt);
+    },
+    // ---- NOTICIAS (las publica el comisionado) ----
+    fantasyGetNews: async ()=>{
+      const qs=await getDocs(query(collection(db,"fantasyNews"), orderBy("createdAt","desc"), limit(30)));
+      return qs.docs.map(d=>d.data());
+    },
+    fantasyPostNews: async (title, text)=>{
+      const id=`n${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+      await setDoc(doc(db,"fantasyNews",id), { id, title, text, createdAt:Date.now() });
+      return id;
+    },
+    fantasyDeleteNews: (id)=> deleteDoc(doc(db,"fantasyNews",id)),
     mapErr
   };
   window.dispatchEvent(new Event("dunkfire-ready"));

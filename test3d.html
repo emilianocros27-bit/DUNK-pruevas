@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mini Basket 3D</title>
+<style>
+  body { margin: 0; overflow: hidden; background: #111; font-family: sans-serif; }
+  #hud { position: fixed; top: 12px; left: 12px; color: #fff; z-index: 10; }
+  #score { font-size: 28px; font-weight: bold; }
+  #help { font-size: 13px; opacity: .7; margin-top: 4px; }
+  #powerWrap { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 260px; height: 16px; border: 2px solid #fff; border-radius: 8px; z-index: 10; }
+  #power { height: 100%; width: 0%; background: linear-gradient(90deg, #4caf50, #ffeb3b, #f44336);
+    border-radius: 6px; }
+  #msg { position: fixed; top: 40%; width: 100%; text-align: center; color: #ffeb3b;
+    font-size: 40px; font-weight: bold; z-index: 10; text-shadow: 0 2px 8px #000; display: none; }
+</style>
+<script type="importmap">
+  { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<div id="hud">
+  <div id="score">🏀 0</div>
+  <div id="help">← → apuntar · ESPACIO (mantener) potencia · soltar = tiro · R reiniciar</div>
+</div>
+<div id="powerWrap"><div id="power"></div></div>
+<div id="msg">¡ENCESTE!</div>
+<script type="module">
+import * as THREE from 'three';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a2233);
+scene.fog = new THREE.Fog(0x1a2233, 20, 45);
+
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xbdd7ff, 0x223311, 0.9));
+const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+sun.position.set(5, 10, 4);
+sun.castShadow = true;
+scene.add(sun);
+
+// Cancha
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(30, 30),
+  new THREE.MeshStandardMaterial({ color: 0xb5651d })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const lines = new THREE.Mesh(
+  new THREE.RingGeometry(1.7, 1.8, 48),
+  new THREE.MeshBasicMaterial({ color: 0xffffff })
+);
+lines.rotation.x = -Math.PI / 2;
+lines.position.y = 0.01;
+scene.add(lines);
+
+// Aro: poste, tablero, rim
+const HOOP = new THREE.Vector3(0, 3.05, -6);
+const pole = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.08, 0.08, 3.6),
+  new THREE.MeshStandardMaterial({ color: 0x888888 })
+);
+pole.position.set(0, 1.8, -6.7);
+scene.add(pole);
+
+const board = new THREE.Mesh(
+  new THREE.BoxGeometry(1.8, 1.1, 0.05),
+  new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 })
+);
+board.position.set(0, 3.5, -6.55);
+scene.add(board);
+
+const rim = new THREE.Mesh(
+  new THREE.TorusGeometry(0.45, 0.03, 12, 32),
+  new THREE.MeshStandardMaterial({ color: 0xff4400 })
+);
+rim.rotation.x = Math.PI / 2;
+rim.position.copy(HOOP);
+scene.add(rim);
+
+// Balón
+const BALL_R = 0.24;
+const ball = new THREE.Mesh(
+  new THREE.SphereGeometry(BALL_R, 24, 24),
+  new THREE.MeshStandardMaterial({ color: 0xff8c00 })
+);
+ball.castShadow = true;
+scene.add(ball);
+
+// Estado
+const START = new THREE.Vector3(0, BALL_R, 2);
+let vel = new THREE.Vector3();
+let flying = false;
+let aim = 0;           // radianes, izquierda/derecha
+let power = 0;
+let charging = false;
+let scored = false;
+let score = 0;
+let prevY = 0;
+
+function reset() {
+  ball.position.copy(START);
+  vel.set(0, 0, 0);
+  flying = false;
+  scored = false;
+  power = 0;
+  charging = false;
+  document.getElementById('power').style.width = '0%';
+}
+reset();
+
+const keys = {};
+addEventListener('keydown', e => {
+  if (e.code === 'Space' && !flying && !charging) { charging = true; power = 0; }
+  if (e.code === 'KeyR') reset();
+  keys[e.code] = true;
+  if (e.code === 'Space') e.preventDefault();
+});
+addEventListener('keyup', e => {
+  if (e.code === 'Space' && charging) shoot();
+  keys[e.code] = false;
+});
+
+function shoot() {
+  charging = false;
+  flying = true;
+  const speed = 4 + power * 8;           // 4..12 m/s
+  const pitch = THREE.MathUtils.degToRad(55);
+  vel.set(
+    Math.sin(aim) * speed * Math.cos(pitch) * -1,
+    Math.sin(pitch) * speed,
+    -Math.cos(aim) * speed * Math.cos(pitch)
+  );
+}
+
+function showMsg(text) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 1200);
+}
+
+window.DBG = () => ({ pos: ball.position.toArray().map(n => +n.toFixed(2)),
+  vel: vel.toArray().map(n => +n.toFixed(2)), power: +power.toFixed(2), flying, charging, score });
+
+const clock = new THREE.Clock();
+function animate() {
+  const dt = Math.min(clock.getDelta(), 0.033);
+
+  if (!flying) {
+    if (keys['ArrowLeft'])  aim = Math.min(aim + 1.2 * dt,  0.5);
+    if (keys['ArrowRight']) aim = Math.max(aim - 1.2 * dt, -0.5);
+    if (charging) {
+      power = Math.min(power + dt * 0.9, 1);
+      document.getElementById('power').style.width = (power * 100) + '%';
+    }
+  } else {
+    physicsStep(dt);
+  }
+
+  // Flecha de puntería (rotar balón como guía visual)
+  if (!flying) {
+    ball.position.x = START.x;
+    ball.rotation.y = aim;
+  }
+
+  // Cámara sigue balón suave
+  const camTarget = new THREE.Vector3(
+    ball.position.x * 0.5,
+    Math.max(ball.position.y * 0.4 + 1.6, 1.6),
+    ball.position.z + 4
+  );
+  camera.position.lerp(camTarget, 0.08);
+  camera.lookAt(ball.position.x * 0.5, Math.max(ball.position.y * 0.5, 1.5), -4);
+
+  renderer.render(scene, camera);
+}
+setInterval(animate, 16);
+
+function physicsStep(dt) {
+  prevY = ball.position.y;
+  vel.y -= 9.8 * dt;
+  ball.position.addScaledVector(vel, dt);
+
+  // Rebote tablero
+  if (ball.position.z < board.position.z + BALL_R &&
+      Math.abs(ball.position.x) < 0.9 &&
+      ball.position.y > 2.95 && ball.position.y < 4.05 && vel.z < 0) {
+    vel.z *= -0.55;
+    ball.position.z = board.position.z + BALL_R;
+  }
+
+  // Enceste: cruza plano del aro bajando, cerca del centro
+  if (!scored && prevY > HOOP.y && ball.position.y <= HOOP.y && vel.y < 0) {
+    const dx = ball.position.x - HOOP.x;
+    const dz = ball.position.z - HOOP.z;
+    if (Math.sqrt(dx * dx + dz * dz) < 0.45 - BALL_R * 0.5) {
+      scored = true;
+      score++;
+      document.getElementById('score').textContent = '🏀 ' + score;
+      showMsg('¡ENCESTE!');
+    }
+  }
+
+  // Suelo
+  if (ball.position.y < BALL_R) {
+    ball.position.y = BALL_R;
+    vel.y *= -0.55;
+    vel.x *= 0.8;
+    vel.z *= 0.8;
+    if (vel.length() < 0.5) setTimeout(reset, 600);
+  }
+  // Fuera de cancha
+  if (Math.abs(ball.position.x) > 15 || Math.abs(ball.position.z) > 15) reset();
+}
+
+window.TEST_SHOT = (p, a = 0) => {
+  reset();
+  aim = a;
+  power = p;
+  shoot();
+  let t = 0;
+  while (flying && !scored && t < 6) { physicsStep(1 / 60); t += 1 / 60; }
+  const out = { scored, t: +t.toFixed(2), pos: ball.position.toArray().map(n => +n.toFixed(2)) };
+  reset();
+  return out;
+};
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>
