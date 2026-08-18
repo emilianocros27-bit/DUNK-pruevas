@@ -4,7 +4,15 @@ service cloud.firestore {
 
     // Progreso del juego: solo tu propia cuenta
     match /saves/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid;
+      // El dueño escribe libre su propio save. El comisionado (vía Claude en el chat) puede
+      // otorgar insignias manualmente a cualquiera vía updateDoc con dot-path ("state.badge90s"),
+      // lo que Firestore reporta como cambio al campo raíz "state" (no hay granularidad más fina).
+      allow update: if request.auth != null &&
+        (request.auth.uid == uid ||
+         (request.auth.token.email == "emilianocros27@gmail.com" &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(["state"])));
     }
 
     // Perfiles: cualquiera autenticado puede VER, solo el dueño edita
@@ -42,8 +50,10 @@ service cloud.firestore {
     }
 
     // Fantasy: temporada compartida (mapa equipo->dueño), calendario por equipo y partidos.
-    // Todo autenticado puede leer/reclamar equipo, pero solo el comisionado puede arrancar el reloj
-    // (cambiar started/startedAt/endsAt) — así el dueño de la cuenta decide cuándo inicia.
+    // Todo autenticado puede leer/reclamar equipo (escribe "teams"), mover jugadores al ejecutar
+    // un trade ya aceptado, y acreditar el dinero de ese trade (playerMoves/budgetBonus) — el propio
+    // código de la app solo dispara esos cambios al firmar una oferta, no hay botón libre para tocarlos.
+    // Solo el comisionado puede arrancar/reiniciar el reloj de temporada (started/startedAt/endsAt).
     match /fantasySeason/{id} {
       allow read: if request.auth != null;
       allow create: if request.auth != null;
@@ -60,12 +70,34 @@ service cloud.firestore {
     match /fantasyLineups/{team} {
       allow read, write: if request.auth != null;
     }
-    // Ofertas de mercado: cualquiera autenticado crea la suya; solo el comisionado puede
-    // aceptar/rechazar (cambia el status), vía Claude en el chat.
+    // Ofertas de mercado: cualquiera autenticado crea la suya. Solo el comisionado puede
+    // ejecutar (mover jugadores) tras una aceptación, vía Claude en el chat.
+    // Excepciones:
+    //  - el dueño del equipo que RECIBE una oferta pendiente puede FIRMARLA tal cual (-> accepted),
+    //    RECHAZARLA directo (-> rejected), o MODIFICARLA (-> countered), que de nuevo solo el
+    //    comisionado resuelve;
+    //  - quien la ENVIÓ puede CANCELARLA mientras siga pendiente o contraofertada (-> cancelled).
     match /fantasyTrades/{id} {
       allow read: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.fromUid == request.auth.uid;
-      allow update: if request.auth != null && request.auth.token.email == "emilianocros27@gmail.com";
+      allow update: if request.auth != null &&
+        (request.auth.token.email == "emilianocros27@gmail.com"
+         || (resource.data.status == "pending"
+             && get(/databases/$(database)/documents/fantasySeason/current).data.teams[resource.data.toTeam] == request.auth.uid
+             && (
+                  (request.resource.data.status == "countered"
+                   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["offeredSlug","amount","status","originalOfferedSlug","originalAmount"]))
+                  ||
+                  (request.resource.data.status == "accepted"
+                   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"]))
+                  ||
+                  (request.resource.data.status == "rejected"
+                   && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"]))
+                ))
+         || (request.auth.uid == resource.data.fromUid
+             && (resource.data.status == "pending" || resource.data.status == "countered")
+             && request.resource.data.status == "cancelled"
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"])));
       allow delete: if false;
     }
     // Buzón privado de avisos de Fantasy (ej. "se aceptó tu oferta"): el comisionado los crea,
