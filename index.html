@@ -417,10 +417,13 @@
   .ff-court::after{content:""; position:absolute; left:50%; top:14px; bottom:14px; width:2px; background:rgba(255,255,255,.35); transform:translateX(-50%); pointer-events:none;}
   .ff-formation-lbl{position:absolute; top:8px; left:50%; transform:translateX(-50%); font-family:var(--display); font-weight:800;
     text-transform:uppercase; letter-spacing:.04em; font-size:12px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.6); z-index:2;}
-  .ff-slot{position:absolute; width:19%; max-width:110px; transform:translate(-50%,-50%); text-align:center; z-index:1;}
-  .ff-slot.tl{left:22%; top:30%;} .ff-slot.tr{left:78%; top:30%;}
-  .ff-slot.mid{left:50%; top:58%;}
-  .ff-slot.bl{left:22%; top:82%;} .ff-slot.br{left:78%; top:82%;}
+  /* la posición de cada hueco la pone la formación elegida (inline), no una clase fija */
+  .ff-slot{position:absolute; width:19%; max-width:110px; transform:translate(-50%,-50%); text-align:center; z-index:1; transition:left .25s ease, top .25s ease;}
+  .ff-formations{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:12px;}
+  .ff-form-btn{background:var(--surface-2); border:1px solid var(--line); color:var(--muted); font-family:var(--display);
+    font-weight:700; font-size:12.5px; letter-spacing:.03em; padding:7px 14px; border-radius:var(--radius-pill); cursor:pointer; transition:.15s;}
+  .ff-form-btn:hover{border-color:var(--fantasy-accent, var(--accent)); color:var(--text);}
+  .ff-form-btn.active{background:var(--fantasy-accent, var(--accent)); border-color:var(--fantasy-accent, var(--accent)); color:#fff;}
   .ff-card{background:linear-gradient(160deg, rgba(20,22,30,.92), rgba(10,11,16,.92)); border:1.5px solid var(--c1,var(--line));
     border-radius:12px; padding:6px 5px 8px; box-shadow:0 6px 16px rgba(0,0,0,.5); position:relative; cursor:default;}
   .ff-slot.editable .ff-card{cursor:pointer; transition:transform .15s;}
@@ -4127,33 +4130,38 @@
   }
   // rival fijo de postemporada (Copa Final y cada ronda de Playoffs) — mismo para toda la temporada,
   // así si los dos califican para la misma ronda se enfrentan de verdad.
+  const fantasyClaimedTeams = () => {
+    const t=(fantasySeasonData&&fantasySeasonData.teams)||{};
+    return Object.keys(t).filter(x=>t[x]);
+  };
+  // el rival de postemporada sale SOLO de los equipos con dueño: si se emparejara contra cualquiera
+  // de los 30, cada quien jugaría su propia final por separado y saldrían campeones distintos.
   function fantasyPostseasonPartner(team, seasonNumber){
-    const order=fantasySeedShuffle(FANTASY_ALL_TEAMS, `postseason-${seasonNumber}`);
+    const claimed=fantasyClaimedTeams();
+    if(claimed.length<2) return null;
+    const order=fantasySeedShuffle(claimed.slice().sort(), `postseason-${seasonNumber}`);
     const idx=order.indexOf(team);
-    return order[idx%2===0 ? idx+1 : idx-1];
+    if(idx<0) return null;
+    return order[idx%2===0 ? idx+1 : idx-1] || null;   // si sobra uno (impar), se queda sin rival
   }
-  // busca rival real para una ronda de postemporada: si el rival fijo ya generó este cruce apuntándome
-  // a mí, lo reflejo tal cual (mismo id, rol contrario); si no pero también calificó, lo genero yo;
-  // si no hay manera de saberlo (no tiene dueño, no ha calificado, o coincidimos exactos al mismo tiempo
-  // sin transacción de por medio), cae a un rival aleatorio como respaldo.
+  // busca el cruce real de una ronda: si el rival ya lo generó apuntándome a mí, lo reflejo tal cual
+  // (mismo id, rol contrario); si todavía no pero también clasificó, lo genero yo.
+  // Devuelve null si no hay rival clasificado — y entonces NO se inventa ninguna final.
   async function fantasyPickPostseasonOpponent(type, qualifyCheck){
     const season=fantasySeasonData.seasonNumber;
     const partner=fantasyPostseasonPartner(fantasyMyTeam, season);
-    if(fantasySeasonData.teams && fantasySeasonData.teams[partner]){
-      try{
-        const pSched=await window.DunkFire.fantasyGetSchedule(partner);
-        const pGames=(pSched&&pSched.games)||[];
-        const mine=pGames.find(g=>g.type===type && g.opponent===fantasyMyTeam);
-        if(mine) return { opponent:partner, role: mine.role==="home"?"away":"home", matchId: mine.id };
-        if(qualifyCheck(pGames)){
-          const matchId=`s${season}-${type}-${[fantasyMyTeam,partner].map(fantasyTeamSlug).sort().join("-")}`;
-          return { opponent:partner, role: fantasyMyTeam<partner?"home":"away", matchId };
-        }
-      }catch(e){}
-    }
-    const pool=FANTASY_ALL_TEAMS.filter(t=>t!==fantasyMyTeam);
-    const opponent=pool[Math.floor(Math.random()*pool.length)];
-    return { opponent, role:"home", matchId:`s${season}-${fantasyTeamSlug(fantasyMyTeam)}-${type}-${Date.now()}` };
+    if(!partner) return null;
+    try{
+      const pSched=await window.DunkFire.fantasyGetSchedule(partner);
+      const pGames=(pSched&&pSched.games)||[];
+      const mine=pGames.find(g=>g.type===type && g.opponent===fantasyMyTeam);
+      if(mine) return { opponent:partner, role: mine.role==="home"?"away":"home", matchId: mine.id };
+      if(qualifyCheck(pGames)){
+        const matchId=`s${season}-${type}-${[fantasyMyTeam,partner].map(fantasyTeamSlug).sort().join("-")}`;
+        return { opponent:partner, role: fantasyMyTeam<partner?"home":"away", matchId };
+      }
+    }catch(e){}
+    return null;
   }
   function fantasyGenerateSchedule(myTeam, seasonNumber, startedAt){
     const grid=fantasyBuildLeagueGrid(seasonNumber);
@@ -4192,7 +4200,9 @@
     const wins = group.filter(g=>g.won).length;
     if(wins < FANTASY_COPA_WINS_NEEDED) return;
     const lastDay = Math.max(...group.map(g=>g.day));
-    const {opponent, role, matchId} = await fantasyPickPostseasonOpponent("copa-final", fantasyCopaQualifies);
+    const pick = await fantasyPickPostseasonOpponent("copa-final", fantasyCopaQualifies);
+    if(!pick) return;   // el otro dueño no pasó de la fase de grupos: no hay final que jugar
+    const {opponent, role, matchId} = pick;
     // arranca en cuanto se genera: entra al mismo reloj que el resto, así se resuelve solo si no lo ves
     fantasySchedule.games.push({ id:matchId, day:lastDay, opponent, role, status:"scheduled", scheduledAt:Date.now(), type:"copa-final" });
     try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(e){}
@@ -4228,7 +4238,9 @@
       const roundGames = fantasySchedule.games.filter(g=>g.type===type);
       if(type!=="playoff-final"){
         if(roundGames.length) { if(roundGames[0].status!=="final" || !roundGames[0].won) return; continue; }
-        const {opponent, role, matchId} = await fantasyPickPostseasonOpponent(type, pGames=>fantasyPlayoffQualifies(pGames, type));
+        const pick = await fantasyPickPostseasonOpponent(type, pGames=>fantasyPlayoffQualifies(pGames, type));
+        if(!pick) return;   // sin rival clasificado no se inventa la ronda
+        const {opponent, role, matchId} = pick;
         fantasySchedule.games.push({ id:matchId, day:lastDay+FANTASY_PLAYOFF_ROUNDS.indexOf(type)+1, opponent, role, status:"scheduled", scheduledAt:Date.now(), type });
         try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, fantasySchedule.games); }catch(e){}
         toast(`🏀 ¡Avanzaste a ${FANTASY_PLAYOFF_ROUND_LABEL[type]}!`);
@@ -4246,6 +4258,7 @@
           matchId=`s${fantasySeasonData.seasonNumber}-${type}-${[fantasyMyTeam,opponent].map(fantasyTeamSlug).sort().join("-")}-g${gi}`;
         } else {
           const picked = await fantasyPickPostseasonOpponent(type, pGames=>fantasyPlayoffQualifies(pGames, type));
+          if(!picked) return;
           opponent=picked.opponent; role=picked.role; matchId=picked.matchId;
         }
         fantasySchedule.games.push({ id:matchId, day:lastDay+FANTASY_PLAYOFF_ROUNDS.indexOf(type)+gi, opponent, role, status:"scheduled", scheduledAt:Date.now(), type });
@@ -4537,12 +4550,28 @@
         <b>${r.v}${pct?"%":""}<span class="fs-leader-unit">${esc(unit)}</span></b>
       </div>`).join("");
   }
-  function fantasyAssignSlots(roster, starters){
+  // formaciones: cada una coloca los 5 huecos en la cancha (izquierda%, arriba%) y define en cuál
+  // va el base (el armador). Solo cambia la disposición — los 5 titulares siguen siendo los mismos.
+  const FANTASY_FORMATIONS = {
+    "2-1-2": { lbl:"2-1-2", playmaker:"mid", pos:{ tl:[22,30], tr:[78,30], mid:[50,56], bl:[22,82], br:[78,82] } },
+    "1-2-2": { lbl:"1-2-2", playmaker:"mid", pos:{ mid:[50,22], tl:[20,54], tr:[80,54], bl:[28,84], br:[72,84] } },
+    "3-2":   { lbl:"3-2",   playmaker:"mid", pos:{ tl:[19,34], mid:[50,24], tr:[81,34], bl:[28,80], br:[72,80] } },
+    "1-3-1": { lbl:"1-3-1", playmaker:"mid", pos:{ mid:[50,21], tl:[19,53], bl:[50,56], tr:[81,53], br:[50,86] } },
+    "2-3":   { lbl:"2-3",   playmaker:"tl",  pos:{ tl:[27,27], tr:[73,27], bl:[19,78], mid:[50,85], br:[81,78] } },
+  };
+  const FANTASY_DEFAULT_FORMATION = "2-1-2";
+  const fantasyFormationOf = key => FANTASY_FORMATIONS[key] || FANTASY_FORMATIONS[FANTASY_DEFAULT_FORMATION];
+  function fantasyAssignSlots(roster, starters, formationKey){
+    const f=fantasyFormationOf(formationKey);
     const bySlug=Object.fromEntries(roster.map(p=>[p.slug,p]));
     let five=fantasyEligibleStarters(roster, starters).map(s=>bySlug[s]).filter(Boolean).slice(0,5);
     const pgIdx=five.findIndex(p=>p.posicion==="PG");
-    const mid = pgIdx>=0 ? five.splice(pgIdx,1)[0] : (five.shift()||null);
-    return { tl:five[0]||null, tr:five[1]||null, mid, bl:five[2]||null, br:five[3]||null };
+    const playmaker = pgIdx>=0 ? five.splice(pgIdx,1)[0] : (five.shift()||null);
+    const out={};
+    const rest=Object.keys(f.pos).filter(k=>k!==f.playmaker);
+    out[f.playmaker]=playmaker;
+    rest.forEach((k,i)=>{ out[k]=five[i]||null; });
+    return out;
   }
   function fantasyCardHTML(p, editable){
     if(!p) return `<div class="ff-card-empty">+</div>`;
@@ -4555,10 +4584,18 @@
       <div class="ff-stats"><span>${st[0][0]} <b>${st[0][1]}</b></span><span>${st[1][0]} <b>${st[1][1]}</b></span></div>
     </div>`;
   }
-  function fantasyFormationHTML(team, starters, editable){
+  function fantasyFormationHTML(team, starters, editable, formationKey){
     const roster=fantasyRoster(team);
-    const slots=fantasyAssignSlots(roster, starters);
-    const slot=(key,cls)=>`<div class="ff-slot ${cls} ${editable?"editable":""}" data-ff-key="${key}">${fantasyCardHTML(slots[key],editable)}</div>`;
+    const fKey = FANTASY_FORMATIONS[formationKey] ? formationKey : FANTASY_DEFAULT_FORMATION;
+    const f = fantasyFormationOf(fKey);
+    const slots=fantasyAssignSlots(roster, starters, fKey);
+    const slot=(key)=>{
+      const [l,t]=f.pos[key];
+      return `<div class="ff-slot ${editable?"editable":""}" style="left:${l}%;top:${t}%" data-ff-key="${key}">${fantasyCardHTML(slots[key],editable)}</div>`;
+    };
+    const picker = editable ? `<div class="ff-formations">
+        ${Object.keys(FANTASY_FORMATIONS).map(k=>`<button class="ff-form-btn ${k===fKey?"active":""}" data-formation="${esc(k)}" type="button">${esc(FANTASY_FORMATIONS[k].lbl)}</button>`).join("")}
+      </div>` : "";
     const suspended = roster.filter(p=>{ const s=fantasySeasonData&&fantasySeasonData.suspensions&&fantasySeasonData.suspensions[p.slug]; return s&&s.gamesLeft>0; });
     const suspendedHTML = suspended.length ? `<div class="ff-suspended">
         <div class="ff-suspended-lbl">🚫 Suspendidos (no disponibles)</div>
@@ -4569,31 +4606,33 @@
         </div>`;}).join("")}
       </div>` : "";
     return `<div class="ff-wrap">
+      ${picker}
       <div class="ff-court">
-        <div class="ff-formation-lbl">${esc(team)}</div>
-        ${slot("tl","tl")}${slot("tr","tr")}${slot("mid","mid")}${slot("bl","bl")}${slot("br","br")}
+        <div class="ff-formation-lbl">${esc(team)} · ${esc(f.lbl)}</div>
+        ${slot("tl")}${slot("tr")}${slot("mid")}${slot("bl")}${slot("br")}
         <div class="ff-chem"><b>${FANTASY_CHEM_OVERRIDE[team]||100}</b><span>Química</span></div>
       </div>
       ${suspendedHTML}
-      ${editable?`<p class="ff-hint2">Toca un jugador para sustituirlo. Los titulares reciben más jugadas que la banca.</p>
+      ${editable?`<p class="ff-hint2">Toca un jugador para sustituirlo, o cambia la formación arriba. Los titulares reciben más jugadas que la banca.</p>
       <div class="ff-actions"><button class="btn btn-primary" id="fantasy-save-lineup">💾 Guardar plantilla</button></div>`:""}
     </div>`;
   }
-  let fantasyEditStarters=null, fantasyEditMode=null;
+  let fantasyEditStarters=null, fantasyEditMode=null, fantasyEditFormation=FANTASY_DEFAULT_FORMATION;
   async function fantasyLoadEditStarters(){
     let lu=null; try{ lu=await window.DunkFire.fantasyGetLineup(fantasyMyTeam); }catch(e){}
     const roster=fantasyRoster(fantasyMyTeam);
     fantasyEditStarters = (lu && lu.starters && lu.starters.length) ? lu.starters.slice()
       : roster.slice().sort((a,b)=>b.media-a.media).slice(0,5).map(p=>p.slug);
+    fantasyEditFormation = (lu && FANTASY_FORMATIONS[lu.formation]) ? lu.formation : FANTASY_DEFAULT_FORMATION;
   }
   function fantasyRerenderEditor(){
-    const html=fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true);
+    const html=fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation);
     if(fantasyEditMode==="equipo"){ const w=$("#fantasy-equipo-wrap"); if(w) w.innerHTML=html; closeSheet(); }
     else if(fantasyEditMode==="sheet"){ $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + html; }
   }
   function fantasySlotClick(key){
     const roster=fantasyRoster(fantasyMyTeam);
-    const slots=fantasyAssignSlots(roster, fantasyEditStarters);
+    const slots=fantasyAssignSlots(roster, fantasyEditStarters, fantasyEditFormation);
     const outgoing=slots[key];
     openFantasySubPicker(incomingSlug=>{
       if(outgoing) fantasyEditStarters=fantasyEditStarters.filter(s=>s!==outgoing.slug);
@@ -4626,7 +4665,7 @@
     showSheet();
   }
   async function fantasySaveLineupNow(){
-    try{ await window.DunkFire.fantasySaveLineup(fantasyMyTeam, {starters: fantasyEditStarters}); }
+    try{ await window.DunkFire.fantasySaveLineup(fantasyMyTeam, {starters: fantasyEditStarters, formation: fantasyEditFormation}); }
     catch(e){ toast("No se pudo guardar la plantilla"); return; }
     const liveGameOfMine = fantasyLiveGame && fantasyLiveGame.status!=="final" && (fantasyLiveGame.home===fantasyMyTeam || fantasyLiveGame.away===fantasyMyTeam);
     if(liveGameOfMine){
@@ -4644,12 +4683,12 @@
     wrap.innerHTML = `<p style="color:var(--muted);font-size:13px;text-align:center">Cargando…</p>`;
     await fantasyLoadEditStarters();
     fantasyEditMode="equipo";
-    wrap.innerHTML = fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true);
+    wrap.innerHTML = fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation);
   }
   async function fantasyOpenTimeoutTeam(){
     await fantasyLoadEditStarters();
     fantasyEditMode="sheet";
-    $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true);
+    $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation);
     showSheet();
   }
   function renderFantasyTransfer(){
@@ -5048,6 +5087,14 @@
       sched = { games, createdAt: Date.now(), gridVersion: FANTASY_GRID_VERSION };
     }
     fantasySchedule = sched;
+    // borra finales "fantasma": Copa/Playoffs contra un rival sin dueño, que se generaban al azar
+    // y hacían que cada quien tuviera SU propia final distinta (campeones diferentes en la misma liga)
+    const claimedSet = new Set(fantasyClaimedTeams());
+    const kept = fantasySchedule.games.filter(g=>!g.type || claimedSet.has(g.opponent));
+    if(kept.length !== fantasySchedule.games.length){
+      fantasySchedule.games = kept;
+      try{ await window.DunkFire.fantasySaveSchedule(fantasyMyTeam, kept, FANTASY_GRID_VERSION); }catch(e){}
+    }
     // sin servidor de por medio: al entrar se calcula el tiempo transcurrido y se resuelven
     // de golpe los partidos que ya se jugaron completos mientras la app estaba cerrada
     try{ await fantasyCatchUpGames(); }catch(e){}
@@ -5065,7 +5112,10 @@
     const copaFinal = fantasySchedule.games.find(g=>g.type==="copa-final");
     const playoffGames = fantasySchedule.games.filter(g=>g.type&&g.type!=="copa-final");
     let extraLine = "";
+    const copaGroup = fantasySchedule.games.filter(g=>g.copaGroup);
+    const copaGroupDone = copaGroup.length>=FANTASY_COPA_GROUP_GAMES && copaGroup.every(g=>g.status==="final");
     if(copaFinal) extraLine += `<div class="fantasy-stat"><b>${copaFinal.status==="final"?(copaFinal.won?"🏆 Campeón":"Final perdida"):"Clasificado"}</b><span>Copa NBA</span></div>`;
+    else if(copaGroupDone) extraLine += `<div class="fantasy-stat"><b>Eliminado</b><span>Copa NBA · grupos</span></div>`;
     if(playoffGames.length){
       const pw=playoffGames.filter(g=>g.status==="final"&&g.won).length, pl=playoffGames.filter(g=>g.status==="final"&&!g.won).length;
       const champ = playoffGames.filter(g=>g.type==="playoff-final").filter(g=>g.status==="final"&&g.won).length>=2;
@@ -5388,6 +5438,7 @@
       switchFantasySub(b.dataset.sub);
     });
     $("#fantasy-equipo-wrap")?.addEventListener("click", e=>{
+      const fb=e.target.closest("[data-formation]"); if(fb){ fantasyEditFormation=fb.dataset.formation; fantasyRerenderEditor(); return; }
       const slot=e.target.closest(".ff-slot"); if(slot){ fantasySlotOrStats(slot); return; }
       const save=e.target.closest("#fantasy-save-lineup"); if(save){ fantasySaveLineupNow(); return; }
     });
@@ -5408,6 +5459,7 @@
     $("#sheet")?.addEventListener("click", e=>{
       const statRow=e.target.closest("[data-stat-slug]"); if(statRow && !e.target.closest("[data-offer-slug]") && !e.target.closest("[data-toggle-listing]")){ fantasyOpenPlayerStats(statRow.dataset.statSlug, {}); return; }
       if(fantasyEditMode!=="sheet") return;
+      const fb=e.target.closest("[data-formation]"); if(fb){ fantasyEditFormation=fb.dataset.formation; fantasyRerenderEditor(); return; }
       const slot=e.target.closest(".ff-slot"); if(slot){ fantasySlotOrStats(slot); return; }
       const save=e.target.closest("#fantasy-save-lineup"); if(save){ fantasySaveLineupNow(); return; }
     });
