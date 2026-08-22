@@ -637,6 +637,12 @@
   .pack:has(.pk-photo) .pk-desc{text-align:center;}
   .pack:has(.pk-photo) .btn{align-self:center;}
   .pack:hover .pk-photo{transform:translateY(-4px) scale(1.03);}
+  /* sobres "minimal": solo foto, nombre y precio, sin marco de card */
+  .pack.pack-minimal{border:none; background:none; box-shadow:none; padding:8px 4px; min-height:0;}
+  .pack.pack-minimal::before{display:none;}
+  .pack.pack-minimal .pk-photo{max-width:100%; max-height:300px; margin:0 auto 14px;}
+  .pack.pack-minimal .pk-name{font-family:var(--display); font-size:15px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--text); margin-bottom:14px;}
   .pack .btn{margin-top:18px; align-self:flex-start}
   .pack-stats{text-align:center; color:var(--muted); font-size:13px; margin-top:22px;}
   .pack-stats b{color:var(--text); font-family:var(--display)}
@@ -1468,22 +1474,14 @@
         </div>
       </div>
       <div class="packs-wrap">
-        <div class="pack std" style="--pc:#386cff">
-          <div class="pk-foil"></div>
-          <span class="pk-badge">5 cartas</span>
+        <div class="pack std pack-minimal" style="--pc:#386cff">
           <img class="pk-photo" src="pack-assets/pack-std-v2.png" alt="Sobre estándar DUNK">
-          <div class="pk-kicker">Sobre estándar</div>
-          <h3>Base</h3>
-          <p class="pk-desc">Cinco cartas aleatorias de toda la liga. La forma normal de crecer tu colección.</p>
+          <div class="pk-name">Sobre estándar</div>
           <button class="btn btn-primary pack-buy" data-pack="std" id="btn-std">Abrir · <span class="coin-ico"></span> 150</button>
         </div>
-        <div class="pack elite" style="--pc:#f2552c">
-          <div class="pk-foil"></div>
-          <span class="pk-badge">Media 85+ asegurada</span>
+        <div class="pack elite pack-minimal" style="--pc:#f2552c">
           <img class="pk-photo" src="pack-assets/pack-elite.png" alt="Sobre Élite DUNK">
-          <div class="pk-kicker">Sobre Élite</div>
-          <h3>Élite</h3>
-          <p class="pk-desc">Cinco cartas: al menos una estrella de media 85 o más, garantizada.</p>
+          <div class="pk-name">Sobre Élite</div>
           <button class="btn btn-primary pack-buy" data-pack="elite" id="btn-elite">Abrir · <span class="coin-ico"></span> 600</button>
         </div>
         <div class="pack psa" id="pack-psa" style="--pc:#d23b3b">
