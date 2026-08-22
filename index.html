@@ -1477,6 +1477,15 @@
           <p class="pk-desc">Cinco cartas aleatorias de toda la liga. La forma normal de crecer tu colección.</p>
           <button class="btn btn-primary pack-buy" data-pack="std" id="btn-std">Abrir · <span class="coin-ico"></span> 150</button>
         </div>
+        <div class="pack elite" style="--pc:#f2552c">
+          <div class="pk-foil"></div>
+          <span class="pk-badge">Media 85+ asegurada</span>
+          <div class="pk-kicker">Sobre Élite</div>
+          <h3>Élite</h3>
+          <p class="pk-desc">Cinco cartas: al menos una estrella de media 85 o más, garantizada.</p>
+          <span class="pk-art">85</span>
+          <button class="btn btn-primary pack-buy" data-pack="elite" id="btn-elite">Abrir · <span class="coin-ico"></span> 600</button>
+        </div>
         <div class="pack psa" id="pack-psa" style="--pc:#d23b3b">
           <div class="pk-foil"></div>
           <span class="pk-badge">Graduada · 1 carta</span>
@@ -3269,7 +3278,7 @@
       // SOLO leyendas de los 90 (no jugadores actuales)
       for(let i=0;i<n;i++){ const p=drawOne(LEGENDS_90S, taken); picks.push(p); taken.add(p.slug); }
     } else if(kind==="elite" || kind==="reward"){
-      const minMedia = kind==="reward" ? 90 : 88;          // recompensa garantiza 90+
+      const minMedia = kind==="reward" ? 90 : 85;          // recompensa garantiza 90+, Élite garantiza 85+
       const tops = CARD_PLAYERS.filter(p=>ovr(p)>=minMedia);
       const first = drawOne(tops, taken); picks.push(first); taken.add(first.slug);
       for(let i=0;i<n-1;i++){ const p=drawOne(CARD_PLAYERS, taken); picks.push(p); taken.add(p.slug); }
@@ -3336,7 +3345,7 @@
     }
   }
   function renderShop(){
-    const map={std:"#btn-std",psa:"#btn-psa"};
+    const map={std:"#btn-std",elite:"#btn-elite",psa:"#btn-psa"};
     for(const k in map){ const b=document.querySelector(map[k]); if(!b) continue;
       b.classList.toggle("cant-afford", (state.coins||0) < PACK_COST[k]); }
   }
