@@ -16,6 +16,26 @@
         "build_medias.py",
         "firestore.rules",
         "medias.csv"
+      ],
+      "headers": [
+        {
+          "source": "/",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(html|json)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0"
+            }
+          ]
+        }
       ]
     },
     {
@@ -31,6 +51,26 @@
         "build_medias.py",
         "firestore.rules",
         "medias.csv"
+      ],
+      "headers": [
+        {
+          "source": "/",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(html|json)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0"
+            }
+          ]
+        }
       ]
     }
   ]

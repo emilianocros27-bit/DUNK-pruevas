@@ -76,7 +76,8 @@ service cloud.firestore {
     //  - el dueño del equipo que RECIBE una oferta pendiente puede FIRMARLA tal cual (-> accepted),
     //    RECHAZARLA directo (-> rejected), o MODIFICARLA (-> countered), que de nuevo solo el
     //    comisionado resuelve;
-    //  - quien la ENVIÓ puede CANCELARLA mientras siga pendiente o contraofertada (-> cancelled).
+    //  - quien la ENVIÓ puede CANCELARLA mientras siga pendiente o contraofertada (-> cancelled),
+    //    o FIRMAR la contraoferta que le devolvieron (countered -> accepted).
     match /fantasyTrades/{id} {
       allow read: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.fromUid == request.auth.uid;
@@ -97,6 +98,11 @@ service cloud.firestore {
          || (request.auth.uid == resource.data.fromUid
              && (resource.data.status == "pending" || resource.data.status == "countered")
              && request.resource.data.status == "cancelled"
+             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"]))
+         // quien mandó la oferta puede FIRMAR la contraoferta que le devolvieron
+         || (request.auth.uid == resource.data.fromUid
+             && resource.data.status == "countered"
+             && request.resource.data.status == "accepted"
              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"])));
       allow delete: if false;
     }

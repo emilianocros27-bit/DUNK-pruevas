@@ -154,6 +154,20 @@
   main{max-width:var(--maxw); margin:0 auto; padding:22px 16px 96px;}
   .view{display:none; animation:viewIn .45s var(--ease) both;}
   .view.active{display:block;}
+  /* Temporada 1.3: el álbum va sobre el tapete verde retro */
+  #view-album.active{
+    background:radial-gradient(ellipse at 50% 0%, #16a34a, #0b5c2e 72%);
+    background-image:
+      repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 2px, transparent 2px 4px),
+      radial-gradient(ellipse at 50% 0%, #16a34a, #0b5c2e 72%);
+    background-attachment:fixed;
+    margin:-22px -16px -96px;          /* compensa el padding de <main> para sangrar de borde a borde */
+    padding:22px 16px 96px;
+  }
+  /* sobre el verde, los textos de cabecera necesitan más contraste */
+  #view-album.active .view-head h2{color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.35);}
+  #view-album.active .view-head p{color:rgba(255,255,255,.88);}
+  #view-album.active .teams-done b{color:#f7c31a;}
   @keyframes viewIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
 
   .view-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:18px;}
@@ -419,6 +433,15 @@
     text-transform:uppercase; letter-spacing:.04em; font-size:12px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.6); z-index:2;}
   /* la posición de cada hueco la pone la formación elegida (inline), no una clase fija */
   .ff-slot{position:absolute; width:19%; max-width:110px; transform:translate(-50%,-50%); text-align:center; z-index:1; transition:left .25s ease, top .25s ease;}
+  /* chip de posición bajo cada carta: toca y cambia de sigla a nombre completo */
+  .ff-poschip{display:block; margin:5px auto 0; background:rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.22);
+    color:#fff; font-family:var(--display); font-weight:700; font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+    padding:3px 9px; border-radius:var(--radius-pill); cursor:pointer; white-space:nowrap; transition:.15s;}
+  .ff-poschip:hover{border-color:var(--accent);}
+  .ff-poschip.full{background:var(--accent); border-color:var(--accent); letter-spacing:.02em;}
+  /* jugador marcado con doble toque: listo para intercambiar de posición */
+  .ff-slot.ff-selected{z-index:3;}
+  .ff-slot.ff-selected .ff-card{border-color:#ff7a1a; box-shadow:0 0 0 2px #ff7a1a, 0 0 18px rgba(255,122,26,.55); transform:translateY(-3px);}
   .ff-formations{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:12px;}
   .ff-form-btn{background:var(--surface-2); border:1px solid var(--line); color:var(--muted); font-family:var(--display);
     font-weight:700; font-size:12.5px; letter-spacing:.03em; padding:7px 14px; border-radius:var(--radius-pill); cursor:pointer; transition:.15s;}
@@ -608,9 +631,101 @@
     text-transform:uppercase; padding:5px 11px; border-radius:var(--radius-pill); border:1px solid var(--line-strong); color:var(--text);}
   .pack .pk-art{position:absolute; right:-26px; bottom:-10px; font-family:var(--display); font-weight:700; font-size:150px; line-height:.8;
     color:rgba(255,255,255,.05); z-index:-1;}
+  .pack .pk-photo{display:block; margin:2px auto 8px; max-width:82%; max-height:260px; width:auto; height:auto;
+    filter:drop-shadow(0 16px 30px rgba(0,0,0,.55)); transition:transform .25s ease;}
+  .pack:has(.pk-photo){align-items:center; text-align:center;}
+  .pack:has(.pk-photo) .pk-desc{text-align:center;}
+  .pack:has(.pk-photo) .btn{align-self:center;}
+  .pack:hover .pk-photo{transform:translateY(-4px) scale(1.03);}
   .pack .btn{margin-top:18px; align-self:flex-start}
   .pack-stats{text-align:center; color:var(--muted); font-size:13px; margin-top:22px;}
   .pack-stats b{color:var(--text); font-family:var(--display)}
+
+  /* ===== Temporada 1.3 · vitrina RETRO (formato Donruss '83) ===== */
+  .retro-showcase{margin-top:26px; border-radius:18px; overflow:hidden; border:1px solid rgba(0,0,0,.35);
+    background:radial-gradient(ellipse at 50% 0%, #16a34a, #0b5c2e 72%);
+    background-image:repeating-linear-gradient(45deg, rgba(0,0,0,.06) 0 2px, transparent 2px 4px),
+      radial-gradient(ellipse at 50% 0%, #16a34a, #0b5c2e 72%);
+    box-shadow:0 12px 28px rgba(0,0,0,.35);}
+  .retro-head{padding:18px 18px 4px; text-align:center;}
+  .retro-tag{display:inline-block; background:#f7c31a; color:#8a1210; font-family:var(--display); font-weight:700;
+    font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 10px; border-radius:99px;}
+  .retro-head h3{color:#fff; font-family:var(--display); font-weight:700; font-size:22px; letter-spacing:.04em;
+    text-transform:uppercase; margin:8px 0 4px; text-shadow:0 2px 0 rgba(0,0,0,.35);}
+  .retro-head p{color:rgba(255,255,255,.85); font-size:12.5px; max-width:440px; margin:0 auto;}
+  /* tienda retro: sobre y caja recortados sobre el fondo verde */
+  .retro-shop{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; padding:14px 16px 4px;}
+  .retro-buy{flex:1 1 150px; max-width:210px; background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.22);
+    border-radius:16px; padding:12px 10px 14px; cursor:pointer; color:#fff; display:flex; flex-direction:column;
+    align-items:center; gap:2px; transition:.15s; font:inherit;}
+  .retro-buy:hover{background:rgba(0,0,0,.32); border-color:#f7c31a; transform:translateY(-2px);}
+  .retro-buy.cant-afford{opacity:.55;}
+  .retro-prod{display:block; object-fit:contain; filter:drop-shadow(0 10px 16px rgba(0,0,0,.5)); margin-bottom:8px;}
+  .retro-prod.sobre{height:132px;}
+  .retro-prod.caja{height:132px;}
+  .rb-name{font-family:var(--display); font-weight:700; font-size:16px; letter-spacing:.04em; text-transform:uppercase;}
+  .rb-meta{font-size:11.5px; color:rgba(255,255,255,.78);}
+  .rb-price{margin-top:6px; background:#f7c31a; color:#8a1210; font-family:var(--display); font-weight:700;
+    font-size:13px; border-radius:99px; padding:4px 12px; display:inline-flex; align-items:center; gap:5px;}
+  .rb-price .coin-ico{width:13px; height:13px;}
+  .retro-progress{text-align:center; color:rgba(255,255,255,.9); font-size:12.5px; padding:10px 16px 0; letter-spacing:.02em;}
+  .retro-progress b{color:#f7c31a; font-family:var(--display); font-size:15px;}
+  .retro-strip{display:flex; gap:16px; overflow-x:auto; padding:18px; scroll-snap-type:x mandatory;}
+  .retro-strip::-webkit-scrollbar{height:8px;}
+  .retro-strip::-webkit-scrollbar-thumb{background:rgba(0,0,0,.3); border-radius:99px;}
+  .rcard{flex:0 0 auto; width:192px; aspect-ratio:2.5/3.5; background:#f2ece0; padding:7px 7px 8px;
+    border-radius:5px; position:relative; scroll-snap-align:center;
+    box-shadow:0 10px 20px rgba(0,0,0,.42), 0 2px 0 rgba(255,255,255,.5) inset;
+    background-image:radial-gradient(circle at 18% 12%, rgba(150,120,70,.10) 0 3px, transparent 4px),
+      radial-gradient(circle at 82% 78%, rgba(150,120,70,.09) 0 4px, transparent 5px);}
+  .rframe{position:relative; height:100%; border:2px solid #d8202a; border-radius:3px; padding:2px; background:#f7c31a;}
+  .rphoto{position:relative; height:100%; overflow:hidden; background:#7fa8c9;}
+  /* filtro retro: tono cálido, menos saturación y un punto de grano — foto de los 80 */
+  .rphoto img{width:100%; height:100%; object-fit:cover; display:block;
+    filter:sepia(.32) saturate(.78) contrast(1.06) brightness(1.02) hue-rotate(-6deg);}
+  /* estrella aún no desbloqueada: en gris hasta que la saques */
+  .rcard.rlocked .rphoto img{filter:grayscale(1) contrast(.9) brightness(.78);}
+  .rcard.rlocked .rframe{border-color:#8d8d8d; background:#c9c9c9;}
+  .rcard.rlocked .rplate{background:linear-gradient(#d6d6d6,#b4b4b4); border-color:#7d7d7d;}
+  .rcard.rlocked .rpos{background:#7d7d7d; color:#e8e8e8;}
+  .rcard.rlocked .rname{color:#5b5b5b;}
+  .rcard.rlocked .rbrand-year{background:#c9c9c9; color:#6b6b6b;}
+  .rcard.rlocked .rball svg circle{fill:#b0b0b0;}
+  .rcard.rlocked{filter:saturate(.15);}
+  .rcard.rlocked::after{content:"POR DESBLOQUEAR"; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-11deg);
+    font-family:var(--display); font-weight:700; font-size:11px; letter-spacing:.08em; color:#fff;
+    background:rgba(0,0,0,.62); border:1px solid rgba(255,255,255,.5); border-radius:6px; padding:4px 8px; z-index:5; white-space:nowrap;}
+  .rdup{position:absolute; top:4px; right:4px; z-index:4; background:#111; color:#fbd53c; border-radius:99px;
+    font-family:var(--display); font-weight:700; font-size:10px; padding:2px 7px;}
+  .rphoto::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.22)),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 2px);}
+  .rbrand{position:absolute; top:0; left:0; display:flex; z-index:3;}
+  .rbrand-logo{width:22px; height:24px; background:#f2ece0; border-right:2px solid #111;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;}
+  .rbrand-logo .d{font-family:var(--display); font-weight:700; font-size:14px; color:#111; transform:skewX(-10deg);}
+  .rbrand-logo .nm{font-size:3.6px; letter-spacing:.06em; color:#111; font-weight:700;}
+  .rbrand-year{background:#f7c31a; color:#d8202a; font-family:var(--display); font-weight:700; font-size:12px;
+    padding:0 5px; display:flex; align-items:center;}
+  .rplate{position:absolute; left:4px; right:44px; bottom:5px; height:21px; z-index:3;
+    background:linear-gradient(#fbd53c, #f0a81b); border:2px solid #b8321a; border-radius:11px;
+    display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 7px 0 3px;
+    box-shadow:0 2px 4px rgba(0,0,0,.35);}
+  .rpos{flex:0 0 auto; background:#d8202a; color:#fbd53c; border-radius:9px; font-family:var(--display);
+    font-weight:700; font-size:8px; letter-spacing:.03em; padding:2px 5px; white-space:nowrap;}
+  .rname{font-family:var(--display); font-weight:700; color:#c1191f; font-size:11px; text-transform:uppercase;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-left:auto; text-align:right;}
+  .rball{position:absolute; right:3px; bottom:2px; width:43px; height:43px; z-index:3;}
+  .rball svg{width:100%; height:100%; display:block; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));}
+  .rball .rteam{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--display); font-weight:700; font-size:7.5px; color:#2b1608; transform:rotate(-8deg);
+    text-align:center; line-height:1; padding:0 5px;}
+  .rwear{position:absolute; inset:0; pointer-events:none; border-radius:5px;
+    box-shadow:inset 0 0 0 1px rgba(120,90,50,.25);
+    background:radial-gradient(circle at 0 0, rgba(120,90,50,.30) 0 5px, transparent 6px),
+      radial-gradient(circle at 100% 0, rgba(120,90,50,.26) 0 4px, transparent 5px),
+      radial-gradient(circle at 0 100%, rgba(120,90,50,.28) 0 5px, transparent 6px),
+      radial-gradient(circle at 100% 100%, rgba(120,90,50,.24) 0 4px, transparent 5px);}
 
   /* overlay de apertura */
   .opener{position:fixed; inset:0; z-index:80; display:none; place-items:center; padding:20px;
@@ -629,6 +744,12 @@
   @keyframes flipIn{from{opacity:0; transform:rotateY(90deg) scale(.85)} to{opacity:1; transform:none}}
 
   /* ===== SOBRE DE PAPEL (animación de apertura) ===== */
+  /* apertura filmada de los sobres retro */
+  .retro-vid{width:min(78vw,330px); aspect-ratio:3/4; margin:0 auto 6px; display:block; border-radius:16px;
+    object-fit:cover; background:#0a0a0c;}
+  .retro-vid-flash{position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:60;
+    transition:opacity .55s ease;}
+  .retro-vid-flash.on{opacity:1;}
   .pack3d{position:relative; width:min(60vw,210px); aspect-ratio:3/4.25; margin:0 auto 6px; cursor:pointer;
     user-select:none; -webkit-user-select:none; filter:drop-shadow(0 20px 42px rgba(0,0,0,.6));
     animation:packIn .45s var(--ease) both, packIdle 3.4s ease-in-out 0.5s infinite;}
@@ -1350,10 +1471,10 @@
         <div class="pack std" style="--pc:#386cff">
           <div class="pk-foil"></div>
           <span class="pk-badge">5 cartas</span>
+          <img class="pk-photo" src="pack-assets/pack-std.png" alt="Sobre estándar DUNK">
           <div class="pk-kicker">Sobre estándar</div>
           <h3>Base</h3>
           <p class="pk-desc">Cinco cartas aleatorias de toda la liga. La forma normal de crecer tu colección.</p>
-          <span class="pk-art">5</span>
           <button class="btn btn-primary pack-buy" data-pack="std" id="btn-std">Abrir · <span class="coin-ico"></span> 150</button>
         </div>
         <div class="pack psa" id="pack-psa" style="--pc:#d23b3b">
@@ -1367,6 +1488,31 @@
         </div>
       </div>
       <div class="pack-stats">Sobres abiertos: <b id="packs-opened">0</b> · Cartas obtenidas: <b id="cards-total">0</b></div>
+
+      <!-- ===== Temporada 1.3 · vitrina de cartas RETRO ===== -->
+      <div class="retro-showcase">
+        <div class="retro-head">
+          <span class="retro-tag">Temporada 1.3</span>
+          <h3>Cartas RETRO '83</h3>
+          <p>Las mismas estrellas del álbum, en su versión de cromo antiguo. Complétalo otra vez, ahora en retro.</p>
+        </div>
+        <div class="retro-shop">
+          <button class="retro-buy" data-pack="retro">
+            <img src="retro-assets/retro-sobre.png" alt="Sobre retro" class="retro-prod sobre">
+            <span class="rb-name">Sobre</span>
+            <span class="rb-meta">3 cartas retro</span>
+            <span class="rb-price"><span class="coin-ico"></span> 800</span>
+          </button>
+          <button class="retro-buy" data-pack="retrobox">
+            <img src="retro-assets/retro-caja.png" alt="Caja retro" class="retro-prod caja">
+            <span class="rb-name">Caja</span>
+            <span class="rb-meta">5 sobres · 15 cartas</span>
+            <span class="rb-price"><span class="coin-ico"></span> 3500</span>
+          </button>
+        </div>
+        <div class="retro-progress" id="retro-progress"></div>
+        <div class="retro-strip" id="retro-strip"></div>
+      </div>
     </section>
 
     <!-- ===== TIENDA ===== -->
@@ -1649,6 +1795,9 @@
   <!-- overlay apertura de sobre -->
   <div class="opener" id="opener" aria-hidden="true">
     <div class="opener-stage">
+      <!-- Temporada 1.3: apertura filmada para sobre y caja retro -->
+      <video class="retro-vid" id="retro-vid" playsinline muted preload="auto" style="display:none"></video>
+      <div class="retro-vid-flash" id="retro-vid-flash"></div>
       <div class="pack3d" id="pack3d" style="display:none">
         <div class="pk3-half pk3-l"></div>
         <div class="pk3-half pk3-r"></div>
@@ -1782,11 +1931,13 @@
   let PLAYERS = [];
   let CARD_PLAYERS = [];       // PLAYERS sin banca (suplentes) — solo estos salen en sobres/álbum/completar equipo
   let BY = {};                 // slug -> player
-  function defaultState(){ return { owned:{}, packs:0, totalCards:0, teamsClaimed:{}, rewardPacks:0, messages:[], finals:{}, graded:{}, display:{}, promo:{}, skins:{}, ballSkin:"clasico", coins:300, polvos:0, bestScore:0 }; }
+  function defaultState(){ return { owned:{}, packs:0, totalCards:0, teamsClaimed:{}, rewardPacks:0, messages:[], finals:{}, graded:{}, display:{}, promo:{}, skins:{}, ballSkin:"clasico", coins:300, polvos:0, bestScore:0, retro:{} }; }
   let state = defaultState();
 
   // ===== ECONOMÍA: monedas (se ganan jugando "Encestes") =====
-  const PACK_COST = { std:150, elite:600, finals:1200, psa:1000, reward:0, noventas:1100 };
+  const PACK_COST = { std:150, elite:600, finals:1200, psa:1000, reward:0, noventas:1100, retro:800, retrobox:3500 };
+  const RETRO_BOX_PACKS = 5;    // la caja trae 5 sobres
+  const RETRO_PER_PACK  = 3;    // cada sobre retro trae 3 cartas
   const COINS_PER_POINT = 10;           // (legado) balones por punto — ya no se usa para la recompensa
   const COINS_PER_BASKET = 20;          // balones por CANASTA encestada (no por puntaje)
   function renderCoins(){
@@ -2097,6 +2248,9 @@
     "BRUNSON": OFFER_BY["brunson-anim"].cards,
   };
   const ownsPromo = id => ((state.promo && state.promo[id])||0) > 0;
+  // ---- Temporada 1.3 · RETRO: misma colección, otro estilo de carta ----
+  const retroCount = s => ((state.retro && state.retro[s])||0);
+  const ownsRetro = s => retroCount(s) > 0;
   function grantPromo(ids){
     if(!state.promo) state.promo={};
     let n=0; (ids||[]).forEach(id=>{ if(PROMO_BY[id]){ state.promo[id]=(state.promo[id]||0)+1; n++; } });
@@ -2128,12 +2282,15 @@
   const bestGrade = s => gradesOf(s).length ? Math.max.apply(null, gradesOf(s).map(gNum)) : 0;
   const bestGradedIndex = s => { const a=gradesOf(s); let bi=-1; a.forEach((e,i)=>{ if(bi<0||gNum(e)>gNum(a[bi])) bi=i; }); return bi; };
   const gradedIndex = s => { const d=state.display&&state.display[s]; if(typeof d==="string"&&d.indexOf("graded:#")===0){ const i=+d.slice(8); if(gradesOf(s)[i]!=null) return i; } return -1; };
-  const ownsAny = s => ownsNormal(s) || ownsFinals(s) || ownsGraded(s);
+  const ownsAny = s => ownsNormal(s) || ownsFinals(s) || ownsGraded(s) || ownsRetro(s);
   function displayVariant(s){
     const d = state.display && state.display[s];
     if(typeof d==="string" && d.indexOf("promo:")===0){ const id=d.slice(6); if(ownsPromo(id)) return "promo"; }
     if(typeof d==="string" && d.indexOf("graded")===0 && ownsGraded(s)) return "graded";
     if(d==="finals" && ownsFinals(s)) return "finals";
+    if(d==="retro" && ownsRetro(s)) return "retro";
+    // sin elección explícita, la retro manda sobre la normal: es la novedad de la 1.3
+    if(ownsRetro(s)) return "retro";
     if(ownsNormal(s)) return "normal";
     if(ownsFinals(s)) return "finals";
     if(ownsGraded(s)) return "graded";
@@ -2782,6 +2939,8 @@
     }
     // ---- CARTA PROMO (skin de tienda) ----
     if(variant==="promo"){ const pc=chosenPromo(p.slug); if(pc) return promoCardHTML(pc,{owned:true}); }
+    // ---- CARTA RETRO '83 (Temporada 1.3) ----
+    if(variant==="retro" && ownsRetro(p.slug)) return retroCardHTML(p, {count});
     // ---- CARTA GRADUADA (slab tipo PSA) ----
     if(variant==="graded" && ownsGraded(p.slug)){
       const arr = gradesOf(p.slug);
@@ -2828,6 +2987,34 @@
         ${count>1?`<div class="card-dup">×${count}</div>`:""}
         <div class="card-info"><h3>${esc(nm)}</h3><p>${esc(p.equipo)}</p></div>
       </div></button>`;
+  }
+
+  // ---- carta RETRO '83: mismo jugador, formato de cromo antiguo ----
+  const RETRO_BALL_SVG = `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="29" fill="#d97a2b" stroke="#7a3d12" stroke-width="2"/>
+    <path d="M32 3v58M3 32h58" stroke="#7a3d12" stroke-width="2" fill="none"/>
+    <path d="M12 11c9 11 9 31 0 42M52 11c-9 11-9 31 0 42" stroke="#7a3d12" stroke-width="2" fill="none"/></svg>`;
+  const RETRO_POS_NUM = { PG:"1", SG:"2", SF:"3", PF:"4", C:"5" };
+  const retroNick = team => { const w=String(team||"").split(" "); return (w[w.length-1]||"").toLowerCase(); };
+  function retroCardHTML(p, {count=0, locked=false}={}){
+    const pos=p.posicion||"SF";
+    const foco = FOCO[p.slug] ? `style="object-position:${FOCO[p.slug]}"` : "";
+    return `<button class="rcard ${locked?"rlocked":""}" data-slug="${p.slug}" data-variant="retro" aria-label="${esc(p.nombre)} retro">
+      <div class="rframe">
+        <div class="rphoto"><img loading="lazy" src="${esc(p.foto)}" alt="${esc(p.nombre)}" ${foco} onerror="this.style.opacity=0"></div>
+        <div class="rbrand">
+          <div class="rbrand-logo"><span class="d">D</span><span class="nm">DUNK</span></div>
+          <div class="rbrand-year">'83</div>
+        </div>
+        <div class="rplate">
+          <span class="rpos">${esc((RETRO_POS_NUM[pos]||"")+pos)}</span>
+          <span class="rname">${esc(p.nombre)}</span>
+        </div>
+        <div class="rball">${RETRO_BALL_SVG}<div class="rteam">${esc(retroNick(p.equipo))}</div></div>
+        ${count>1?`<div class="rdup">×${count}</div>`:""}
+      </div>
+      <div class="rwear"></div>
+    </button>`;
   }
 
   /* =====================================================
@@ -2956,9 +3143,10 @@
     const variants = [];
     if(ownsNormal(slug)) variants.push({key:"normal", variant:"normal", label:isLeg?"Leyenda":"Normal"});
     if(ownsFinals(slug)) variants.push({key:"finals", variant:"finals", label:"Finals"});
+    if(ownsRetro(slug)) variants.push({key:"retro", variant:"retro", label:"Retro '83"});
     gradesOf(slug).forEach((e,i)=> variants.push({key:"graded:#"+i, variant:"graded", gradeIdx:i, label:"PSA "+gNum(e)}));
     promosForSlug(slug).forEach(pc=> variants.push({key:"promo:"+pc.id, promo:pc, label:"Promo"}));
-    const cnt = v==="finals" ? (state.finals[slug]||0) : v==="graded" ? gradesOf(slug).length : v==="promo" ? (chosenPromo(slug)?(state.promo[chosenPromo(slug).id]||0):0) : (state.owned[slug]||0);
+    const cnt = v==="finals" ? (state.finals[slug]||0) : v==="graded" ? gradesOf(slug).length : v==="retro" ? retroCount(slug) : v==="promo" ? (chosenPromo(slug)?(state.promo[chosenPromo(slug).id]||0):0) : (state.owned[slug]||0);
     // versión gradable según lo que se muestra (no se puede re-graduar una ya graduada)
     const gradeSrc = v==="finals" ? "finals" : v==="promo" ? ("promo:"+(chosenPromo(slug)?chosenPromo(slug).id:"")) : v==="normal" ? "normal" : null;
     const body = $("#sheet-body");
@@ -3066,9 +3254,18 @@
     if(!free && cost > 0 && !spendCoins(cost)){
       toast(`Te faltan balones. Juega <b>Encestes</b> para ganar más.`); showView("juego"); return;
     }
-    const n = kind==="noventas" ? 2 : 5;     // el sobre 90s da 2 cartas
+    // sobre retro: 3 cartas; caja retro: 5 sobres de 3 = 15
+    const n = kind==="noventas" ? 2 : kind==="retro" ? RETRO_PER_PACK
+            : kind==="retrobox" ? RETRO_PER_PACK*RETRO_BOX_PACKS : 5;
     const picks=[], taken=new Set();          // taken => sin duplicados dentro del mismo sobre
-    if(kind==="noventas"){
+    if(kind==="retro" || kind==="retrobox"){
+      // la caja permite repetir jugador entre sobres distintos, como en la vida real
+      const perPack = kind==="retrobox" ? RETRO_BOX_PACKS : 1;
+      for(let s=0;s<perPack;s++){
+        const t=new Set();
+        for(let i=0;i<RETRO_PER_PACK;i++){ const p=drawOne(CARD_PLAYERS, t); picks.push(p); t.add(p.slug); }
+      }
+    } else if(kind==="noventas"){
       // SOLO leyendas de los 90 (no jugadores actuales)
       for(let i=0;i<n;i++){ const p=drawOne(LEGENDS_90S, taken); picks.push(p); taken.add(p.slug); }
     } else if(kind==="elite" || kind==="reward"){
@@ -3081,7 +3278,8 @@
     }
     // mejor carta al final para clímax
     picks.sort((a,b)=>ovr(a)-ovr(b));
-    let out = picks.map(p=>({p, variant:"normal"}));
+    const isRetro = (kind==="retro" || kind==="retrobox");
+    let out = picks.map(p=>({p, variant: isRetro ? "retro" : "normal"}));
     let gotGraded=null;
     if(kind==="psa" && Math.random()<0.08){
       const pool=CARD_PLAYERS.filter(p=>ovr(p)>=80);
@@ -3093,6 +3291,7 @@
     out.forEach(it=>{
       if(it.variant==="finals") state.finals[it.p.slug]=(state.finals[it.p.slug]||0)+1;
       else if(it.variant==="graded") (state.graded[it.p.slug]=state.graded[it.p.slug]||[]).push(it.grade);
+      else if(it.variant==="retro"){ if(!state.retro) state.retro={}; state.retro[it.p.slug]=(state.retro[it.p.slug]||0)+1; }
       else state.owned[it.p.slug]=(state.owned[it.p.slug]||0)+1;
     });
     state.packs++; state.totalCards+=n;
@@ -3105,7 +3304,19 @@
     if(gotGraded) toast(`¡Carta graduada! <b>${esc(gotGraded.p.nombre)}</b> · PSA ${gotGraded.grade}`);
     newlyDone.forEach(t=> toast(`¡Equipo completo: <b>${esc(t)}</b>! Tienes un mensaje para reclamar tu recompensa`));
   }
-  function renderPackStats(){ $("#packs-opened").textContent=state.packs; $("#cards-total").textContent=state.totalCards; }
+  function renderPackStats(){ $("#packs-opened").textContent=state.packs; $("#cards-total").textContent=state.totalCards; renderRetroStrip(); }
+  // ---- Temporada 1.3: vitrina RETRO. Las estrellas salen en gris hasta que las sacas. ----
+  function renderRetroStrip(){
+    const wrap=$("#retro-strip"); if(!wrap || !PLAYERS.length) return;
+    const stars = CARD_PLAYERS.slice().sort((a,b)=>ovr(b)-ovr(a)).slice(0,12);
+    wrap.innerHTML = stars.map(p=>retroCardHTML(p,{count:retroCount(p.slug), locked:!ownsRetro(p.slug)})).join("");
+    const prog=$("#retro-progress");
+    if(prog){
+      const have=CARD_PLAYERS.filter(p=>ownsRetro(p.slug)).length;
+      prog.innerHTML = `Colección retro: <b>${have}</b> / ${CARD_PLAYERS.length} cartas`;
+    }
+    $$(".retro-buy").forEach(b=>b.classList.toggle("cant-afford",(state.coins||0) < (PACK_COST[b.dataset.pack]||0)));
+  }
   // ---- CÓDIGO DE REGALO: abre N sobres normales (todo en un destape) ----
   function claimRewardCode(payload){
     const packs = Math.max(0, payload.packs|0);
@@ -3325,7 +3536,7 @@
     toast(`¡Equipo <b>${esc(team)}</b> completo! +<b>${TEAM_COMPLETE_REWARD}</b> balones`);
   }
 
-  const PACK_PC = {std:"#386cff", elite:"#f2552c", finals:"#e8b84b", psa:"#d23b3b", reward:"#f2552c", noventas:"#b079ff"};
+  const PACK_PC = {std:"#386cff", elite:"#f2552c", finals:"#e8b84b", psa:"#d23b3b", reward:"#f2552c", noventas:"#b079ff", retro:"#c9a227"};
   let openerQueue=[], openerIdx=0, openerLast=null, openerPhase="reveal", tearTimer=null, revealTimers=[];
   function clearRevealTimers(){ revealTimers.forEach(clearTimeout); revealTimers=[]; clearTimeout(tearTimer); }
   let openerNoAgain=false, openerEndHint=null, afterOpenerOnce=null;
@@ -3351,6 +3562,16 @@
       revealNext();
       return;
     }
+    // Temporada 1.3: solo la CAJA se abre con video; el sobre usa la animación normal de papel
+    if(kind==="retrobox"){
+      pack.style.display="none";
+      strip.style.visibility="hidden";
+      $("#opener-card").style.visibility="hidden";
+      openerPhase="video";
+      $("#opener-hint").textContent="";
+      playRetroOpening();
+      return;
+    }
     // fase 1: mostrar el sobre de papel cerrado
     pack.classList.remove("tearing");
     pack.style.setProperty("--pc", PACK_PC[kind] || "#386cff");
@@ -3359,6 +3580,32 @@
     $("#opener-card").style.visibility="hidden";
     openerPhase="pack";
     $("#opener-hint").textContent="Toca el sobre para abrirlo";
+  }
+  // ---- apertura filmada de la CAJA: el video termina en blanco y ahí empalman las cartas ----
+  let retroVidTimer=null;
+  function playRetroOpening(){
+    const v=$("#retro-vid"), fl=$("#retro-vid-flash");
+    const src = "retro-assets/abrir-caja.mp4";
+    const goCards=()=>{
+      clearTimeout(retroVidTimer); retroVidTimer=null;
+      v.pause(); v.style.display="none"; v.removeAttribute("src"); v.load();
+      fl.classList.remove("on");
+      $("#reveal-strip").style.visibility="visible";
+      $("#opener-card").style.visibility="visible";
+      openerPhase="reveal";
+      revealNext();
+    };
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(reduce){ goCards(); return; }
+    v.style.display="block"; v.src=src; v.currentTime=0;
+    fl.classList.remove("on");
+    // el fogonazo propio arranca cerca del final para que el corte sea invisible
+    v.ontimeupdate=()=>{ if(v.duration && v.currentTime > v.duration-0.7) fl.classList.add("on"); };
+    v.onended=goCards;
+    // red de seguridad: si el video no carga o se traba, pasamos a las cartas igual
+    retroVidTimer=setTimeout(goCards, 7000);
+    const p=v.play();
+    if(p && p.catch) p.catch(()=>goCards());
   }
   function tearPack(){
     if(openerPhase!=="pack") return;
@@ -4561,10 +4808,28 @@
   };
   const FANTASY_DEFAULT_FORMATION = "2-1-2";
   const fantasyFormationOf = key => FANTASY_FORMATIONS[key] || FANTASY_FORMATIONS[FANTASY_DEFAULT_FORMATION];
-  function fantasyAssignSlots(roster, starters, formationKey){
+  const FANTASY_SLOT_KEYS = ["tl","tr","mid","bl","br"];
+  function fantasyAssignSlots(roster, starters, formationKey, slotOrder){
     const f=fantasyFormationOf(formationKey);
     const bySlug=Object.fromEntries(roster.map(p=>[p.slug,p]));
-    let five=fantasyEligibleStarters(roster, starters).map(s=>bySlug[s]).filter(Boolean).slice(0,5);
+    const eligible=fantasyEligibleStarters(roster, starters).slice(0,5);
+    // orden puesto a mano (el dueño rotó posiciones). Se respeta hueco por hueco: si alguno de los
+    // cinco ya no está (sustituido o suspendido), solo ESE hueco se rellena con quien haya entrado —
+    // antes se descartaba el acomodo entero y por eso los cambios "se regresaban" solos.
+    if(slotOrder && slotOrder.length===FANTASY_SLOT_KEYS.length){
+      const set=new Set(eligible);
+      const placed=slotOrder.map(s=>(s && set.has(s)) ? s : null);
+      if(placed.some(Boolean)){
+        const sobran=eligible.filter(s=>!placed.includes(s));
+        const out={};
+        FANTASY_SLOT_KEYS.forEach((k,i)=>{
+          const slug = placed[i] || sobran.shift() || null;
+          out[k] = slug ? (bySlug[slug]||null) : null;
+        });
+        return out;
+      }
+    }
+    let five=eligible.map(s=>bySlug[s]).filter(Boolean);
     const pgIdx=five.findIndex(p=>p.posicion==="PG");
     const playmaker = pgIdx>=0 ? five.splice(pgIdx,1)[0] : (five.shift()||null);
     const out={};
@@ -4572,6 +4837,14 @@
     out[f.playmaker]=playmaker;
     rest.forEach((k,i)=>{ out[k]=five[i]||null; });
     return out;
+  }
+  // nombre largo de cada posición, para el chip de abajo de la carta
+  const FANTASY_POS_FULL = { PG:"Base", SG:"Escolta", SF:"Alero", PF:"Ala-pívot", C:"Pívot" };
+  function fantasyTogglePosChip(btn){
+    const full = btn.dataset.showing==="full";
+    btn.textContent = full ? btn.dataset.abbr : btn.dataset.full;
+    btn.dataset.showing = full ? "abbr" : "full";
+    btn.classList.toggle("full", !full);
   }
   function fantasyCardHTML(p, editable){
     if(!p) return `<div class="ff-card-empty">+</div>`;
@@ -4584,14 +4857,18 @@
       <div class="ff-stats"><span>${st[0][0]} <b>${st[0][1]}</b></span><span>${st[1][0]} <b>${st[1][1]}</b></span></div>
     </div>`;
   }
-  function fantasyFormationHTML(team, starters, editable, formationKey){
+  function fantasyFormationHTML(team, starters, editable, formationKey, slotOrder){
     const roster=fantasyRoster(team);
     const fKey = FANTASY_FORMATIONS[formationKey] ? formationKey : FANTASY_DEFAULT_FORMATION;
     const f = fantasyFormationOf(fKey);
-    const slots=fantasyAssignSlots(roster, starters, fKey);
+    const slots=fantasyAssignSlots(roster, starters, fKey, slotOrder);
     const slot=(key)=>{
       const [l,t]=f.pos[key];
-      return `<div class="ff-slot ${editable?"editable":""}" style="left:${l}%;top:${t}%" data-ff-key="${key}">${fantasyCardHTML(slots[key],editable)}</div>`;
+      const sel = editable && fantasySelectedSlot===key ? " ff-selected" : "";
+      const p=slots[key];
+      // chip de posición: muestra la sigla y al tocarlo la cambia por el nombre completo
+      const posChip = p && p.posicion ? `<button class="ff-poschip" type="button" data-poschip data-abbr="${esc(p.posicion)}" data-full="${esc(FANTASY_POS_FULL[p.posicion]||p.posicion)}">${esc(p.posicion)}</button>` : "";
+      return `<div class="ff-slot ${editable?"editable":""}${sel}" style="left:${l}%;top:${t}%" data-ff-key="${key}">${fantasyCardHTML(p,editable)}${posChip}</div>`;
     };
     const picker = editable ? `<div class="ff-formations">
         ${Object.keys(FANTASY_FORMATIONS).map(k=>`<button class="ff-form-btn ${k===fKey?"active":""}" data-formation="${esc(k)}" type="button">${esc(FANTASY_FORMATIONS[k].lbl)}</button>`).join("")}
@@ -4613,39 +4890,76 @@
         <div class="ff-chem"><b>${FANTASY_CHEM_OVERRIDE[team]||100}</b><span>Química</span></div>
       </div>
       ${suspendedHTML}
-      ${editable?`<p class="ff-hint2">Toca un jugador para sustituirlo, o cambia la formación arriba. Los titulares reciben más jugadas que la banca.</p>
+      ${editable?`<p class="ff-hint2">${fantasySelectedSlot?"Toca a otro jugador para intercambiarlos de posición.":"Toca un jugador para sustituirlo · doble toque para moverlo de posición · o cambia la formación arriba."}</p>
       <div class="ff-actions"><button class="btn btn-primary" id="fantasy-save-lineup">💾 Guardar plantilla</button></div>`:""}
     </div>`;
   }
   let fantasyEditStarters=null, fantasyEditMode=null, fantasyEditFormation=FANTASY_DEFAULT_FORMATION;
+  let fantasyEditSlotOrder=null, fantasySelectedSlot=null, fantasySlotClickTimer=null;
   async function fantasyLoadEditStarters(){
     let lu=null; try{ lu=await window.DunkFire.fantasyGetLineup(fantasyMyTeam); }catch(e){}
     const roster=fantasyRoster(fantasyMyTeam);
     fantasyEditStarters = (lu && lu.starters && lu.starters.length) ? lu.starters.slice()
       : roster.slice().sort((a,b)=>b.media-a.media).slice(0,5).map(p=>p.slug);
     fantasyEditFormation = (lu && FANTASY_FORMATIONS[lu.formation]) ? lu.formation : FANTASY_DEFAULT_FORMATION;
+    fantasyEditSlotOrder = (lu && Array.isArray(lu.slotOrder) && lu.slotOrder.length===FANTASY_SLOT_KEYS.length) ? lu.slotOrder.slice() : null;
+    fantasySelectedSlot = null;
+  }
+  // orden actual de la cancha (hueco por hueco), para poder rotar posiciones a mano
+  function fantasyCurrentSlotOrder(){
+    const slots=fantasyAssignSlots(fantasyRoster(fantasyMyTeam), fantasyEditStarters, fantasyEditFormation, fantasyEditSlotOrder);
+    return FANTASY_SLOT_KEYS.map(k=>slots[k] ? slots[k].slug : null);
+  }
+  function fantasySwapSlots(keyA, keyB){
+    const order=fantasyCurrentSlotOrder();
+    const ia=FANTASY_SLOT_KEYS.indexOf(keyA), ib=FANTASY_SLOT_KEYS.indexOf(keyB);
+    if(ia<0 || ib<0) return;
+    [order[ia], order[ib]] = [order[ib], order[ia]];
+    fantasyEditSlotOrder = order;
+    fantasySelectedSlot = null;
+    fantasyRerenderEditor();
+  }
+  function fantasySlotDblClick(slot){
+    const key=slot.dataset.ffKey;
+    if(!slot.querySelector(".ff-card")) return;   // hueco vacío: nada que mover
+    fantasySelectedSlot = (fantasySelectedSlot===key) ? null : key;
+    fantasyRerenderEditor();
   }
   function fantasyRerenderEditor(){
-    const html=fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation);
+    const html=fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation, fantasyEditSlotOrder);
     if(fantasyEditMode==="equipo"){ const w=$("#fantasy-equipo-wrap"); if(w) w.innerHTML=html; closeSheet(); }
     else if(fantasyEditMode==="sheet"){ $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + html; }
   }
   function fantasySlotClick(key){
     const roster=fantasyRoster(fantasyMyTeam);
-    const slots=fantasyAssignSlots(roster, fantasyEditStarters, fantasyEditFormation);
+    const slots=fantasyAssignSlots(roster, fantasyEditStarters, fantasyEditFormation, fantasyEditSlotOrder);
     const outgoing=slots[key];
     openFantasySubPicker(incomingSlug=>{
+      const order=fantasyCurrentSlotOrder();
       if(outgoing) fantasyEditStarters=fantasyEditStarters.filter(s=>s!==outgoing.slug);
       fantasyEditStarters.push(incomingSlug);
+      // el que entra ocupa el hueco del que salió, para no descuadrar las posiciones ya acomodadas
+      const i=FANTASY_SLOT_KEYS.indexOf(key);
+      if(i>=0){ order[i]=incomingSlug; fantasyEditSlotOrder=order; }
       fantasyRerenderEditor();
     });
   }
   // tocar un jugador en la cancha: si hay alguien, primero sus estadísticas (con botón Sustituir); si el slot está vacío, va directo al selector
   function fantasySlotOrStats(slot){
     const key=slot.dataset.ffKey;
+    // con alguien ya marcado (doble toque), el siguiente toque los intercambia de posición
+    if(fantasySelectedSlot && fantasySelectedSlot!==key){ fantasySwapSlots(fantasySelectedSlot, key); return; }
+    if(fantasySelectedSlot===key){ fantasySelectedSlot=null; fantasyRerenderEditor(); return; }
     const card=slot.querySelector(".ff-card");
     if(card && card.dataset.ffSlug) fantasyOpenPlayerStats(card.dataset.ffSlug, {subKey:key});
     else fantasySlotClick(key);
+  }
+  // distingue toque simple (estadísticas) de doble toque (marcar para mover). Si ya hay uno marcado,
+  // el intercambio es inmediato — no tiene caso esperar el segundo toque.
+  function fantasyHandleSlotTap(slot){
+    if(fantasySelectedSlot){ fantasySlotOrStats(slot); return; }
+    if(fantasySlotClickTimer){ clearTimeout(fantasySlotClickTimer); fantasySlotClickTimer=null; fantasySlotDblClick(slot); return; }
+    fantasySlotClickTimer=setTimeout(()=>{ fantasySlotClickTimer=null; fantasySlotOrStats(slot); }, 240);
   }
   function openFantasySubPicker(onPick){
     const roster=fantasyRoster(fantasyMyTeam);
@@ -4665,7 +4979,7 @@
     showSheet();
   }
   async function fantasySaveLineupNow(){
-    try{ await window.DunkFire.fantasySaveLineup(fantasyMyTeam, {starters: fantasyEditStarters, formation: fantasyEditFormation}); }
+    try{ await window.DunkFire.fantasySaveLineup(fantasyMyTeam, {starters: fantasyEditStarters, formation: fantasyEditFormation, slotOrder: fantasyCurrentSlotOrder()}); }
     catch(e){ toast("No se pudo guardar la plantilla"); return; }
     const liveGameOfMine = fantasyLiveGame && fantasyLiveGame.status!=="final" && (fantasyLiveGame.home===fantasyMyTeam || fantasyLiveGame.away===fantasyMyTeam);
     if(liveGameOfMine){
@@ -4683,12 +4997,12 @@
     wrap.innerHTML = `<p style="color:var(--muted);font-size:13px;text-align:center">Cargando…</p>`;
     await fantasyLoadEditStarters();
     fantasyEditMode="equipo";
-    wrap.innerHTML = fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation);
+    wrap.innerHTML = fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation, fantasyEditSlotOrder);
   }
   async function fantasyOpenTimeoutTeam(){
     await fantasyLoadEditStarters();
     fantasyEditMode="sheet";
-    $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation);
+    $("#sheet-body").innerHTML = `<div class="picker-head"><h3>Tu equipo</h3></div><p style="padding:0 20px;color:var(--muted);font-size:13px">Los cambios se aplican a tu próximo partido — este ya está en marcha.</p>` + fantasyFormationHTML(fantasyMyTeam, fantasyEditStarters, true, fantasyEditFormation, fantasyEditSlotOrder);
     showSheet();
   }
   function renderFantasyTransfer(){
@@ -4709,7 +5023,11 @@
   // lista curada por el comisionado: jugadores señalados como posible fichaje o que buscan salir de su equipo
   function renderFantasyTransferListings(){
     const wrap=$("#fantasy-listed-wrap"); if(!wrap) return;
-    const list = (fantasySeasonData && fantasySeasonData.transferList) || [];
+    const raw = (fantasySeasonData && fantasySeasonData.transferList) || [];
+    // un anuncio de "quiere salir" caduca en cuanto el jugador cambia de equipo: ya se salió
+    const stale = raw.filter(it=>it.type==="sale" && it.team && BY[it.slug] && fantasyEffectiveTeam(BY[it.slug])!==it.team);
+    const list = raw.filter(it=>!stale.includes(it));
+    if(stale.length){ stale.forEach(it=>{ window.DunkFire.fantasyRemoveTransferListing(it.slug).then(d=>{ fantasySeasonData=d; }).catch(()=>{}); }); }
     if(!list.length){ wrap.innerHTML=""; return; }
     wrap.innerHTML = `<div class="pf-sec-head"><h3>📋 Lista de transferencias</h3></div>
       <p class="fantasy-hint" style="margin-top:-8px">Jugadores señalados como posible fichaje o que buscan salir de su equipo.</p>
@@ -4780,6 +5098,8 @@
       </div>` : "";
     const counterNote = o.status==="countered" ? `<div style="padding:0 20px;font-size:12.5px;color:#c3a6ff;margin-bottom:10px">Ahora piden: ${[fantasyOfferedList(o.offeredSlug).length?esc(fantasyOfferedNames(o.offeredSlug)):null, o.amount?esc(fantasyFmtMoney(o.amount)):null].filter(Boolean).join(" + ")||"—"}</div>` : "";
     const cancelBtn = (o.status==="pending"||o.status==="countered") ? `<button class="btn btn-ghost" style="width:calc(100% - 40px);margin:6px 20px 0" data-cancel-id="${esc(o.id)}">Quitar oferta</button>` : "";
+    // te devolvieron la oferta con otros términos: la puedes firmar tal cual desde aquí
+    const acceptCounterBtn = o.status==="countered" ? `<button class="btn btn-primary" style="width:calc(100% - 40px);margin:14px 20px 0" data-accept-counter="${esc(o.id)}">✍️ Firmar contraoferta</button>` : "";
     const body=$("#sheet-body");
     body.innerHTML = `<div class="picker-head"><h3>Tu oferta a ${esc(o.toTeam)}</h3></div>
       <p style="padding:0 20px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em">Pides</p>
@@ -4789,9 +5109,21 @@
       ${baseAmount ? `<div style="padding:0 20px;font-size:13.5px">+ <b>${esc(fantasyFmtMoney(baseAmount))}</b></div>` : ""}
       <div style="padding:14px 20px 0"><span class="fantasy-offer-status ${o.status}">${FANTASY_OFFER_STATUS_LBL[o.status]||o.status}</span></div>
       ${counterNote}
+      ${acceptCounterBtn}
       ${cancelBtn}`;
     body.querySelectorAll("[data-cancel-id]").forEach(btn=>btn.addEventListener("click", ()=>{ fantasyCancelOffer(btn.dataset.cancelId); closeSheet(); }));
+    body.querySelectorAll("[data-accept-counter]").forEach(btn=>btn.addEventListener("click", ()=>fantasyAcceptCounter(o)));
     showSheet();
+  }
+  // firmar la contraoferta: el trato va con los términos NUEVOS (offeredSlug/amount ya actualizados)
+  async function fantasyAcceptCounter(offer){
+    try{
+      await window.DunkFire.fantasyAcceptCounterOffer(offer.id);
+      await fantasyExecuteTradeMoves(offer);
+      toast("Contraoferta firmada ✓ — traspaso ejecutado al instante");
+      closeSheet();
+      renderFantasyTransfer();
+    }catch(e){ toast("No se pudo firmar la contraoferta"); }
   }
   async function fantasyCancelOffer(tradeId){
     try{
@@ -4871,6 +5203,12 @@
       try{ fantasySeasonData = await window.DunkFire.fantasyAdjustBudget(offer.fromTeam, -offer.amount); }catch(e){}
       try{ fantasySeasonData = await window.DunkFire.fantasyAdjustBudget(offer.toTeam, offer.amount); }catch(e){}
     }
+    // quien cambió de equipo ya no "quiere salir" de donde estaba: se cae de la lista de transferencias
+    const movidos = fantasyOfferedList(offer.offeredSlug).concat(offer.playerSlug?[offer.playerSlug]:[]);
+    const listados = new Set(((fantasySeasonData&&fantasySeasonData.transferList)||[]).map(it=>it.slug));
+    for(const slug of movidos.filter(s=>listados.has(s))){
+      try{ fantasySeasonData = await window.DunkFire.fantasyRemoveTransferListing(slug); }catch(e){}
+    }
   }
   async function fantasyAcceptOfferAsRecipient(offer){
     try{
@@ -4942,7 +5280,7 @@
         fantasySeasonData = await window.DunkFire.fantasyRemoveTransferListing(slug);
         toast("Quitado de la lista de transferencias");
       }else{
-        fantasySeasonData = await window.DunkFire.fantasyAddTransferListing(slug);
+        fantasySeasonData = await window.DunkFire.fantasyAddTransferListing(slug, team);
         toast("Jugador puesto en la lista de transferencias");
       }
       fantasyOpenTeamDetail(team);
@@ -5098,6 +5436,7 @@
     // sin servidor de por medio: al entrar se calcula el tiempo transcurrido y se resuelven
     // de golpe los partidos que ya se jugaron completos mientras la app estaba cerrada
     try{ await fantasyCatchUpGames(); }catch(e){}
+    fantasyStartAutoWatch();
     renderFantasyHeader();
     renderFantasySchedule();
     switchFantasySub("partidos");
@@ -5355,6 +5694,31 @@
   // No hay servidor simulando en segundo plano: al entrar, se mira el reloj y se resuelven de una
   // todos los partidos cuya hora ya pasó por completo. Los que están a media marcha se dejan tal cual
   // (al abrirlos, el reloj ya arranca en el minuto que va corriendo).
+  // ---- arranque automático ----
+  // Si estás dentro de DUNK cuando le toca la hora a un partido tuyo, se abre solo y empieza a
+  // narrarse jugada por jugada. No hace falta que lo inicies tú.
+  let fantasyAutoWatchTimer=null;
+  function fantasyStartAutoWatch(){
+    if(fantasyAutoWatchTimer) return;
+    fantasyAutoWatchTimer=setInterval(fantasyAutoWatchTick, 4000);
+  }
+  function fantasyAutoWatchTick(){
+    // solo cuando estás viendo Fantasy y no hay ya un partido en pantalla
+    const viewOn = $("#view-fantasy")?.classList.contains("active");
+    const bodyOn = $("#fantasy-body") && !$("#fantasy-body").hidden;
+    if(!viewOn || !bodyOn || !fantasySchedule || !fantasyMyTeam) return;
+    if(fantasyLiveGame && fantasyLiveGame.status!=="final") return;   // ya hay uno corriendo
+    if($("#sheet")?.classList.contains("show")) return;               // no interrumpir un modal abierto
+    const now=Date.now();
+    const g = fantasySchedule.games.find(x=>x.status!=="final" && x.scheduledAt
+      && x.scheduledAt<=now && (now-x.scheduledAt) < FANTASY_TOTAL_REAL*1000);
+    if(!g) return;
+    const isAway = g.role==="away";
+    const home = isAway ? g.opponent : fantasyMyTeam;
+    const away = isAway ? fantasyMyTeam : g.opponent;
+    toast(`🔴 Empieza tu partido vs <b>${esc(g.opponent)}</b> — narrando en vivo`);
+    openFantasyGame(g.id, home, away, g.day);
+  }
   async function fantasyCatchUpGames(){
     if(!fantasySchedule || !fantasyMyTeam) return 0;
     const now=Date.now();
@@ -5439,7 +5803,8 @@
     });
     $("#fantasy-equipo-wrap")?.addEventListener("click", e=>{
       const fb=e.target.closest("[data-formation]"); if(fb){ fantasyEditFormation=fb.dataset.formation; fantasyRerenderEditor(); return; }
-      const slot=e.target.closest(".ff-slot"); if(slot){ fantasySlotOrStats(slot); return; }
+      const chip=e.target.closest("[data-poschip]"); if(chip){ e.stopPropagation(); fantasyTogglePosChip(chip); return; }
+      const slot=e.target.closest(".ff-slot"); if(slot){ fantasyHandleSlotTap(slot); return; }
       const save=e.target.closest("#fantasy-save-lineup"); if(save){ fantasySaveLineupNow(); return; }
     });
     $("#fantasy-transfer-list")?.addEventListener("click", e=>{
@@ -5460,7 +5825,8 @@
       const statRow=e.target.closest("[data-stat-slug]"); if(statRow && !e.target.closest("[data-offer-slug]") && !e.target.closest("[data-toggle-listing]")){ fantasyOpenPlayerStats(statRow.dataset.statSlug, {}); return; }
       if(fantasyEditMode!=="sheet") return;
       const fb=e.target.closest("[data-formation]"); if(fb){ fantasyEditFormation=fb.dataset.formation; fantasyRerenderEditor(); return; }
-      const slot=e.target.closest(".ff-slot"); if(slot){ fantasySlotOrStats(slot); return; }
+      const chip=e.target.closest("[data-poschip]"); if(chip){ e.stopPropagation(); fantasyTogglePosChip(chip); return; }
+      const slot=e.target.closest(".ff-slot"); if(slot){ fantasyHandleSlotTap(slot); return; }
       const save=e.target.closest("#fantasy-save-lineup"); if(save){ fantasySaveLineupNow(); return; }
     });
     $("#fantasy-live")?.addEventListener("click", e=>{
@@ -5524,7 +5890,7 @@
     $("#opener").addEventListener("click", e=>{
       if(e.target.closest("#opener-actions")) return;
       if(openerPhase==="pack"){ tearPack(); return; }
-      if(openerPhase==="tearing") return;
+      if(openerPhase==="tearing" || openerPhase==="video") return;   // durante el video no se toca
       if($("#opener-actions").style.display==="flex") return;
       revealNext();
     });
@@ -5610,6 +5976,7 @@
     }
   }
   document.addEventListener("DOMContentLoaded", init);
+
 })();
 </script>
 
@@ -6282,14 +6649,16 @@ window.MiniGame = (function(){
     },
     // autoservicio: cada dueño puede pedir salir de su propio equipo — transacción para que dos
     // jugadores listándose casi al mismo tiempo no se pisen el uno al otro.
-    fantasyAddTransferListing: async (slug)=>{
+    // `team` guarda de qué equipo se quiere salir, para poder detectar después si el jugador
+    // ya fue traspasado y el anuncio quedó viejo
+    fantasyAddTransferListing: async (slug, team)=>{
       return await runTransaction(db, async (tx)=>{
         const ref=doc(db,"fantasySeason","current");
         const snap=await tx.get(ref);
         if(!snap.exists()) throw new Error("No hay temporada activa");
         const data=snap.data();
         const list=(data.transferList||[]).filter(it=>it.slug!==slug);
-        list.push({slug, type:"sale", note:null, addedAt:Date.now()});
+        list.push({slug, type:"sale", note:null, team:team||null, addedAt:Date.now()});
         data.transferList=list;
         tx.set(ref, data);
         return data;
@@ -6366,6 +6735,8 @@ window.MiniGame = (function(){
     },
     // el receptor firma una oferta pendiente tal cual — el comisionado la ejecuta después (mueve jugadores)
     fantasyAcceptOfferAsRecipient: (id)=> updateDoc(doc(db,"fantasyTrades",id), {status:"accepted"}),
+    // quien mandó la oferta firma la contraoferta que le devolvieron (mismo cambio de estado, otro permiso)
+    fantasyAcceptCounterOffer: (id)=> updateDoc(doc(db,"fantasyTrades",id), {status:"accepted"}),
     // el receptor la rechaza directo, sin pasar por el comisionado
     fantasyRejectOffer: (id)=> updateDoc(doc(db,"fantasyTrades",id), {status:"rejected"}),
     // quien mandó la oferta la retira mientras siga pendiente o contraofertada

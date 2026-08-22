@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DUNK · Cartas RETRO '83</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:#0f7a3d;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(0,0,0,.05) 0 2px, transparent 2px 4px),
+      radial-gradient(ellipse at 50% 0%, #16a34a, #0b5c2e 70%);
+    min-height:100vh; padding:28px 16px 60px;
+    font-family:Oswald, system-ui, sans-serif;
+  }
+  h1{color:#fff; text-align:center; font-family:Anton, sans-serif; font-size:30px; letter-spacing:.06em; text-transform:uppercase;
+     text-shadow:0 3px 0 rgba(0,0,0,.35);}
+  .sub{color:rgba(255,255,255,.82); text-align:center; font-size:13.5px; margin:6px 0 26px; letter-spacing:.02em;}
+  .grid{display:flex; flex-wrap:wrap; gap:26px; justify-content:center; align-items:flex-start; max-width:1250px; margin:0 auto;}
+
+  /* ===== CARTA: copia del formato Donruss '83 ===== */
+  .card{
+    width:290px; aspect-ratio:2.5/3.5;
+    background:#f2ece0;                       /* cartón crema envejecido */
+    padding:10px 10px 11px;
+    border-radius:5px;
+    position:relative;
+    box-shadow:0 14px 26px rgba(0,0,0,.42), 0 2px 0 rgba(255,255,255,.5) inset;
+    /* manchitas de papel viejo */
+    background-image:
+      radial-gradient(circle at 18% 12%, rgba(150,120,70,.10) 0 3px, transparent 4px),
+      radial-gradient(circle at 82% 78%, rgba(150,120,70,.09) 0 4px, transparent 5px),
+      radial-gradient(circle at 60% 35%, rgba(150,120,70,.07) 0 2px, transparent 3px);
+  }
+  /* marco rojo + filete amarillo, como el original */
+  .frame{
+    position:relative; height:100%;
+    border:3px solid #d8202a;
+    border-radius:3px;
+    padding:3px;
+    background:#f7c31a;
+  }
+  .photo{
+    position:relative; height:100%; overflow:hidden;
+    background:#7fa8c9;
+  }
+  .photo img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.88) contrast(.95);}
+  /* viñeta y grano para que se sienta foto de los 80 */
+  .photo::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.22)),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 2px);
+  }
+
+  /* esquina superior izquierda: logo de marca + año */
+  .brand{position:absolute; top:0; left:0; display:flex; z-index:3;}
+  .brand-logo{
+    width:31px; height:34px; background:#f2ece0; border-right:2px solid #111;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;
+  }
+  .brand-logo .d{font-family:Bungee, sans-serif; font-size:19px; color:#111; transform:skewX(-10deg);}
+  .brand-logo .nm{font-size:4.6px; letter-spacing:.06em; color:#111; font-weight:700; margin-top:1px;}
+  .brand-year{
+    background:#f7c31a; color:#d8202a; font-family:Anton, sans-serif; font-size:17px;
+    padding:0 7px; display:flex; align-items:center; letter-spacing:.02em;
+  }
+
+  /* placa inferior con el nombre */
+  .plate{
+    position:absolute; left:6px; right:64px; bottom:7px; height:29px; z-index:3;
+    background:linear-gradient(#fbd53c, #f0a81b);
+    border:2px solid #b8321a; border-radius:15px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 10px 0 4px;
+    box-shadow:0 2px 4px rgba(0,0,0,.35);
+  }
+  .pos{
+    flex:0 0 auto; background:#d8202a; color:#fbd53c; border-radius:11px;
+    font-family:Anton, sans-serif; font-size:10px; letter-spacing:.03em;
+    padding:3px 7px; white-space:nowrap;
+  }
+  .pname{
+    font-family:Anton, sans-serif; color:#c1191f; font-size:15.5px; letter-spacing:.01em;
+    text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    margin-left:auto; text-align:right;   /* nombre pegado a la derecha, sin tocar la posición */
+  }
+  /* balón en la esquina inferior derecha (donde iba el guante) */
+  .ball{position:absolute; right:5px; bottom:4px; width:62px; height:62px; z-index:3;}
+  .ball svg{width:100%; height:100%; display:block; filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));}
+  .ball .team{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:Bungee, sans-serif; font-size:10.5px; color:#2b1608; letter-spacing:-.01em;
+    transform:rotate(-8deg); text-align:center; line-height:1; padding:0 8px;
+  }
+  /* desgaste de esquinas */
+  .wear{position:absolute; inset:0; pointer-events:none; border-radius:5px;
+    box-shadow:inset 0 0 0 1px rgba(120,90,50,.25);
+    background:
+      radial-gradient(circle at 0 0, rgba(120,90,50,.30) 0 6px, transparent 7px),
+      radial-gradient(circle at 100% 0, rgba(120,90,50,.26) 0 5px, transparent 6px),
+      radial-gradient(circle at 0 100%, rgba(120,90,50,.28) 0 6px, transparent 7px),
+      radial-gradient(circle at 100% 100%, rgba(120,90,50,.24) 0 5px, transparent 6px);
+  }
+  .caption{color:rgba(255,255,255,.9); text-align:center; font-size:12px; margin-top:9px; letter-spacing:.03em;}
+</style>
+</head>
+<body>
+  <h1>Temporada 1.3 · Cartas RETRO</h1>
+  <p class="sub">Formato Donruss '83 llevado al basquetbol. Dime cuál ajusto.</p>
+  <div class="grid" id="grid"></div>
+
+<script>
+const BALL = `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="32" cy="32" r="29" fill="#d97a2b" stroke="#7a3d12" stroke-width="2"/>
+  <path d="M32 3v58M3 32h58" stroke="#7a3d12" stroke-width="2" fill="none"/>
+  <path d="M12 11c9 11 9 31 0 42M52 11c-9 11-9 31 0 42" stroke="#7a3d12" stroke-width="2" fill="none"/>
+</svg>`;
+
+const CARDS = [
+  {n:"Stephen Curry",  pos:"1PG", team:"warriors", img:"fotos-nba/19-Golden-State-Warriors/stephen-curry.jpg"},
+  {n:"Nikola Jokic",   pos:"3C",  team:"nuggets",  img:"fotos-nba/05-Denver-Nuggets/nikola-jokic.jpg"},
+  {n:"V. Wembanyama",  pos:"3C",  team:"spurs",    img:"fotos-nba/06-San-Antonio-Spurs/victor-wembanyama.jpg"},
+  {n:"Shai Gilgeous",  pos:"1PG", team:"thunder",  img:"fotos-nba/02-Oklahoma-City-Thunder/shai-gilgeous-alexander.jpg"},
+  {n:"Anthony Edwards",pos:"2SG", team:"wolves",   img:"fotos-nba/12-Minnesota-Timberwolves/anthony-edwards.jpg"},
+];
+
+document.getElementById("grid").innerHTML = CARDS.map(c=>`
+  <div>
+    <div class="card">
+      <div class="frame">
+        <div class="photo">
+          <img src="${c.img}" alt="${c.n}">
+        </div>
+        <div class="brand">
+          <div class="brand-logo"><span class="d">D</span><span class="nm">DUNK</span></div>
+          <div class="brand-year">'83</div>
+        </div>
+        <div class="plate">
+          <span class="pos">${c.pos}</span>
+          <span class="pname">${c.n}</span>
+        </div>
+        <div class="ball">${BALL}<div class="team">${c.team}</div></div>
+      </div>
+      <div class="wear"></div>
+    </div>
+  </div>
+`).join("");
+</script>
+</body>
+</html>
